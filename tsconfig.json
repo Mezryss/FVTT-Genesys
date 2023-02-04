@@ -1,0 +1,53 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ES2022",
+		"moduleResolution": "Node",
+
+		"baseUrl": "src",
+		"emitDeclarationOnly": true,
+		"declaration": true,
+		"declarationDir": "lib",
+
+		"strict": true,
+
+		"skipLibCheck": true,
+		"isolatedModules": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"useDefineForClassFields": true,
+		"jsx": "preserve",
+
+		"allowJs": true,
+		"checkJs": true,
+
+		"noImplicitOverride": true,
+
+		"paths": {
+			"@/*": ["*"]
+		},
+		"lib": [
+			"ES2021",
+			"DOM"
+		],
+		"typeRoots": [
+			"node_modules",
+			"node_modules/types",
+			"types"
+		],
+		"types": [
+			"jquery",
+			"node",
+			"foundry",
+		]
+	},
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.d.ts",
+		"src/**/*.tsx",
+		"src/**/*.vue",
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

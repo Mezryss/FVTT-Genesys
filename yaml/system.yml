@@ -1,0 +1,60 @@
+id: genesys
+title: Genesys
+description: Unofficial implementation of EDGE Studio's Genesys RPG System.
+version: 1.0.0
+compatibility:
+  minimum: 10
+  verified: 10
+  maximum: 10
+templateVersion: 1
+authors:
+  - name: Mezryss
+scripts:
+  - scripts/container-query-polyfill/container-query-polyfill.modern.js
+esmodules:
+  - Genesys.mjs
+styles:
+  - style.css
+languages:
+  - lang: en
+    name: English
+    path: lang/en.json
+packs:
+  - name: crb-skills
+    label: Core Skills
+    system: genesys
+    path: ./packs/crb-skills.db
+    type: Item
+  - name: crb-archetypes
+    label: Core Archetypes
+    system: genesys
+    path: ./packs/crb-archetypes.db
+    type: Item
+  - name: crb-careers
+    label: Core Careers
+    system: genesys
+    path: ./packs/crb-careers.db
+    type: Item
+  - name: crb-equipment
+    label: Core Equipment
+    system: genesys
+    path: ./packs/crb-equipment.db
+    type: Item
+  - name: crb-talents
+    label: Core Talents
+    system: genesys
+    path: ./packs/crb-talents.db
+    type: Item
+  - name: crb-injuries
+    label: Core Critical Injuries
+    system: genesys
+    path: ./packs/crb-injuries.db
+    type: Item
+  - name: crb-tables
+    label: Core Tables
+    system: genesys
+    path: ./packs/crb-tables.db
+    type: RollTable
+socket: true
+url: https://github.com/Mezryss/FVTT-Genesys
+license: https://github.com/Mezryss/FVTT-Genesys/blob/main/LICENSE

@@ -1,0 +1,197 @@
+Actor:
+  types:
+    - character
+  templates:
+    # Has basic characteristics.
+    characteristics:
+      characteristics:
+        brawn: 0
+        agility: 0
+        intellect: 0
+        cunning: 0
+        willpower: 0
+        presence: 0
+    # Has basic combat stats (wounds, etc).
+    combat:
+      defense:
+        melee: 0
+        ranged: 0
+      soak: 0
+      wounds: &combat_pool
+        value: 0
+        max: 0
+      strain: *combat_pool
+  character:
+    # NOTE: If this is updated, make sure to update the schema class!
+    templates:
+      - characteristics
+      - combat
+    # Character illustration image path.
+    illustration: 'icons/svg/mystery-man.svg'
+    # Character's four Motivations.
+    motivations:
+      strength: &motivation
+        name: ''
+        description: ''
+      flaw: *motivation
+      desire: *motivation
+      fear: *motivation
+    # Character Description fields
+    details:
+      # I hate using 'gender' instead of 'pronouns' as the field, but this is needed for compatibility with Player Pronouns plugin.
+      gender: ''
+      age: ''
+      height: ''
+      build: ''
+      hair: ''
+      eyes: ''
+      notableFeatures: ''
+    # A general notes field for anything the player'd like to keep on their sheet.
+    notes: ''
+    # Experience Journal data
+    experienceJournal:
+      # Individual entries noting where experience points were spent or earned.
+      entries: []
+      # Once the initial experience points granted by a character's archetype are spent, character creation mode is considered locked.
+      locked: false
+    # Encumbrance Data - This is mostly here to allow ActiveEffects to impact current Encumbrance & Encumbrance Threshold.
+    encumbrance:
+      # Current Encumbrance amount
+      value: 0
+      # Maximum Encumbrance value.
+      threshold: 0
+    # Amount of generic Currency the character has.
+    currency: 500
+
+Item:
+  types:
+    # TODO: It'd be nice to do something like Pathfinder 2E does, using optgroups in the drop-down.
+    # Equipment
+    - armor
+    - consumable
+    - container
+    - gear
+    - quality
+    - weapon
+
+    # Character Building
+    - ability
+    - archetype
+    - career
+    - injury
+    - skill
+    - talent
+  templates:
+    basic:
+      # Descriptive text for the item.
+      description: ''
+      # Source (book & page reference).
+      source: ''
+    equipment:
+      # Rarity Rating (0-10)
+      rarity: 0
+      # Encumbrance Value
+      encumbrance: 0
+      # Price (the specific denomination depends on the setting)
+      price: 0
+      # (Owned) Damage value. One of 'undamaged', 'minor', 'moderate', 'major' - See CRB p.89
+      damage: 'undamaged'
+      # (Owned) Inventory container where the item is held.
+      container: ''
+      # (Owned) How many the character possesses.
+      quantity: 1
+      # (Owned) Current item state. (Carried, Dropped, or Equipped)
+      state: 'carried'
+  ability:
+    templates: [basic]
+    # Whether this talent is active or passive and, if active, details on the activation requirement.
+    activation:
+      type: 'passive'
+      detail: ''
+  archetype:
+    templates: [basic]
+    # Characteristics values granted by the archetype.
+    characteristics:
+      brawn: 2
+      agility: 2
+      intellect: 2
+      cunning: 2
+      willpower: 2
+      presence: 2
+    # Wound & Strain threshold bases (the number not including Brawn & Willpower)
+    woundThreshold: 10
+    strainThreshold: 10
+    # Starting Experience
+    startingXP: 100
+    # Item Data for items to grant to the character when added.
+    grantedItems: []
+  armor:
+    templates:
+      - basic
+      - equipment
+    defense: 0
+    soak: 0
+  career:
+    templates: [basic]
+    # Item Data for career skills granted by this career.
+    careerSkills: []
+    # (Owned) The list of skill IDs the character took a rank in.
+    selectedSkillIDs: []
+  consumable:
+    templates:
+      - basic
+      - equipment
+  container:
+    templates:
+      - basic
+      - equipment
+    open: false
+  injury:
+    templates: [basic]
+    severity: 'average'
+  gear:
+    templates:
+      - basic
+      - equipment
+  skill:
+    templates: [basic]
+    # Which characteristic the skill uses.
+    characteristic: 'brawn'
+    # Which category (general, magic, etc) the skill belongs to.
+    category: 'general'
+    # (Owned) Whether this skill is a career skill for the character.
+    career: false
+    # (Owned) Ranks the player has in the skill.
+    rank: 0
+  talent:
+    templates: [basic]
+    # Talent's base tier (Effective tier is increased when a ranked talent is purchased multiple times, however).
+    tier: 1
+    # Whether this talent is active or passive and, if active, details on the activation requirement.
+    activation:
+      type: 'active'
+      detail: ''
+    # Whether the talent can be taken multiple times.
+    ranked: 'no'
+    # (Owned) How many times the talent has been taken, if it's a ranked talent.
+    rank: 1
+  quality:
+    templates: [basic]
+    # Whether the quality passively applies or must be activated by spending Advantage.
+    activation: 'passive'
+    # Whether the quality can have different rating levels applied to it.
+    isRated: true
+  weapon:
+    templates:
+      - basic
+      - equipment
+    # Weapon's base damage value.
+    damage: 0
+    # Weapon's critical rating.
+    critical: 0
+    # Weapon's range - one of Engaged, Close, Medium, Long, or Extreme.
+    range: 'engaged'
+    # Skill names that can be used when wielding the weapon.
+    skills: []
+    # Item qualities applicable to the weapon.
+    qualities: []

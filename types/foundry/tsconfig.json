@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "es2020",
+        "moduleResolution": "node",
+        "target": "es2018",
+        "lib": [
+            "dom",
+            "es2017"
+        ],
+        "strict": true,
+        "noImplicitOverride": true,
+        "noEmit": true
+    },
+    "files": [
+        "index.d.ts",
+        "util.d.ts"
+    ]
+}
