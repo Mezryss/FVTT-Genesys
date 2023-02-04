@@ -5,25 +5,39 @@
 	"repository": "https://github.com/Mezryss/FVTT-Genesys",
 	"author": "Mezryss <mezryss@minalien.dev>",
 	"license": "MIT",
+	"type": "module",
 	"private": true,
 	"scripts": {
 		"build:data": "gulp",
-		"build": "vue-tsc && yarn build:data && vite build",
-		"dev": "vite",
-		"watch:data": "gulp watch"
+		"build": "vue-tsc --emitDeclarationOnly && yarn build:data && vite build",
+		"dev": "concurrently \"gulp watch\" \"vite\"",
+		"watch:data": "gulp watch",
+		"lint": "eslint src --ext .vue,.js,.ts",
+		"format": "prettier --write src/"
 	},
 	"devDependencies": {
+		"@rushstack/eslint-patch": "^1.2.0",
+		"@types/gulp": "^4.0.10",
 		"@types/handlebars": "^4.1.0",
 		"@types/jquery": "^3.5.16",
 		"@types/node": "^18.11.18",
 		"@vitejs/plugin-vue": "^4.0.0",
+		"@vue/eslint-config-prettier": "^7.1.0",
+		"@vue/eslint-config-typescript": "^11.0.2",
+		"concurrently": "^7.6.0",
+		"eslint": "^8.34.0",
+		"eslint-plugin-vue": "^9.9.0",
 		"gulp": "^4.0.2",
 		"gulp-clean": "^0.4.0",
 		"gulp-yaml": "^2.0.4",
+		"handlebars": "^4.7.7",
+		"prettier": "^2.8.4",
 		"sass": "^1.58.0",
+		"socket.io": "^4.6.0",
 		"typescript": "^4.9.5",
 		"vite": "^4.1.1",
 		"vue": "^3.2.47",
+		"vue-debounce": "^4.0.0",
 		"vue-tsc": "^1.0.24"
 	}
 }

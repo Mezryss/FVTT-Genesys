@@ -120,3 +120,4 @@ import "./common/data/validators";
 import "./common/documents";
 import "./common/types";
 import "./common/utils";
+import "./prosemirror";

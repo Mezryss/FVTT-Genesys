@@ -19,7 +19,7 @@ declare global {
      */
     class ContextMenu {
         constructor(
-            element: HTMLElement | JQuery,
+            element: JQuery,
             selector: string,
             menuItems: ContextMenuEntry[],
             { eventName }?: { eventName?: string }

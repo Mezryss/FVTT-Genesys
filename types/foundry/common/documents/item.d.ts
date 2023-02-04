@@ -12,7 +12,7 @@ declare module foundry {
             static override get metadata(): ItemMetadata;
 
             /** A reference to the Collection of ActiveEffect instances in the Item document, indexed by _id. */
-            get effects(): this["data"]["effects"];
+	        get effects(): abstract.EmbeddedCollection<documents.BaseActiveEffect>;
 
             override canUserModify(user: BaseUser, action: UserAction, data?: DocumentUpdateData<this>): boolean;
 
@@ -46,7 +46,7 @@ declare module foundry {
             readonly data: data.ItemData<BaseItem, BaseActiveEffect>;
 
             /** Shim for V10 preparation */
-            readonly system: this["data"]["system"];
+            readonly system: any;//this["data"]["system"];
 
             readonly parent: BaseActor | null;
 

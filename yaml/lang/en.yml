@@ -1,5 +1,8 @@
 ACTOR:
   TypeCharacter: Character
+  TypeMinion: Minion
+  TypeRival: Rival
+  TypeNemesis: Nemesis
 
 ITEM:
   # Character Creation Items
@@ -56,7 +59,7 @@ Genesys:
   CareerSkillPrompt:
     Header: Career Skills
     Hint: 'Select Career Skills to gain a rank:'
-    RemainingChoices: 'Remaining Choices: {remaining}'
+    RemainingChoices: Remaining Choices
     Confirm: Done
 
   # Dice So Nice strings
@@ -112,9 +115,9 @@ Genesys:
     Award: '<strong>XP Awarded by GM</strong>: {reason}'
     Starting: <strong>Starting XP from Archetype</strong>
     Characteristic: Increased <strong>{characteristic}</strong> to {rank}.
-    Skill: Increased <strong>{skill}</strong> to {rank}.
+    Skill: Increased <strong>{name}</strong> to {rank}.
     NewTalent: 'Purchased Talent: <strong>{name}</strong> (Tier {tier}).'
-    IncreaseTalent: Increased <strong>{name}</strong> to Rank {rank} (Effective Tier {tier}).
+    TalentRank: Increased <strong>{name}</strong> to Rank {rank} (Effective Tier {tier}).
 
   # Notification Prompts
   Notifications:
@@ -131,12 +134,19 @@ Genesys:
     CannotDeleteNewTalent: Cannot delete XP Journal Entry for new talent '{name}' - you must delete the talent's rank increases first!
     CannotDeleteExistingTalent: Cannot delete XP Journal Entry for increasing talent '{name}' to rank {rank} - you must delete the higher rank increases first!
     CannotPurchaseTalentTier: Cannot purchase talents at tier {tier} - you must have at least {minimum} talents at rank {lowerTier} first.
+    NotEnoughStoryPoints: You can't spend Story Points you don't have!
 
   # Story Points
   StoryPoints:
-    Label: Story Points
-    Players: Players
-    GM: GM
+    Player: Player Story Points
+    GM: GM Story Points
+    Reset: Reset Story Points
+    Spend: Spend Point
+    ChatMessage: Spending a Story Point!
+
+  # Localized strings used in TextEditor enrichers.
+  Enrichers:
+    Difficulty: '{difficulty} [{symbols}] {skill} check'  # e.g. Average [♦♦] Coercion Check
 
   # Sheet Tab names
   Tabs:
@@ -186,6 +196,17 @@ Genesys:
     StartingXP: Starting Experience
     GrantedItems: Granted Items
 
+  # Adversary Labels
+  Adversary:
+    MinionSkills: Skills (group only)
+    Skills: Skills
+    Talents: Talents
+    Abilities: Abilities
+    Equipment: Equipment
+    None: None.
+    Base: Base
+    Remaining: remaining
+
   # Career Data
   Career:
     Skills: Career Skills
@@ -233,8 +254,8 @@ Genesys:
     Edit: Edit
     NoCareer: No career selected - drag one over!
     NoArchetype: No archetype selected - drag one over!
-    UnmarkCareer: Un-Mark as Career Skill
-    MarkCareer: Mark as Career Skill
+    MarkCareerSkill: Mark As Career Skill
+    UnmarkCareerSkill: Unmark As Career Skill
     Motivations: Motivations
     Strength: Strength
     Flaw: Flaw
@@ -253,6 +274,7 @@ Genesys:
     XPJournal: XP Journal
     Tier: Tier
     Activation: Activation
+    Rank: Rank
     Ranked: Ranked
     Active: Active
     Passive: Passive
@@ -260,7 +282,7 @@ Genesys:
     No: No
     Talents: Talents
     SpecialAbilities: Special Abilities
-    TierCount: 'Tier {tier}: {current}/{max}'
+    TierCount: Tier {tier}
     DeletedItemData: 'ERR: Deleted item {name}'
     Add: Add
     Encumbrance: Encumbrance
@@ -272,6 +294,8 @@ Genesys:
     Quantity: Quantity
     EncumbranceThreshold: Encumbrance Threshold
     Encumbered: Encumbered!
+    RankUp: Rank Up
+    RankDown: Rank Down
     FreeRankUp: Rank Up (Free)
     FreeRankDown: Rank Down (Free)
     AwardXP: Award XP
@@ -287,3 +311,4 @@ Genesys:
     Skill: Skill
     Crit: Crit
     Special: Special
+    GroupSize: Group Size

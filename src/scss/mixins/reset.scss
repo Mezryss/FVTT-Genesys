@@ -1,0 +1,15 @@
+@mixin input {
+	input {
+		border: none;
+		background: none;
+		border-radius: 0;
+		padding: 0;
+		margin: 0;
+
+		&:focus {
+			border: none;
+			outline: none;
+			box-shadow: none;
+		}
+	}
+}

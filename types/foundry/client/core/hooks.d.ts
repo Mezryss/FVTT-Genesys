@@ -129,6 +129,9 @@ declare global {
         static once(...args: HookParamsUpdateWorldTime): number;
         static once(...args: HookParameters<string, unknown[]>): number;
 
+		static on(...args: HookParameters<'diceSoNiceReady', [Dice3d]>): number;
+	    static once(...args: HookParameters<'diceSoNiceReady', [Dice3d]>): number;
+
         /**
          * Unregister a callback handler for a particular hook event
          *

@@ -1,14 +1,23 @@
 import {AliasOptions, defineConfig} from 'vite';
 import pluginVue from '@vitejs/plugin-vue';
-import * as path from 'path';
+import path from 'path';
 
 /**
  * A list of aliases to be applied only in production.
  */
 let releaseOnlyAliases: AliasOptions = [];
 
+let devOnlyAliases: AliasOptions = [];
+
 if (process.env.NODE_ENV === 'production') {
-	releaseOnlyAliases = [];
+	releaseOnlyAliases = [
+		{find: 'vue', replacement: path.resolve(__dirname, `external/vue.esm-browser.prod.js`)},
+		{find: '@assets', replacement: path.resolve(__dirname, 'public/assets')},
+	];
+} else {
+	devOnlyAliases = [
+		{find: '@assets', replacement: path.resolve(__dirname, 'assets')},
+	];
 }
 
 // https://vitejs.dev/config/
@@ -31,7 +40,7 @@ export default defineConfig({
 		outDir: 'dist',
 		emptyOutDir: true,
 		sourcemap: true,
-		// Avoiding minification is important, because we don't want names of globals/etc to be mangled.
+		// Avoiding minification is important, because we don't want names of globals/etc. to be mangled.
 		minify: false,
 		lib: {
 			name: 'Genesys',
@@ -45,7 +54,9 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: [
-			{find: '@', replacement: path.resolve(__dirname, `src`)},
+			{find: '@', replacement: path.resolve(__dirname, 'src')},
+			{find: '@scss', replacement: path.resolve(__dirname, 'src/scss')},
+			...devOnlyAliases,
 			...releaseOnlyAliases,
 		]
 	}

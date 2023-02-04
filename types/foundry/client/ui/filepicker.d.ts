@@ -24,7 +24,7 @@ declare class FilePicker extends Application {
     /** The current set of file extensions which are being filtered upon */
     extension: string[];
 
-    constructor(options: ApplicationOptions);
+    constructor(options: any);
 
     /**
      * Given a current file path, determine the directory it belongs to
@@ -66,7 +66,7 @@ declare class FilePicker extends Application {
      * @param target    The target within the currently active source location.
      * @param options   Browsing options
      */
-    browse(target: string, options?: object): Promise<any>;
+    browse(target?: string, options?: object): Promise<any>;
 
     /**
      * Browse files for a certain directory location

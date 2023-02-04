@@ -1,0 +1,162 @@
+@use '@scss/vars/colors.scss';
+
+$size: 2rem;
+
+.roll {
+	.dice-row,
+	.results-row {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		font-family: 'Bebas Neue', sans-serif;
+
+		label {
+			font-size: 1.5em;
+			color: colors.$blue;
+		}
+	}
+
+	.roll-description {
+		font-family: 'Roboto', sans-serif;
+	}
+
+	.dice {
+		margin-top: 0.25em;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.25em;
+		padding-left: 0.5em;
+		padding-right: 0.5em;
+
+		.symbol {
+			position: relative;
+			top: -0.05em;
+			font-family: 'Genesys Symbols', sans-serif;
+			font-size: 2em;
+		}
+
+		.result {
+			display: grid;
+			grid-template-columns: $size;
+			grid-template-rows: $size;
+			width: $size;
+			height: $size;
+			font-family: 'Genesys Symbols', sans-serif;
+			align-items: center;
+			justify-items: center;
+
+			& > div {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				flex-wrap: nowrap;
+
+				grid-column: 1 / span 1;
+				grid-row: 1 / span 1;
+				width: 100%;
+				height: 100%;
+			}
+
+			.type {
+				font-size: 3em;
+				-webkit-text-stroke: 1px black;
+				text-stroke: 1px black;
+
+				// Boost Die
+				&[data-type='B'] {
+					color: colors.$die-boost;
+				}
+
+				// Ability Die
+				&[data-type='A'] {
+					color: colors.$die-ability;
+				}
+
+				// Proficiency Die
+				&[data-type='P'] {
+					color: colors.$die-proficiency;
+				}
+
+				// Setback Die
+				&[data-type='S'] {
+					color: colors.$die-setback;
+				}
+
+				// Difficulty Die
+				&[data-type='I'] {
+					color: colors.$die-difficulty;
+				}
+
+				// Challenge Die
+				&[data-type='C'] {
+					color: colors.$die-challenge;
+				}
+			}
+
+			.face {
+				position: relative;
+				top: -0.25em;
+				font-size: 1.5em;
+
+				&[data-type='S'],
+				&[data-type='I'],
+				&[data-type='C'] {
+					color: white;
+				}
+			}
+		}
+	}
+
+	.net-results {
+		font-family: 'Genesys Symbols', sans-serif;
+		font-size: 1.25em;
+		padding-left: 0.5em;
+	}
+
+	.summary-table {
+		display: grid;
+		grid-template-columns: /* Symbol */ auto /* Label */ auto /* Value */ 1fr;
+		grid-auto-rows: auto 1px;
+		align-items: center;
+		column-gap: 0.3em;
+
+		font-family: 'Roboto Serif', serif;
+		font-size: 1em;
+		padding-left: 0.5em;
+
+		.separator {
+			position: relative;
+			top: -2px;
+			grid-column: 1 / span all;
+			width: 100%;
+			height: 1px;
+			border-bottom: 1px dashed colors.$light-blue;
+
+			&:last-child {
+				border-bottom: none;
+			}
+		}
+
+		.label,
+		.count {
+			position: relative;
+			top: -0.25em;
+		}
+
+		.label {
+			font-weight: bold;
+		}
+
+		.count {
+			justify-self: right;
+			padding-right: 0.5em;
+		}
+
+		.symbol {
+			font-family: 'Genesys Symbols', sans-serif;
+		}
+	}
+}

@@ -1,0 +1,54 @@
+/**
+ * Genesys Glyphs & Dice is available under the MIT License (https://github.com/themensch/FFG-Genesys-Glyphs-and-Dice/blob/master/LICENSE)
+ *
+ * The customized GenesysSymbols-Regular-Ligatures font is created using symbols from this font.
+ */
+
+@use '@scss/vars/colors.scss';
+
+@font-face {
+	font-family: 'Genesys Symbols';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('@assets/fonts/GenesysSymbols-Regular-Ligatures.woff2') format('woff2');
+}
+
+.font-genesys-symbols {
+	font-family: 'Genesys Symbols', sans-serif;
+	min-height: 24px;
+}
+
+.die {
+	-webkit-text-stroke: 1px black;
+	text-stroke: 1px black;
+	font-style: normal;
+	font-family: 'Genesys Symbols', sans-serif;
+
+	// Ability & Difficulty Die
+	&.die-A {
+		color: colors.$die-ability;
+	}
+
+	&.die-D {
+		color: colors.$die-difficulty;
+	}
+
+	// Proficiency Die
+	&.die-P {
+		color: colors.$die-proficiency;
+	}
+
+	&.die-C {
+		color: colors.$die-challenge;
+	}
+
+	// Boost Die
+	&.die-B {
+		color: colors.$die-boost;
+	}
+
+	&.die-S {
+		color: colors.$die-setback;
+	}
+}

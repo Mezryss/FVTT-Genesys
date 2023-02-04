@@ -1,0 +1,30 @@
+@use 'src/scss/mixins/backgrounds';
+@use 'src/scss/vars/sheet';
+
+// Restrict the minimum size for the sheet window.
+.window-app.sheet.actor {
+	min-width: 580px;
+	min-height: 600px;
+
+	.vue-app {
+		// Base-level CSS Container.
+		container: sheet / inline-size;
+
+		// Get rid of Foundry padding for character sheets, we'll do our own.
+		margin: -1 * sheet.$padding;
+		padding: sheet.$padding;
+
+		@include backgrounds.crossboxes;
+		font-family: 'Roboto', sans-serif;
+
+		// sheet-body is the container where the current tab contents are rendered.
+		.sheet-body {
+			// Allow for container queries against just the tab container.
+			container: sheet-body / inline-size;
+
+			// Take up as much space as is available. Individual sheets are responsible for limiting this to avoid it going overly large.
+			width: 100%;
+			height: 100%;
+		}
+	}
+}

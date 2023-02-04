@@ -1,0 +1,32 @@
+@use '@scss/mixins/backgrounds.scss';
+@use '@scss/vars/colors.scss';
+
+.chat-message {
+	@include backgrounds.crossboxes();
+
+	.message-header {
+		border-bottom: 1px dashed colors.$blue !important;
+	}
+
+	.message-sender {
+		color: colors.$dark-blue;
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.5em;
+	}
+
+	.message-content {
+		padding: 0.25em;
+	}
+
+	.story-point {
+		width: 100%;
+		text-align: center;
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1.5em;
+		color: colors.$blue;
+
+		&.gm {
+			color: colors.$red;
+		}
+	}
+}

@@ -58,6 +58,7 @@ declare global {
                 >
             >;
             typeLabels: Record<string, string | undefined>;
+	        systemDataModels: Record<string, any>,
         };
 
         /** Configuration for the Cards primary Document type */
@@ -111,6 +112,7 @@ declare global {
                     }
                 >
             >;
+			systemDataModels: Record<string, any>,
             typeLabels: Record<string, string | undefined>;
         };
 

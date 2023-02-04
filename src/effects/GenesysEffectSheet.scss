@@ -1,0 +1,137 @@
+@use '@scss/mixins/backgrounds.scss';
+@use '@scss/mixins/reset.scss';
+@use '@scss/vars/colors.scss';
+@use '@scss/vars/sheet.scss';
+
+// Restrict the minimum size for the sheet window.
+.window-app.sheet.item {
+	min-width: 320px;
+	min-height: 200px;
+}
+
+.effect-sheet {
+	// Base-level CSS Container.
+	container: sheet / inline-size;
+
+	// Get rid of Foundry padding for character sheets, we'll do our own.
+	margin: -1 * sheet.$padding;
+
+	@include backgrounds.crossboxes;
+	font-family: 'Roboto', sans-serif;
+
+	display: grid;
+	// Header, tabs, tab content
+	grid-template-rows: /* Header & Tabs */ repeat(2, auto) /* Body */ 1fr /* Footer */ auto;
+	padding: 0;
+
+	.tint-container {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+	}
+
+	.checkbox-container {
+		display: flex;
+	}
+
+	& > header {
+		display: grid;
+		$base-columns: auto 1fr;
+		grid-template-columns: $base-columns;
+		gap: 0.5rem;
+		align-items: center;
+		padding: sheet.$padding;
+
+		// Header Decoration
+		&.with-decoration {
+			grid-template-columns: $base-columns auto;
+		}
+
+		@include reset.input;
+
+		// Item image
+		img {
+			border: 1px solid colors.$gold;
+			background: transparentize(colors.$gold, 0.5);
+			border-radius: 1em;
+			height: 2.5rem;
+		}
+
+		// Name Input
+		input {
+			width: 100%;
+			font-family: 'Bebas Neue', sans-serif;
+			font-size: 2rem;
+			color: colors.$blue;
+
+			&,
+			&:focus {
+				border-bottom: 1px solid colors.$dark-blue;
+			}
+		}
+	}
+
+	nav.sheet-tabs {
+		margin-left: 0;
+		width: 100%;
+	}
+
+	.tab {
+		padding-left: sheet.$padding;
+		padding-right: sheet.$padding;
+	}
+
+	section.data-grid,
+	section.effect-grid {
+		display: flex;
+		flex-direction: column;
+
+		.header,
+		.row {
+			display: grid;
+			grid-template-columns: minmax(min-content, 30%) 1fr;
+			align-items: center;
+			padding: 0.25em;
+			row-gap: 0.1em;
+			column-gap: 0.25em;
+		}
+
+		.header {
+			font-family: 'Bebas Neue', sans-serif;
+		}
+
+		.row {
+			border-bottom: 1px dashed black;
+
+			input,
+			select {
+				width: 100%;
+			}
+		}
+
+		.split {
+			display: grid;
+			grid-template-columns: repeat(2, auto 1fr);
+			align-items: center;
+			gap: 0.25em;
+		}
+	}
+
+	section.data-grid {
+		.row {
+			& > * {
+				grid-column: 2 / span 1;
+			}
+
+			& > label {
+				grid-column: 1 / span 1;
+			}
+		}
+	}
+
+	section.effect-grid {
+		.row,
+		.header {
+			grid-template-columns: /* Key */ 2fr /* Change Mode */ 1fr /* Value */ 1fr /* Actions */ auto;
+		}
+	}
+}

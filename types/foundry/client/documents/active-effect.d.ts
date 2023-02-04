@@ -46,6 +46,9 @@ declare global {
         /** Describe whether the ActiveEffect has a temporary duration based on combat turns or rounds. */
         get isTemporary(): boolean;
 
+		/** Is there some system logic that makes this active effect ineligible for application? */
+		get isSuppressed(): boolean;
+
         /** A cached property for obtaining the source name */
         get sourceName(): string;
 

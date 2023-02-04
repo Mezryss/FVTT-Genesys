@@ -6,14 +6,8 @@ declare global {
         title: string;
         template: string;
         width: number;
-        height: string;
-        tabs: [
-            {
-                navSelector: ".tabs";
-                contentSelector: "form";
-                initial: "details";
-            }
-        ];
+        height: number;
+        tabs: {navSelector: string, contentSelector: string, initial: string}[];
     }
 
     interface ActiveEffectConfigData<TDocument extends ActiveEffect = ActiveEffect>

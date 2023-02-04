@@ -1,0 +1,163 @@
+<form class="genesys effect-sheet" autocomplete="off">
+	<header class="{{#if (eq hasDecoration true)}}with-decoration{{/if}}">
+		<img src="{{ data.icon }}" data-edit="icon" title="{{ label }}" />
+		<input type="text" name="label" value="{{ data.label }}" placeholder="{{ localize 'Genesys.Labels.Name' }}" />
+		{{#if (eq hasDecoration true)}}
+			{{>decoration}}
+		{{/if}}
+	</header>
+
+	<nav class="sheet-tabs" data-group="primary">
+		<div class="spacer"></div>
+
+		<a class="item" data-tab="details">
+			<i class="fas fa-book"></i> {{localize 'Genesys.Tabs.Details'}}
+		</a>
+
+		<a class="item" data-tab="duration">
+			<i class="fas fa-clock"></i> {{localize 'Genesys.Tabs.Duration'}}
+		</a>
+
+		<a class="item" data-tab="effects">
+			<i class="fas fa-cogs"></i> {{localize 'Genesys.Tabs.Effects'}}
+		</a>
+
+		<div class="spacer"></div>
+	</nav>
+
+	<section class="sheet-body">
+		<div class="tab" data-group="primary" data-tab="details">
+			<section class="data-grid">
+				<div class="row">
+					<label>{{localize 'EFFECT.IconTint'}}</label>
+					<div class="tint-container">
+						{{colorPicker name="tint" value=data.tint}}
+					</div>
+				</div>
+
+				<div class="row">
+					<label>{{localize 'EFFECT.Disabled'}}</label>
+					<div class="checkbox-container">
+						<input type="checkbox" name="disabled" {{checked data.disabled}} />
+					</div>
+				</div>
+
+				{{#if isActorEffect}}
+					<div class="row">
+						<label>{{localize 'EFFECT.Origin'}}</label>
+						<input type="text" name="origin" value="{{data.origin}}" disabled />
+					</div>
+				{{/if}}
+
+				{{#if isItemEffect}}
+					<div class="row">
+						<label>{{localize 'EFFECT.Transfer'}}</label>
+						<div class="checkbox-container">
+							<input type="checkbox" name="transfer" {{checked data.transfer}} />
+						</div>
+					</div>
+				{{/if}}
+			</section>
+		</div>
+
+		<div class="tab" data-group="primary" data-tab="duration">
+			<section class="data-grid">
+				<div class="row">
+					<label>{{localize 'EFFECT.DurationSecs'}}</label>
+					<input type="number" name="duration.seconds" value="{{data.duration.seconds}}" />
+				</div>
+
+				<div class="row">
+					<label>{{localize 'EFFECT.StartTime'}}</label>
+					<input type="number" name="duration.startTime" value="{{data.duration.startTime}}" />
+				</div>
+
+				<div class="row">
+					<label>{{localize 'EFFECT.DurationTurns'}}</label>
+					<div class="split">
+						<label>{{localize 'COMBAT.Rounds'}}</label>
+						<input type="number" name="duration.rounds" value="{{data.duration.rounds}}" />
+						<label>{{localize 'COMBAT.Turns'}}</label>
+						<input type="number" name="duration.turns" value="{{data.duration.turns}}" />
+					</div>
+				</div>
+
+				<div class="row">
+					<label>{{localize 'EFFECT.Combat'}}</label>
+					<input type="text" name="duration.combat" value="{{data.duration.combat}}" disabled />
+				</div>
+
+				<div class="row">
+					<label>{{localize 'EFFECT.StartTurns'}}</label>
+					<div class="split">
+						<label>{{localize 'COMBAT.Round'}}</label>
+						<input type="number" name="duration.startRound" value="{{data.duration.startRound}}" />
+						<label>{{localize 'COMBAT.Turn'}}</label>
+						<input type="number" name="duration.startTurn" value="{{data.duration.startTurn}}" />
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<div class="tab" data-group="primary" data-tab="effects">
+			<section class="effect-grid">
+				<div class="header">
+					<div>{{localize 'EFFECT.ChangeKey'}}</div>
+					<div>{{localize 'EFFECT.ChangeMode'}}</div>
+					<div>{{localize 'EFFECT.ChangeValue'}}</div>
+					<div>
+						<a class="effect-control" data-action="add">
+							<i class="far fa-plus-square"></i>
+						</a>
+					</div>
+				</div>
+
+				{{#each data.changes as |change i|}}
+					<div class="row effect-change" data-index="{{i}}">
+						{{#select change.key}}
+							<select name="changes.{{i}}.key">
+								<option value="">—</option>
+
+								{{!-- Stat Changes --}}
+								<optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyCharacteristic'}}">
+									{{!-- Characteristics --}}
+									<option value="system.characteristics.brawn">{{localize 'Genesys.Characteristics.Brawn'}}</option>
+									<option value="system.characteristics.agility">{{localize 'Genesys.Characteristics.Agility'}}</option>
+									<option value="system.characteristics.intellect">{{localize 'Genesys.Characteristics.Intellect'}}</option>
+									<option value="system.characteristics.cunning">{{localize 'Genesys.Characteristics.Cunning'}}</option>
+									<option value="system.characteristics.willpower">{{localize 'Genesys.Characteristics.Willpower'}}</option>
+									<option value="system.characteristics.presence">{{localize 'Genesys.Characteristics.Presence'}}</option>
+								</optgroup>
+
+								<optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyStat'}}">
+									{{!-- Secondary Stats --}}
+									<option value="system.soak">{{localize 'Genesys.Labels.SoakValue'}}</option>
+									<option value="system.wounds.max">{{localize 'Genesys.Labels.WoundThreshold'}}</option>
+									<option value="system.strain.max">{{localize 'Genesys.Labels.StrainThreshold'}}</option>
+									<option value="system.defense.melee">{{localize 'Genesys.Labels.MeleeDefense'}}</option>
+									<option value="system.defense.ranged">{{localize 'Genesys.Labels.RangedDefense'}}</option>
+									<option value="system.encumbrance.threshold">{{localize 'Genesys.Labels.EncumbranceThreshold'}}</option>
+								</optgroup>
+
+								{{!-- Skill Changes --}}
+
+								{{!-- Dice Pool Changes --}}
+							</select>
+						{{/select}}
+						<select name="changes.{{i}}.mode" data-dtype="Number">
+							{{selectOptions ../modes selected=change.mode}}
+						</select>
+						<input type="text" name="changes.{{i}}.value" value="{{change.value}}" />
+						<div class="effect-controls">
+							<a class="effect-control" data-action="delete"><i class="fas fa-trash"></i></a>
+						</div>
+					</div>
+				{{/each}}
+			</section>
+		</div>
+	</section>
+
+	<footer class="sheet-footer">
+		<button type="submit"><i class="fas fa-save"></i> {{localize submitText}}</button>
+	</footer>
+</form>

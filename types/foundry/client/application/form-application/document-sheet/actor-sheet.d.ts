@@ -6,7 +6,7 @@ declare global {
     }
 
     interface ActorSheetData<A extends Actor> extends DocumentSheetData<A> {
-        actor: any;
+        actor: A;
         data: any;
         items: any;
         cssClass: "editable" | "locked";
@@ -108,7 +108,7 @@ declare global {
          * @param data  The data transfer extracted from the event
          * @return A data object which describes the result of the drop
          */
-        protected _onDropItem(event: ElementDragEvent, data: DropCanvasData<"Item", TItem>): Promise<TItem[]>;
+        protected _onDropItem(event: DragEvent, data: DropCanvasData<"Item", TItem>): Promise<TItem[]|boolean>;
 
         /**
          * Handle dropping of a Folder on an Actor Sheet.
@@ -131,6 +131,6 @@ declare global {
          * @param  event
          * @param itemData
          */
-        protected _onSortItem(event: ElementDragEvent, itemData: TItem["_source"]): Promise<TItem[]>;
+        protected _onSortItem(event: DragEvent, itemData: TItem["_source"]): Promise<TItem[]|undefined>;
     }
 }

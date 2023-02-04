@@ -1,6 +1,9 @@
 Actor:
   types:
     - character
+    - minion
+    - rival
+    - nemesis
   templates:
     # Has basic characteristics.
     characteristics:
@@ -11,21 +14,23 @@ Actor:
         cunning: 0
         willpower: 0
         presence: 0
-    # Has basic combat stats (wounds, etc).
-    combat:
+    # Adversaries
+    adversary:
+      soak: 0
       defense:
         melee: 0
         ranged: 0
-      soak: 0
-      wounds: &combat_pool
-        value: 0
-        max: 0
-      strain: *combat_pool
+      description: ''
   character:
-    # NOTE: If this is updated, make sure to update the schema class!
-    templates:
-      - characteristics
-      - combat
+    templates: [characteristics]
+    defense:
+      melee: 0
+      ranged: 0
+    soak: 0
+    wounds: &combat_pool
+      value: 0
+      max: 0
+    strain: *combat_pool
     # Character illustration image path.
     illustration: 'icons/svg/mystery-man.svg'
     # Character's four Motivations.
@@ -46,7 +51,7 @@ Actor:
       hair: ''
       eyes: ''
       notableFeatures: ''
-    # A general notes field for anything the player'd like to keep on their sheet.
+    # A general notes field for anything the player would like to keep on their sheet.
     notes: ''
     # Experience Journal data
     experienceJournal:
@@ -62,6 +67,34 @@ Actor:
       threshold: 0
     # Amount of generic Currency the character has.
     currency: 500
+  minion:
+    templates:
+      - characteristics
+      - adversary
+    # Base number of minions in the group by default. This will likely be edited on a per-token basis.
+    groupSize: 4
+    wounds:
+      # Value expresses the number of wounds currently sustained by the group.
+      value: 0
+      # Threshold is the actual per-minion Wound Threshold value.
+      threshold: 0
+  rival:
+    templates:
+      - characteristics
+      - adversary
+    wounds:
+      value: 0
+      max: 0
+  nemesis:
+    templates:
+      - characteristics
+      - adversary
+    wounds:
+      value: 0
+      max: 0
+    strain:
+      value: 0
+      max: 0
 
 Item:
   types:
@@ -186,7 +219,7 @@ Item:
       - basic
       - equipment
     # Weapon's base damage value.
-    damage: 0
+    baseDamage: 0
     # Weapon's critical rating.
     critical: 0
     # Weapon's range - one of Engaged, Close, Medium, Long, or Extreme.

@@ -1,0 +1,128 @@
+@use 'vars/colors';
+@use 'vars/sheet';
+
+.sheet {
+	nav.sheet-tabs {
+		// Stretch the tabs container across the full sheet width.
+		margin-left: -1 * sheet.$padding;
+		width: calc(100% + #{sheet.$padding * 2});
+
+		// Undo Foundry's default styling for sheet tabs.
+		border-top: none !important;
+		border-bottom: none !important;
+
+		// Center the nav links.
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		// Make it look pretty!
+		font-family: 'Bebas Neue', sans-serif;
+		color: white;
+
+		// Create a decorative border effect to reuse on the tabs.
+		$decoration-color: colors.$gold;
+		$decorative-lines-top-bottom: linear-gradient(
+			to bottom,
+			transparent 2px,
+			$decoration-color 2px,
+			$decoration-color 3px,
+			transparent 3px,
+			transparent calc(100% - 3px),
+			$decoration-color calc(100% - 3px),
+			$decoration-color calc(100% - 2px),
+			transparent calc(100% - 2px)
+		);
+		background:
+			// Decorative lines on the top & bottom
+			$decorative-lines-top-bottom,
+			// Radial gradient to mask some of the repeating vertical line.
+			radial-gradient(colors.$blue 70%, transparent 100%),
+			// A vertical line at the left that will repeat and give a nice pattern along with the radial bit.
+			linear-gradient(to right, transparent 2px, $decoration-color 2px, $decoration-color 3px, transparent 3px);
+		background-color: colors.$blue;
+		background-size: 40px auto;
+
+		// A spacer is used to prevent the vertical decorations from appearing too close to the edges of the actual nav items.
+		.spacer {
+			background: $decorative-lines-top-bottom;
+			background-color: colors.$blue;
+			width: 30px;
+			height: 100%;
+		}
+
+		// Styling for each tab link.
+		.item {
+			position: relative;
+			padding: 4px;
+
+			background:
+				// Decorative lines on the top & bottom
+				$decorative-lines-top-bottom,
+				// Radial gradient to mask some of the repeating vertical line.
+				radial-gradient(colors.$blue 60%, transparent 100%),
+				// Vertical bar on the left.
+				linear-gradient(to right, transparent 2px, $decoration-color 2px, $decoration-color 3px, transparent 3px);
+			background-color: colors.$blue;
+
+			&:not(.active) {
+				// Add some extra space for the vertical bar.
+				padding-left: 7px;
+
+				// The last nav item needs to add a vertical bar to the right.
+				&:last-of-type::after {
+					position: absolute;
+					left: 100%;
+					top: 0;
+					display: block;
+					content: ' ';
+					height: 100%;
+					width: 5px;
+					background: $decorative-lines-top-bottom,
+						// Radial gradient to mask some of the repeating vertical line.
+						radial-gradient(colors.$blue 0%, transparent 100%),
+						// Vertical line
+						linear-gradient(to right, transparent 2px, $decoration-color 2px, $decoration-color 3px, transparent 3px);
+					background-color: colors.$blue;
+				}
+			}
+		}
+
+		// Styling for the active tab link.
+		.active {
+			position: relative;
+			background: colors.$red;
+
+			// Add a small triangle to the bottom of the active tab for some visual flair!
+			&::after {
+				display: block;
+				content: ' ';
+				position: absolute;
+				left: 0;
+				top: 100%;
+				height: 0.25rem;
+				width: 100%;
+				background-color: colors.$red;
+				clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 25%, 0% 100%);
+			}
+
+			// Get rid of the next item's left bar & padding.
+			& + .item {
+				background: $decorative-lines-top-bottom;
+				background-color: colors.$blue;
+				padding-left: 4px;
+			}
+		}
+	}
+
+	// Ensure that tabs and their containing <section>s fill the available space.
+	.tab {
+		width: 100%;
+		height: 100%;
+
+		& > section {
+			width: 100%;
+			height: 100%;
+		}
+	}
+}
