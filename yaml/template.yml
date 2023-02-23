@@ -220,6 +220,8 @@ Item:
       - equipment
     # Weapon's base damage value.
     baseDamage: 0
+    # Characteristic added to damage value.
+    damageCharacteristic: '-'
     # Weapon's critical rating.
     critical: 0
     # Weapon's range - one of Engaged, Close, Medium, Long, or Extreme.

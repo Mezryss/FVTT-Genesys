@@ -90,6 +90,16 @@ function skillNameForWeapon(weapon: GenesysItem): string {
 	}
 }
 
+function damageForWeapon(weapon: GenesysItem): number {
+	const weaponData = weapon.system as WeaponDataModel;
+
+	if (weaponData.damageCharacteristic === '-') {
+		return weaponData.baseDamage;
+	}
+
+	return weaponData.baseDamage + system.value.characteristics[weaponData.damageCharacteristic];
+}
+
 onBeforeMount(updateEffects);
 onBeforeUpdate(updateEffects);
 </script>
@@ -250,7 +260,7 @@ onBeforeUpdate(updateEffects);
 									{{ item.name }}
 									(<span class="weapon-details">
 										<span>{{ skillNameForWeapon(item) }}</span>
-										<span>Damage {{ item.system.baseDamage }}</span>
+										<span>Damage {{ damageForWeapon(item) }}</span>
 										<span>Critical {{ item.system.critical }}</span>
 										<span>Range [<Localized :label="`Genesys.Range.${item.system.range.capitalize()}`" />]</span>
 										<span v-if="item.system.qualities.length > 0" class="weapon-qualities">

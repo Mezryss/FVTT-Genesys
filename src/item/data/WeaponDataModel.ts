@@ -5,6 +5,8 @@
  * @author Mezryss
  * @file Weapons
  */
+
+import { Characteristic } from '@/data/Characteristics';
 import EquipmentDataModel from '@/item/data/EquipmentDataModel';
 
 type ContainedItemQuality = {
@@ -36,6 +38,11 @@ export default abstract class WeaponDataModel extends EquipmentDataModel {
 	abstract baseDamage: number;
 
 	/**
+	 * Characteristic that is added to the damage value.
+	 */
+	abstract damageCharacteristic: Characteristic | '-';
+
+	/**
 	 * Critical value.
 	 */
 	abstract critical: number;
@@ -61,6 +68,10 @@ export default abstract class WeaponDataModel extends EquipmentDataModel {
 		return {
 			...super.defineSchema(),
 			baseDamage: new fields.NumberField({ initial: 0, integer: true }),
+			damageCharacteristic: new fields.StringField({
+				initial: '-',
+				choices: ['-', Characteristic.Brawn, Characteristic.Agility, Characteristic.Intellect, Characteristic.Cunning, Characteristic.Willpower, Characteristic.Presence],
+			}),
 			critical: new fields.NumberField({ initial: 0, integer: true }),
 			range: new fields.StringField({
 				initial: 'engaged',
