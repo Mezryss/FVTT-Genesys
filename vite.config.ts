@@ -1,4 +1,4 @@
-import {AliasOptions, defineConfig} from 'vite';
+import { AliasOptions, defineConfig } from 'vite';
 import pluginVue from '@vitejs/plugin-vue';
 import path from 'path';
 
@@ -10,14 +10,9 @@ let releaseOnlyAliases: AliasOptions = [];
 let devOnlyAliases: AliasOptions = [];
 
 if (process.env.NODE_ENV === 'production') {
-	releaseOnlyAliases = [
-		{find: 'vue', replacement: path.resolve(__dirname, `external/vue.esm-browser.prod.js`)},
-		{find: '@assets', replacement: path.resolve(__dirname, 'public/assets')},
-	];
+	releaseOnlyAliases = [{ find: 'vue', replacement: path.resolve(__dirname, 'external/vue.esm-browser.prod.js') }];
 } else {
-	devOnlyAliases = [
-		{find: '@assets', replacement: path.resolve(__dirname, 'assets')},
-	];
+	devOnlyAliases = [];
 }
 
 // https://vitejs.dev/config/
@@ -28,12 +23,13 @@ export default defineConfig({
 		port: 30001,
 		open: true,
 		proxy: {
+			'^/assets': 'http://localhost:30000/systems/genesys/',
 			'^(?!/systems/genesys)': 'http://localhost:30000/',
 			'/socket.io': {
 				target: 'ws://localhost:30000',
 				ws: true,
-			}
-		}
+			},
+		},
 	},
 	publicDir: 'public',
 	build: {
@@ -46,18 +42,11 @@ export default defineConfig({
 			name: 'Genesys',
 			entry: 'src/Genesys.ts',
 			formats: ['es'], // ES Modules
-			fileName: 'Genesys'
-		}
+			fileName: 'Genesys',
+		},
 	},
-	plugins: [
-		pluginVue(),
-	],
+	plugins: [pluginVue()],
 	resolve: {
-		alias: [
-			{find: '@', replacement: path.resolve(__dirname, 'src')},
-			{find: '@scss', replacement: path.resolve(__dirname, 'src/scss')},
-			...devOnlyAliases,
-			...releaseOnlyAliases,
-		]
-	}
+		alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }, { find: '@scss', replacement: path.resolve(__dirname, 'src/scss') }, ...devOnlyAliases, ...releaseOnlyAliases],
+	},
 });

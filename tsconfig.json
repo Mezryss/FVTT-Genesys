@@ -24,7 +24,6 @@
 
 		"paths": {
 			"@/*": ["src/*"],
-			"@assets/*": ["public/assets/*"],
 		},
 		"lib": [
 			"ES2021",
