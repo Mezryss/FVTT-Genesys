@@ -4,6 +4,7 @@
 /public/lang
 /public/system.json
 /public/template.json
+/genesys-*.zip
 
 # Node
 /node_modules
