@@ -4,7 +4,7 @@ import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import GenesysItem from '@/item/GenesysItem';
 import Localized from '@/vue/components/Localized.vue';
-import WeaponDataModel, { ContainedItemQuality } from '@/item/data/WeaponDataModel';
+import WeaponDataModel from '@/item/data/WeaponDataModel';
 import ArmorDataModel from '@/item/data/ArmorDataModel';
 import Enriched from '@/vue/components/Enriched.vue';
 import InjuryDataModel from '@/item/data/InjuryDataModel';
@@ -13,6 +13,7 @@ import DicePrompt, { RollType } from '@/app/DicePrompt';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_SKILL_FOR_INJURIES } from '@/settings/campaign';
 import SkillRanks from '@/vue/components/character/SkillRanks.vue';
+import Tooltip from '@/vue/components/Tooltip.vue';
 
 const rootContext = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 
@@ -70,16 +71,6 @@ function damageForWeapon(weapon: GenesysItem<WeaponDataModel>) {
 
 	return weapon.systemData.baseDamage + rootContext.data.actor.systemData.characteristics[weapon.systemData.damageCharacteristic];
 }
-
-async function showQualityTooltip(quality: ContainedItemQuality, event: Event) {
-	const description: string = quality.description.trim() !== '' ? await TextEditor.enrichHTML(quality.description, { async: true }) : game.i18n.localize('Genesys.Tooltips.NoDescription');
-
-	game.tooltip.activate(event.currentTarget as HTMLElement, { text: description });
-}
-
-function hideQualityTooltip() {
-	game.tooltip.deactivate();
-}
 </script>
 
 <template>
@@ -100,7 +91,7 @@ function hideQualityTooltip() {
 					<div class="name">
 						<a @click="rollAttack(weapon)">{{ weapon.name }}</a>
 					</div>
-					<div class="skill" v-for="skill in [skillForWeapon(weapon)]" :key="skill.id">
+					<div class="skill" v-for="skill in [skillForWeapon(weapon)]" :key="skill?.id ?? 'skill'">
 						<template v-if="skill">
 							{{ skill.name }}
 							<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="actor.systemData.characteristics[skill.systemData.characteristic]" />
@@ -111,9 +102,11 @@ function hideQualityTooltip() {
 					<div class="crit">{{ weapon.systemData.critical }}</div>
 					<div class="range"><Localized :label="`Genesys.Range.${weapon.systemData.range.capitalize()}`" /></div>
 					<div v-if="weapon.systemData.qualities.length > 0" class="qualities">
-						<div v-for="quality in weapon.systemData.qualities" :key="quality.name" class="quality" @mouseover="showQualityTooltip(quality, $event)" @mouseleave="hideQualityTooltip" data-tooltip-direction="RIGHT">
-							{{ quality.name }} <template v-if="quality.isRated">{{ quality.rating }}</template>
-						</div>
+						<Tooltip v-for="quality in weapon.systemData.qualities" :key="quality.name" :content="quality.description">
+							<div class="quality">
+								{{ quality.name }} <template v-if="quality.isRated">{{ quality.rating }}</template>
+							</div>
+						</Tooltip>
 					</div>
 				</div>
 			</div>
