@@ -159,4 +159,20 @@ $size: 2rem;
 			font-family: 'Genesys Symbols', sans-serif;
 		}
 	}
+
+	.qualities {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0.25em;
+
+		font-size: 1.05em;
+
+		.quality {
+			background: transparentize(colors.$gold, 0.9);
+			border: 1px dashed colors.$gold;
+			border-radius: 0.25em;
+			padding: 0.25em;
+		}
+	}
 }

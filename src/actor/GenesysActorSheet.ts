@@ -41,7 +41,7 @@ export default abstract class GenesysActorSheet<ActorDataModel extends foundry.a
 
 				const skillId = matchingSkill ? matchingSkill.id : '-';
 
-				await DicePrompt.promptForRoll(this.actor, skillId, difficulty);
+				await DicePrompt.promptForRoll(this.actor, skillId, { startingDifficulty: difficulty });
 			});
 		}, 250);
 	}

@@ -37,6 +37,12 @@ Genesys:
     CareerSkillRanksHint: Number of skills you can select from your Career Skills list during character creation.
     UncoupleSkillsAlternateRule: Uncouple Skills from Characteristics
     UncoupleSkillsAlternateRuleHint: Allows selecting an alternative Characteristic for a skill in the dice prompt window, per the Uncoupling Skills from Characteristics alternate rule (Core Rulebook, p.205).
+    ShowDamageOnFailure: Show Attack Damage On Failure
+    ShowDamageOnFailureHint: Whether to show Damage, Critical, and Qualities on attack roll chat cards even when the roll was a failure.
+
+  # Tooltips
+  Tooltips:
+    NoDescription: No Description Available
 
   # Dice Rolls
   Rolls:
@@ -46,6 +52,14 @@ Genesys:
       Characteristic: Rolling <strong>{characteristic}</strong>...
       Skill: Rolling <strong>{skill} ({characteristic})</strong>...
       SkillWithoutCharacteristic: Rolling <strong>{skill}</strong>...
+      AttackCharacteristic: Attacking with <strong>{name}</strong> using (<strong>{characteristic}</strong>)!
+      AttackSkill: Attacking with <strong>{name}</strong> using (<strong>{skill} ({characteristic})</strong>)!
+      AttackSkillWithoutCharacteristic: Attacking with <strong>{name}</strong> using (<strong>{skill}</strong>)!
+    Attack:
+      Critical: Critical
+      Label: Attack Results
+      Damage: Damage
+      Qualities: Attack Qualities
     Summary:
       Label: Summary
       Successes: Successes

@@ -13,7 +13,7 @@ import AbilityDataModel from '@/item/data/AbilityDataModel';
 import EquipmentDataModel from '@/item/data/EquipmentDataModel';
 import { EQUIPMENT_TYPES } from '@/actor/data/CharacterDataModel';
 import SkillRanks from '@/vue/components/character/SkillRanks.vue';
-import DicePrompt from '@/app/DicePrompt';
+import DicePrompt, { RollType } from '@/app/DicePrompt';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
 import Enriched from '@/vue/components/Enriched.vue';
@@ -54,6 +54,14 @@ async function rollSkill(skill: GenesysItem<SkillDataModel>) {
 	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.id);
 }
 
+async function rollAttack(weapon: GenesysItem) {
+	if (weapon.type !== 'weapon') {
+		return;
+	}
+
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), skillForWeapon(weapon)[1], { rollType: RollType.Attack, rollData: { weapon: weapon } });
+}
+
 async function editItem(item: GenesysItem) {
 	await toRaw(item).sheet.render(true);
 }
@@ -73,9 +81,9 @@ async function adjustTalentOrSkillRank(item: GenesysItem<TalentDataModel> | Gene
 	}
 }
 
-function skillNameForWeapon(weapon: GenesysItem): string {
+function skillForWeapon(weapon: GenesysItem): [name: string, id: string] {
 	if ((weapon.systemData as WeaponDataModel).skills.length === 0) {
-		return 'Unskilled';
+		return ['Unskilled', '-'];
 	}
 
 	const validSkillNames = (weapon.systemData as WeaponDataModel).skills.map((s) => s.toLowerCase());
@@ -84,9 +92,9 @@ function skillNameForWeapon(weapon: GenesysItem): string {
 	const possessedSkill = toRaw(context.data.actor).items.find((i) => i.type === 'skill' && validSkillNames.includes(i.name.toLowerCase()));
 
 	if (possessedSkill) {
-		return possessedSkill.name;
+		return [possessedSkill.name, possessedSkill.id];
 	} else {
-		return (weapon.systemData as WeaponDataModel).skills[0];
+		return [(weapon.systemData as WeaponDataModel).skills[0], '-'];
 	}
 }
 
@@ -255,11 +263,11 @@ onBeforeUpdate(updateEffects);
 									</MenuItem>
 								</template>
 
-								<a @click="editItem(item)">
+								<a @click="rollAttack(item)">
 									<i class="far fa-dice-d10"></i>
 									{{ item.name }}
 									(<span class="weapon-details">
-										<span>{{ skillNameForWeapon(item) }}</span>
+										<span>{{ skillForWeapon(item)[0] }}</span>
 										<span>Damage {{ damageForWeapon(item) }}</span>
 										<span>Critical {{ item.system.critical }}</span>
 										<span>Range [<Localized :label="`Genesys.Range.${item.system.range.capitalize()}`" />]</span>

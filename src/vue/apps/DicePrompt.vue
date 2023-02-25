@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, inject, onMounted, ref, toRaw } from 'vue';
-import { DicePromptContext } from '@/app/DicePrompt';
+import { DicePromptContext, type AttackRollData, RollType } from '@/app/DicePrompt';
 import { Characteristic } from '@/data/Characteristics';
 import GenesysRoller from '@/dice/GenesysRoller';
 import GenesysItem from '@/item/GenesysItem';
@@ -238,13 +238,25 @@ async function rollPool() {
 		.map((d) => `${dice[d as DieString]}${ICON_TO_FORMULA[d as DieString]}`)
 		.join('+');
 
-	await GenesysRoller.skillRoll({
+	const baseRollData = {
 		actor: toRaw(context.actor),
 		characteristic: selectedCharacteristic.value === '-' ? undefined : (selectedCharacteristic.value as Characteristic),
 		skillId: selectedSkill.value?.id ?? '-',
 		formula,
 		symbols: symbols as Record<string, number>,
-	});
+	};
+
+	switch (context.rollType) {
+		case RollType.Attack:
+			await GenesysRoller.attackRoll({
+				...baseRollData,
+				weapon: (context.rollData as AttackRollData).weapon,
+			});
+			break;
+
+		default:
+			await GenesysRoller.skillRoll(baseRollData);
+	}
 
 	await context.app.close();
 }

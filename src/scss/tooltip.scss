@@ -1,0 +1,20 @@
+@use '@scss/mixins/backgrounds.scss';
+@use '@scss/vars/colors.scss';
+
+#tooltip {
+	@include backgrounds.crossboxes;
+	color: black;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	text-align: left !important;
+	border-color: colors.$gold;
+	border-radius: 0.5em;
+
+	p:first-of-type {
+		margin-top: 0.2em;
+	}
+
+	p:last-of-type {
+		margin-bottom: 0.2em;
+	}
+}

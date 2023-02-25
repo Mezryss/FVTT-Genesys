@@ -1,0 +1,159 @@
+<div class="roll roll-skill">
+	{{!-- Formatted Results --}}
+	<div class="results-row">
+		{{#if description}}
+			<div class="roll-description">{{{description}}}</div>
+		{{/if}}
+
+		<label>{{localize 'Genesys.Rolls.Results'}}</label>
+		<div class="net-results">
+			{{!-- Success --}}
+			{{#repeat (sub results.netSuccess results.totalTriumph)}}
+				<span>s</span>
+			{{/repeat}}
+
+			{{!-- Failure --}}
+			{{#repeat (sub results.netFailure results.totalDespair)}}
+				<span>f</span>
+			{{/repeat}}
+
+			{{!-- Advantage --}}
+			{{#repeat results.netAdvantage}}
+				<span>a</span>
+			{{/repeat}}
+
+			{{!-- Threat --}}
+			{{#repeat results.netThreat}}
+				<span>h</span>
+			{{/repeat}}
+
+			{{!-- Triumphs --}}
+			{{#repeat results.totalTriumph}}
+				<span>t</span>
+			{{/repeat}}
+
+			{{!-- Despair --}}
+			{{#repeat results.totalDespair}}
+				<span>d</span>
+			{{/repeat}}
+		</div>
+
+		{{#if (or showDamageOnFailure (gt results.netSuccess 0))}}
+			<label>{{localize 'Genesys.Rolls.Attack.Label'}}</label>
+			<div class="summary-table">
+				{{!-- Damage --}}
+				<span class="symbol"><i class="far fa-face-head-bandage"></i></span>
+				<span class="label">{{localize 'Genesys.Rolls.Attack.Damage'}} ({{damageFormula}})</span>
+				<span class="count">{{totalDamage}}</span>
+
+				<div class="separator"></div>
+
+				{{!-- Critical --}}
+				<span class="symbol"><i class="fas fa-explosion"></i></span>
+				<span class="label">{{localize 'Genesys.Rolls.Attack.Critical'}}</span>
+				<span class="count">{{critical}}</span>
+
+				<div class="separator"></div>
+			</div>
+		{{/if}}
+
+		<label>{{localize 'Genesys.Rolls.Summary.Label'}}</label>
+		<div class="summary-table">
+			{{!-- Success --}}
+			{{#if (gt results.netSuccess 0)}}
+				<span class="symbol">s</span>
+				<span class="label">{{localize 'Genesys.Rolls.Summary.Successes'}}</span>
+				<span class="count">{{results.netSuccess}}</span>
+
+				<div class="separator"></div>
+			{{/if}}
+
+			{{!-- Failure --}}
+			{{#if (gt results.netFailure 0)}}
+				<span class="symbol">f</span>
+				<span class="label">{{localize 'Genesys.Rolls.Summary.Failures'}}</span>
+				<span class="count">{{results.netFailure}}</span>
+
+				<div class="separator"></div>
+			{{/if}}
+
+			{{!-- Advantage --}}
+			{{#if (gt results.netAdvantage 0)}}
+				<span class="symbol">a</span>
+				<span class="label">{{localize 'Genesys.Rolls.Summary.Advantage'}}</span>
+				<span class="count">{{results.netAdvantage}}</span>
+
+				<div class="separator"></div>
+			{{/if}}
+
+			{{!-- Threat --}}
+			{{#if (gt results.netThreat 0)}}
+				<span class="symbol">h</span>
+				<span class="label">{{localize 'Genesys.Rolls.Summary.Threat'}}</span>
+				<span class="count">{{results.netThreat}}</span>
+
+				<div class="separator"></div>
+			{{/if}}
+
+			{{!-- Triumphs --}}
+			{{#if (gt results.totalTriumph 0)}}
+				<span class="symbol">t</span>
+				<span class="label">{{localize 'Genesys.Rolls.Summary.Triumph'}}</span>
+				<span class="count">{{results.totalTriumph}}</span>
+
+				<div class="separator"></div>
+			{{/if}}
+
+			{{!-- Despair --}}
+			{{#if (gt results.totalDespair 0)}}
+				<span class="symbol">d</span>
+				<span class="label">{{localize 'Genesys.Rolls.Summary.Despair'}}</span>
+				<span class="count">{{results.totalDespair}}</span>
+
+				<div class="separator"></div>
+			{{/if}}
+		</div>
+
+		{{!-- Attack Qualities --}}
+		{{#if qualities}}
+			<label>{{localize 'Genesys.Rolls.Attack.Qualities'}}</label>
+			<div class="qualities">
+				{{#each qualities}}
+					<a class="quality" data-tooltip="{{or description 'Genesys.Tooltips.NoDescription'}}">{{name}} {{#if isRated}}{{rating}}{{/if}}</a>
+				{{/each}}
+			</div>
+		{{/if}}
+	</div>
+
+	{{!-- Dice --}}
+	<div class="dice-row">
+		<label>{{localize 'Genesys.Rolls.Dice'}}</label>
+		<div class="dice">
+			{{#each results.faces as |faces die|}}
+				{{#each faces}}
+					<div class="result">
+						<div class="type" data-type="{{capitalize die}}">
+							<span>
+								{{!-- Convert difficulty to the correct symbol --}}
+								{{#if (eq die 'i')}}
+									D
+								{{else}}
+									{{capitalize die}}
+								{{/if}}
+							</span>
+						</div>
+						<div class="face" data-type="{{capitalize die}}">
+							<span>{{this}}</span>
+						</div>
+					</div>
+				{{/each}}
+			{{/each}}
+
+			{{#each results.extraSymbols as |count symbol|}}
+				{{#repeat count}}
+					<div class="symbol">{{symbol}}</div>
+				{{/repeat}}
+			{{/each}}
+		</div>
+	</div>
+</div>

@@ -17,6 +17,10 @@
 .font-genesys-symbols {
 	font-family: 'Genesys Symbols', sans-serif;
 	min-height: 24px;
+
+	&.nolig {
+		font-variant-ligatures: none;
+	}
 }
 
 .die {

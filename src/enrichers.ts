@@ -76,7 +76,7 @@ export function register() {
 			pattern: /@symbols?\[(?<symbols>\w+)]/gim,
 			enricher: async (match, _) => {
 				const span = document.createElement('span');
-				span.className = 'font-genesys-symbols';
+				span.className = 'font-genesys-symbols nolig';
 
 				span.innerText = match.groups?.['symbols']?.toLowerCase() ?? '';
 

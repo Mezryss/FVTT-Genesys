@@ -9,6 +9,10 @@
 import GenesysActor from '@/actor/GenesysActor';
 import GenesysDie from '@/dice/types/GenesysDie';
 import { Characteristic } from '@/data/Characteristics';
+import GenesysItem from '@/item/GenesysItem';
+import WeaponDataModel from '@/item/data/WeaponDataModel';
+import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
+import { KEY_SHOW_DAMAGE_ON_FAILURE } from '@/settings/campaign';
 
 export type GenesysRollResults = {
 	/**
@@ -104,6 +108,91 @@ export default class GenesysRoller {
 			results,
 		};
 		const html = await renderTemplate('systems/genesys/templates/chat/rolls/skill.hbs', rollData);
+
+		const chatData = {
+			user: game.user.id,
+			speaker: { actor: actor?.id },
+			rollMode: game.settings.get('core', 'rollMode'),
+			content: html,
+			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+			roll,
+		};
+		await ChatMessage.create(chatData);
+	}
+
+	static async attackRoll({
+		actor,
+		characteristic,
+		skillId,
+		formula,
+		symbols,
+		weapon,
+	}: {
+		actor?: GenesysActor;
+		characteristic?: Characteristic;
+		skillId: string;
+		formula: string;
+		symbols: Record<string, number>;
+		weapon: GenesysItem<WeaponDataModel>;
+	}) {
+		const roll = new Roll(formula, { symbols });
+		await roll.evaluate({ async: true });
+		const results = await this.parseRollResults(roll);
+
+		let description: string | undefined = undefined;
+
+		let totalDamage = weapon.systemData.baseDamage;
+		let damageFormula = weapon.systemData.baseDamage.toString();
+
+		if (actor && weapon.systemData.damageCharacteristic !== '-') {
+			totalDamage += (actor.system as any).characteristics[weapon.systemData.damageCharacteristic] as number;
+			damageFormula = game.i18n.localize(`Genesys.CharacteristicAbbr.${weapon.systemData.damageCharacteristic.capitalize()}`) + ` + ${damageFormula}`;
+		}
+
+		if (results.netSuccess > 0) {
+			totalDamage += results.netSuccess;
+		}
+
+		if (skillId === '-') {
+			if (characteristic) {
+				description = game.i18n.format('Genesys.Rolls.Description.AttackCharacteristic', {
+					name: weapon.name,
+					characteristic: game.i18n.localize(`Genesys.Characteristics.${characteristic.capitalize()}`),
+				});
+			}
+		} else if (actor) {
+			if (characteristic) {
+				description = game.i18n.format('Genesys.Rolls.Description.AttackSkill', {
+					name: weapon.name,
+					skill: actor.items.get(skillId)?.name ?? 'UNKNOWN',
+					characteristic: game.i18n.localize(`Genesys.CharacteristicAbbr.${characteristic.capitalize()}`),
+				});
+			} else {
+				description = game.i18n.format('Genesys.Rolls.Description.AttackSkillWithoutCharacteristic', {
+					name: weapon.name,
+					skill: actor.items.get(skillId)?.name ?? 'UNKNOWN',
+				});
+			}
+		}
+
+		const attackQualities = weapon.systemData.qualities;
+		await Promise.all(
+			attackQualities.map(async (quality) => {
+				quality.description = await TextEditor.enrichHTML(quality.description, { async: true });
+			}),
+		);
+
+		const rollData = {
+			description: description,
+			results,
+			totalDamage,
+			damageFormula,
+			critical: weapon.systemData.critical,
+			// tbh I can't be assed to implement another Handlebars helper for array length so let's just do undefined. <.<
+			qualities: weapon.systemData.qualities.length === 0 ? undefined : attackQualities,
+			showDamageOnFailure: game.settings.get(SETTINGS_NAMESPACE, KEY_SHOW_DAMAGE_ON_FAILURE) as boolean,
+		};
+		const html = await renderTemplate('systems/genesys/templates/chat/rolls/attack.hbs', rollData);
 
 		const chatData = {
 			user: game.user.id,
