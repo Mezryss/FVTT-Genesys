@@ -100,7 +100,7 @@ function hideQualityTooltip() {
 					<div class="name">
 						<a @click="rollAttack(weapon)">{{ weapon.name }}</a>
 					</div>
-					<div class="skill" v-for="skill in [skillForWeapon(weapon)]">
+					<div class="skill" v-for="skill in [skillForWeapon(weapon)]" :key="skill.id">
 						<template v-if="skill">
 							{{ skill.name }}
 							<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="actor.systemData.characteristics[skill.systemData.characteristic]" />
