@@ -9,6 +9,8 @@
 import { register as registerCampaignSettings } from './campaign';
 import { register as registerStoryPoints } from './storyPoints';
 
+import { register as registerAlpha } from './alpha';
+
 /**
  * Namespace used to access system settings from {@link Game.settings}.
  */
@@ -20,4 +22,6 @@ export const NAMESPACE = 'genesys';
 export function register() {
 	registerCampaignSettings(NAMESPACE);
 	registerStoryPoints(NAMESPACE);
+
+	registerAlpha(NAMESPACE);
 }
