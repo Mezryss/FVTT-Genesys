@@ -59,7 +59,7 @@ async function rollAttack(weapon: GenesysItem) {
 		return;
 	}
 
-	await DicePrompt.promptForRoll(toRaw(context.data.actor), skillForWeapon(weapon)[1], { rollType: RollType.Attack, rollData: { weapon: weapon } });
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), skillForWeapon(weapon)[1], { rollType: RollType.Attack, rollData: { weapon } });
 }
 
 async function editItem(item: GenesysItem) {

@@ -9,7 +9,7 @@
 import { Characteristic } from '@/data/Characteristics';
 import EquipmentDataModel from '@/item/data/EquipmentDataModel';
 
-type ContainedItemQuality = {
+export type ContainedItemQuality = {
 	/**
 	 * Quality's Display name
 	 */

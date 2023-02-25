@@ -4,23 +4,81 @@ import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import GenesysItem from '@/item/GenesysItem';
 import Localized from '@/vue/components/Localized.vue';
-import WeaponDataModel from '@/item/data/WeaponDataModel';
+import WeaponDataModel, { ContainedItemQuality } from '@/item/data/WeaponDataModel';
 import ArmorDataModel from '@/item/data/ArmorDataModel';
 import Enriched from '@/vue/components/Enriched.vue';
 import InjuryDataModel from '@/item/data/InjuryDataModel';
+import SkillDataModel from '@/item/data/SkillDataModel';
+import DicePrompt, { RollType } from '@/app/DicePrompt';
+import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
+import { KEY_SKILL_FOR_INJURIES } from '@/settings/campaign';
+import SkillRanks from '@/vue/components/character/SkillRanks.vue';
 
 const rootContext = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 
-const weapons = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'weapon' && i.system.state === 'equipped') as GenesysItem<WeaponDataModel>[]);
-const armors = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'armor' && i.system.state === 'equipped') as GenesysItem<ArmorDataModel>[]);
-const injuries = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
+const actor = computed(() => toRaw(rootContext.data.actor));
 
-async function editInjury(item: GenesysItem) {
+const weapons = computed(() => actor.value.items.filter((i) => i.type === 'weapon' && i.system.state === 'equipped') as GenesysItem<WeaponDataModel>[]);
+const armors = computed(() => actor.value.items.filter((i) => i.type === 'armor' && i.system.state === 'equipped') as GenesysItem<ArmorDataModel>[]);
+const injuries = computed(() => actor.value.items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
+
+const SEVERITY_TO_DIFFICULTY = {
+	'-': 0,
+	easy: 1,
+	average: 2,
+	hard: 3,
+	daunting: 4,
+};
+
+async function openItem(item: GenesysItem) {
 	await item.sheet?.render(true);
 }
 
-async function deleteInjury(item: GenesysItem) {
+async function deleteItem(item: GenesysItem) {
 	await item.delete();
+}
+
+async function rollAttack(weapon: GenesysItem<WeaponDataModel>) {
+	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), skillForWeapon(weapon)?.id ?? '-', {
+		rollType: RollType.Attack,
+		rollData: {
+			weapon,
+		},
+	});
+}
+
+async function healInjury(injury: GenesysItem<InjuryDataModel>) {
+	const resilienceSkillName = game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_INJURIES) as string;
+
+	const resilienceSkill = toRaw(rootContext.data.actor).items.find((s) => s.name.toLowerCase() === resilienceSkillName.toLowerCase());
+
+	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), resilienceSkill?.id ?? '-', {
+		startingDifficulty: SEVERITY_TO_DIFFICULTY[injury.systemData.severity],
+	});
+}
+
+function skillForWeapon(weapon: GenesysItem<WeaponDataModel>): GenesysItem<SkillDataModel> | undefined {
+	const weaponSkills = weapon.systemData.skills.map((s) => s.toLowerCase());
+
+	return toRaw(rootContext.data.actor).items.find((i) => i.type === 'skill' && weaponSkills.includes(i.name.toLowerCase())) as GenesysItem<SkillDataModel> | undefined;
+}
+
+function damageForWeapon(weapon: GenesysItem<WeaponDataModel>) {
+	if (weapon.systemData.damageCharacteristic === '-') {
+		return weapon.systemData.baseDamage;
+	}
+
+	return weapon.systemData.baseDamage + rootContext.data.actor.systemData.characteristics[weapon.systemData.damageCharacteristic];
+}
+
+async function showQualityTooltip(quality: ContainedItemQuality, event: Event) {
+	const description: string = quality.description.trim() !== '' ? await TextEditor.enrichHTML(quality.description, { async: true }) : game.i18n.localize('Genesys.Tooltips.NoDescription');
+
+	game.tooltip.activate(event.currentTarget as HTMLElement, { text: description });
+}
+
+function hideQualityTooltip() {
+	game.tooltip.deactivate();
 }
 </script>
 
@@ -35,20 +93,28 @@ async function deleteInjury(item: GenesysItem) {
 					<div class="damage"><Localized label="Genesys.Labels.Damage" /></div>
 					<div class="crit"><Localized label="Genesys.Labels.Crit" /></div>
 					<div class="range"><Localized label="Genesys.Labels.Range" /></div>
-					<div class="special"><Localized label="Genesys.Labels.Special" /></div>
 				</div>
 
 				<div v-for="weapon in weapons" :key="weapon.id" class="weapon">
 					<img :src="weapon.img" :alt="weapon.name" />
 					<div class="name">
-						<a>{{ weapon.name }}</a>
+						<a @click="rollAttack(weapon)">{{ weapon.name }}</a>
 					</div>
-					<div class="skill">-Skill-</div>
-					<div class="damage">-Damage-</div>
+					<div class="skill" v-for="skill in [skillForWeapon(weapon)]">
+						<template v-if="skill">
+							{{ skill.name }}
+							<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="actor.systemData.characteristics[skill.systemData.characteristic]" />
+						</template>
+						<span v-else><Localized label="Genesys.Labels.SkillNotFound" /></span>
+					</div>
+					<div class="damage">{{ damageForWeapon(weapon) }}</div>
 					<div class="crit">{{ weapon.systemData.critical }}</div>
 					<div class="range"><Localized :label="`Genesys.Range.${weapon.systemData.range.capitalize()}`" /></div>
-					<div class="special">-Special-</div>
-					<div class="description"><Enriched :value="weapon.systemData.description" /></div>
+					<div v-if="weapon.systemData.qualities.length > 0" class="qualities">
+						<div v-for="quality in weapon.systemData.qualities" :key="quality.name" class="quality" @mouseover="showQualityTooltip(quality, $event)" @mouseleave="hideQualityTooltip" data-tooltip-direction="RIGHT">
+							{{ quality.name }} <template v-if="quality.isRated">{{ quality.rating }}</template>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -65,7 +131,7 @@ async function deleteInjury(item: GenesysItem) {
 				<div v-for="armor in armors" :key="armor.id" class="armor">
 					<img :src="armor.img" :alt="armor.name" />
 					<div class="name">
-						<a>{{ armor.name }}</a>
+						<a @click="openItem(armor)">{{ armor.name }}</a>
 					</div>
 					<div class="soak">{{ armor.systemData.soak }}</div>
 					<div class="defense">{{ armor.systemData.defense }}</div>
@@ -84,7 +150,7 @@ async function deleteInjury(item: GenesysItem) {
 
 				<div v-for="injury in injuries" :key="injury.id" class="injury">
 					<div class="severity">
-						<a>
+						<a @click="healInjury(injury)">
 							<template v-if="injury.systemData.severity === 'easy'">D</template>
 							<template v-if="injury.systemData.severity === 'average'">DD</template>
 							<template v-if="injury.systemData.severity === 'hard'">DDD</template>
@@ -92,11 +158,11 @@ async function deleteInjury(item: GenesysItem) {
 						</a>
 					</div>
 					<div class="name">
-						<a>{{ injury.name }}</a>
+						<a @click="openItem(injury)">{{ injury.name }}</a>
 					</div>
 					<div v-if="rootContext.data.editable" class="actions">
-						<a @click="editInjury(injury)"><i class="fas fa-edit"></i></a>
-						<a @click="deleteInjury(injury)"><i class="fas fa-trash"></i></a>
+						<a @click="openItem(injury)"><i class="fas fa-edit"></i></a>
+						<a @click="deleteItem(injury)"><i class="fas fa-trash"></i></a>
 					</div>
 					<div v-else />
 					<div class="description"><Enriched :value="injury.systemData.description" /></div>
@@ -123,7 +189,6 @@ async function deleteInjury(item: GenesysItem) {
 		border-bottom: 1px dashed colors.$blue;
 		align-items: center;
 		justify-items: center;
-		column-gap: 0.25em;
 
 		& > .header {
 			grid-template-rows: auto;
@@ -169,7 +234,39 @@ async function deleteInjury(item: GenesysItem) {
 	}
 
 	.weapon {
-		grid-template-columns: 1.5rem 1fr repeat(5, 80px);
+		grid-template-columns: 1.5rem 2fr 1fr repeat(3, 80px);
+
+		&:not(.header) {
+			grid-template-rows: auto auto;
+		}
+
+		.qualities {
+			grid-column: 1 / span all;
+			grid-row: 2 / span 1;
+			justify-self: left;
+			padding-left: 1em;
+
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 0.25em;
+
+			.quality {
+				background: transparentize(colors.$gold, 0.7);
+				border: 1px dashed colors.$gold;
+				border-radius: 0.25em;
+				padding: 0.25em;
+				font-family: 'Bebas Neue', sans-serif;
+			}
+		}
+	}
+
+	.skill {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		white-space: nowrap;
+		gap: 0.25em;
 	}
 
 	.block {

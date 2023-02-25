@@ -39,6 +39,8 @@ Genesys:
     UncoupleSkillsAlternateRuleHint: Allows selecting an alternative Characteristic for a skill in the dice prompt window, per the Uncoupling Skills from Characteristics alternate rule (Core Rulebook, p.205).
     ShowDamageOnFailure: Show Attack Damage On Failure
     ShowDamageOnFailureHint: Whether to show Damage, Critical, and Qualities on attack roll chat cards even when the roll was a failure.
+    SkillForInjuries: Resilience Skill Name
+    SkillForInjuriesHint: Name of the skill used when recovering from Critical Injuries.
 
   # Tooltips
   Tooltips:
@@ -52,9 +54,9 @@ Genesys:
       Characteristic: Rolling <strong>{characteristic}</strong>...
       Skill: Rolling <strong>{skill} ({characteristic})</strong>...
       SkillWithoutCharacteristic: Rolling <strong>{skill}</strong>...
-      AttackCharacteristic: Attacking with <strong>{name}</strong> using (<strong>{characteristic}</strong>)!
-      AttackSkill: Attacking with <strong>{name}</strong> using (<strong>{skill} ({characteristic})</strong>)!
-      AttackSkillWithoutCharacteristic: Attacking with <strong>{name}</strong> using (<strong>{skill}</strong>)!
+      AttackCharacteristic: Attacking with <strong>{name}</strong> using <strong>{characteristic}</strong>!
+      AttackSkill: Attacking with <strong>{name}</strong> using <strong>{skill} ({characteristic})</strong>!
+      AttackSkillWithoutCharacteristic: Attacking with <strong>{name}</strong> using <strong>{skill}</strong>!
     Attack:
       Critical: Critical
       Label: Attack Results
@@ -327,3 +329,4 @@ Genesys:
     Crit: Crit
     Special: Special
     GroupSize: Group Size
+    SkillNotFound: Skill Not Found

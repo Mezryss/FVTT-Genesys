@@ -60,7 +60,7 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SkillForInjuriesHint'),
 		scope: 'world',
 		config: true,
-		default: 'Medicine',
+		default: 'Resilience',
 		type: String,
 	});
 
