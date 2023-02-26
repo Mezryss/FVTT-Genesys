@@ -6,6 +6,7 @@
  * @file System Entry Point
  */
 
+import { register as registerCombat } from '@/combat';
 import { register as registerDice } from '@/dice';
 import { register as registerEnrichers } from '@/enrichers';
 import { register as registerFonts } from '@/fonts';
@@ -51,11 +52,11 @@ async function doAlphaNotice() {
 	<p>The current Character Sheet is poorly implemented, and the product of a rapid rewrite from Handlebars + JQuery into Vue 3. I intend to rewrite the sheet entirely before 1.0, but for now The Show Must Go On.</p>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
-		<li>1.0: Core Rulebook Compatibility</li>
-		<li>1.1: Expanded Player's Guide Compatibility</li>
-		<li>1.2: First-Party Setting Books Compatibility</li>
-		<li>1.3: Community Feature Focus</li>
-		<li>1.4: Automation Focus</li>
+		<li><strong>1.0:</strong> Core Rulebook Compatibility</li>
+		<li><strong>1.1:</strong> Expanded Player's Guide Compatibility</li>
+		<li><strong>1.2:</strong> First-Party Setting Books Compatibility</li>
+		<li><strong>1.3:</strong> Community Feature Focus</li>
+		<li><strong>1.4:</strong> Automation Focus</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Useful Links</h4>
 	<ul style="margin-top: 0">
@@ -89,6 +90,7 @@ Hooks.once('init', async () => {
 	registerItems();
 
 	// Misc. modules with one-time registrations
+	registerCombat();
 	registerDice();
 	registerEnrichers();
 	registerFonts();

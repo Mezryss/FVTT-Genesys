@@ -9,6 +9,9 @@
 import GenesysActor from '@/actor/GenesysActor';
 import GenesysEffect from '@/effects/GenesysEffect';
 import GenesysItem from '@/item/GenesysItem';
+import GenesysCombat from '@/combat/GenesysCombat';
+import GenesysCombatant from '@/combat/GenesysCombatant';
+import GenesysCombatTracker from '@/combat/GenesysCombatTracker';
 
 declare global {
 	const ui: FoundryUI;
@@ -21,9 +24,9 @@ declare global {
 		ActorDirectory<GenesysActor>,
 		ChatLog,
 		ChatMessage,
-		Combat,
-		Combatant<Combat, GenesysActor>,
-		CombatTracker<Combat>,
+		GenesysCombat,
+		GenesysCombatant,
+		GenesysCombatTracker,
 		CompendiumDirectory,
 		Hotbar,
 		GenesysItem,
@@ -36,5 +39,5 @@ declare global {
 		EffectsCanvasGroup
 	>;
 
-	const game: Game<GenesysActor, Actors, ChatMessage, Combat, GenesysItem, Macro, Scene, User>;
+	const game: Game<GenesysActor, Actors, ChatMessage, GenesysCombat, GenesysItem, Macro, Scene, User>;
 }

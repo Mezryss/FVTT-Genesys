@@ -17,6 +17,7 @@ import WeaponDataModel from '@/item/data/WeaponDataModel';
 export enum RollType {
 	Skill,
 	Attack,
+	Initiative,
 }
 
 export interface DicePromptContext extends ContextBase {
@@ -31,6 +32,10 @@ export interface DicePromptContext extends ContextBase {
 
 export type AttackRollData = {
 	weapon: GenesysItem<WeaponDataModel>;
+};
+
+export type InitiativeRollData = {
+	resolvePromise: (roll?: Roll) => void;
 };
 
 type DicePromptOptions = {
@@ -58,6 +63,18 @@ export default class DicePrompt extends VueApplication<DicePromptContext> {
 	static async promptForRoll(actor: GenesysActor, skillId: string, options: DicePromptOptions = {}) {
 		const app = new DicePrompt(actor, skillId, options);
 		await app.render(true);
+	}
+
+	static async promptForInitiative(actor: GenesysActor, skillId: string, options: DicePromptOptions = {}) {
+		return new Promise<Roll | undefined>((resolve) => {
+			const app = new DicePrompt(actor, skillId, {
+				...options,
+				rollType: RollType.Initiative,
+				rollData: { resolvePromise: resolve },
+			});
+
+			app.render(true);
+		});
 	}
 
 	actor: GenesysActor;

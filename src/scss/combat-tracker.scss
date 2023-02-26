@@ -1,0 +1,29 @@
+@use '@scss/vars/colors.scss';
+
+#combat-tracker {
+	.active {
+		border-color: colors.$gold;
+	}
+
+	.initiative {
+		padding-right: 0.5em;
+	}
+
+	.disposition-friendly, .disposition-hostile, .disposition-neutral {
+		&:not(.active) {
+			border-bottom: 1px dashed transparentize(colors.$gold, 0.6);
+		}
+	}
+
+	.disposition-friendly {
+		background: transparentize(#155786, 0.7);
+	}
+
+	.disposition-neutral {
+		background: transparentize(#aab1b9, 0.7);
+	}
+
+	.disposition-hostile {
+		background: transparentize(#923414, 0.7);
+	}
+}

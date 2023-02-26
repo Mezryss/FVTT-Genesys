@@ -22,6 +22,7 @@ export function register() {
 	Handlebars.registerHelper('min', (lhs, rhs) => Math.min(lhs, rhs));
 	Handlebars.registerHelper('max', (lhs, rhs) => Math.max(lhs, rhs));
 	Handlebars.registerHelper('abs', (val) => Math.abs(val));
+	Handlebars.registerHelper('floor', (val) => Math.floor(val));
 
 	/** Logic Utilities */
 	Handlebars.registerHelper('and', (lhs, rhs) => lhs && rhs);

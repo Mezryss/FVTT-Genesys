@@ -44,7 +44,7 @@ export default class AwardXPPrompt extends VueApplication<AwardXPContext> {
 
 	static async promptForXPAward(): Promise<AwardData | undefined> {
 		const sheet = new AwardXPPrompt();
-		sheet.render(true);
+		await sheet.render(true);
 
 		return new Promise<AwardData | undefined>((resolve) => {
 			sheet.#resolvePromise = resolve;

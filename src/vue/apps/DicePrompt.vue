@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, inject, onMounted, ref, toRaw } from 'vue';
-import { DicePromptContext, type AttackRollData, RollType } from '@/app/DicePrompt';
+import { DicePromptContext, type AttackRollData, RollType, InitiativeRollData } from '@/app/DicePrompt';
 import { Characteristic } from '@/data/Characteristics';
 import GenesysRoller from '@/dice/GenesysRoller';
 import GenesysItem from '@/item/GenesysItem';
@@ -252,6 +252,10 @@ async function rollPool() {
 				...baseRollData,
 				weapon: (context.rollData as AttackRollData).weapon,
 			});
+			break;
+
+		case RollType.Initiative:
+			(context.rollData as InitiativeRollData).resolvePromise(new Roll(formula, { symbols }));
 			break;
 
 		default:
