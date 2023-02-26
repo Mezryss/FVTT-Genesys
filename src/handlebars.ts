@@ -23,6 +23,7 @@ export function register() {
 	Handlebars.registerHelper('max', (lhs, rhs) => Math.max(lhs, rhs));
 	Handlebars.registerHelper('abs', (val) => Math.abs(val));
 	Handlebars.registerHelper('floor', (val) => Math.floor(val));
+	Handlebars.registerHelper('toFixed', (val: number, fractionDigits: number) => val.toFixed(fractionDigits));
 
 	/** Logic Utilities */
 	Handlebars.registerHelper('and', (lhs, rhs) => lhs && rhs);

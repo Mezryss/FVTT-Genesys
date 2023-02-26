@@ -257,7 +257,7 @@ async function rollPool() {
 		case RollType.Initiative:
 			(context.rollData as InitiativeRollData).resolvePromise({
 				roll: new Roll(formula, { symbols }),
-				skillName: selectedSkill.value?.name,
+				skillName: selectedSkill.value?.name ?? 'Unskilled',
 			});
 			break;
 

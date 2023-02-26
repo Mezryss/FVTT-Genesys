@@ -35,7 +35,8 @@ export type AttackRollData = {
 };
 
 export type InitiativeRollData = {
-	resolvePromise: (roll: { roll?: Roll; skillName?: string }) => void;
+	resolvePromise: (roll: { roll: Roll; skillName: string }) => void;
+	rejectPromise: () => void;
 };
 
 type DicePromptOptions = {
@@ -66,11 +67,11 @@ export default class DicePrompt extends VueApplication<DicePromptContext> {
 	}
 
 	static async promptForInitiative(actor: GenesysActor, skillId: string, options: DicePromptOptions = {}) {
-		return new Promise<{ roll?: Roll; skillName?: string }>((resolve) => {
+		return new Promise<{ roll: Roll; skillName: string }>((resolve, reject) => {
 			const app = new DicePrompt(actor, skillId, {
 				...options,
 				rollType: RollType.Initiative,
-				rollData: { resolvePromise: resolve },
+				rollData: { resolvePromise: resolve, rejectPromise: reject },
 			});
 
 			app.render(true);
@@ -99,7 +100,7 @@ export default class DicePrompt extends VueApplication<DicePromptContext> {
 
 	override async close(options: {} = {}) {
 		if (this.rollType === RollType.Initiative) {
-			(this.rollData as InitiativeRollData).resolvePromise({});
+			(this.rollData as InitiativeRollData).rejectPromise();
 		}
 
 		await super.close(options);

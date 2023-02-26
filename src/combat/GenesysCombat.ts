@@ -23,7 +23,7 @@ export default class GenesysCombat extends Combat {
 		const messages: any[] = [];
 		for (const [i, id] of ids.entries()) {
 			// Combatant data
-			const combatant: Embedded<GenesysCombatant> | undefined = this.combatants.get(id);
+			const combatant = this.combatants.get(id) as Embedded<GenesysCombatant> | undefined;
 			if (!combatant?.isOwner) {
 				continue;
 			}
@@ -34,11 +34,13 @@ export default class GenesysCombat extends Combat {
 			let roll: Roll | undefined;
 
 			if (prompt) {
-				const promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillId, { startingDifficulty: 0 });
+				try {
+					const promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillId, { startingDifficulty: 0 });
 
-				if (promptedRoll.roll) {
 					roll = promptedRoll.roll;
 					skillName = promptedRoll.skillName ?? 'Unskilled';
+				} catch {
+					continue;
 				}
 			}
 

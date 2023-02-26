@@ -95,7 +95,7 @@
 					<div class="token-initiative">
 						{{#if hasRolled}}
 							<span class="initiative font-genesys-symbols">
-								{{#repeat (floor initiative)}}s{{/repeat}}{{#repeat (mul 100 (sub initiative (floor initiative)))}}a{{/repeat}}
+								{{#repeat (floor initiative)}}s{{/repeat}}{{#repeat (mul 100 (toFixed (sub initiative (floor initiative)) 2))}}a{{/repeat}}
 							</span>
 						{{else if owner}}
 							<a class="combatant-control roll" data-tooltip="COMBAT.InitiativeRoll" data-control="rollInitiative"></a>
