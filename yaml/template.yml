@@ -192,6 +192,8 @@ Item:
     characteristic: 'brawn'
     # Which category (general, magic, etc) the skill belongs to.
     category: 'general'
+    # Whether the skill can be used for Initiative rolls.
+    initiative: false
     # (Owned) Whether this skill is a career skill for the character.
     career: false
     # (Owned) Ranks the player has in the skill.

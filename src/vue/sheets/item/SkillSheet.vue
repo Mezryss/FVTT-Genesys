@@ -5,6 +5,7 @@ import { ItemSheetContext, RootContext } from '@/vue/SheetContext';
 import BasicItemSheet from '@/vue/sheets/item/BasicItemSheet.vue';
 import Localized from '@/vue/components/Localized.vue';
 import SkillDataModel from '@/item/data/SkillDataModel';
+import Tooltip from '@/vue/components/Tooltip.vue';
 
 const context = inject<ItemSheetContext<SkillDataModel>>(RootContext)!;
 
@@ -36,6 +37,13 @@ const system = computed(() => context.data.item.systemData);
 						<option value="social"><Localized label="Genesys.SkillCategory.Social" /></option>
 						<option value="knowledge"><Localized label="Genesys.SkillCategory.Knowledge" /></option>
 					</select>
+				</div>
+
+				<div class="row">
+					<label>
+						<Tooltip content="Genesys.Tooltips.IsInitiative" localized><Localized label="Genesys.Labels.IsInitiative" /></Tooltip>
+					</label>
+					<input type="checkbox" name="system.initiative" :checked="system.initiative" />
 				</div>
 
 				<div class="row">

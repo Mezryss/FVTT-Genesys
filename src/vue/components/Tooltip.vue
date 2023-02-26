@@ -18,7 +18,8 @@ const props = withDefaults(
 );
 
 async function showTooltip(event: Event) {
-	const enriched = await TextEditor.enrichHTML(props.content, { async: true });
+	const sourceText = props.localized ? game.i18n.localize(props.content) : props.content;
+	const enriched = await TextEditor.enrichHTML(sourceText, { async: true });
 
 	game.tooltip.activate(event.currentTarget as HTMLElement, { text: enriched, direction: props.direction, cssClass: props.cssClass });
 }

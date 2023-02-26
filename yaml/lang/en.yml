@@ -45,6 +45,7 @@ Genesys:
   # Tooltips
   Tooltips:
     NoDescription: No Description Available
+    IsInitiative: Whether the skill is commonly used for Initiative or not. Setting this to true will make it appear as an option in the combat tracker for mass rolls.
 
   # Dice Rolls
   Rolls:
@@ -331,3 +332,4 @@ Genesys:
     Special: Special
     GroupSize: Group Size
     SkillNotFound: Skill Not Found
+    IsInitiative: Initiative Skill?
