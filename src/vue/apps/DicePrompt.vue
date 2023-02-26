@@ -255,7 +255,10 @@ async function rollPool() {
 			break;
 
 		case RollType.Initiative:
-			(context.rollData as InitiativeRollData).resolvePromise(new Roll(formula, { symbols }));
+			(context.rollData as InitiativeRollData).resolvePromise({
+				roll: new Roll(formula, { symbols }),
+				skillName: selectedSkill.value?.name,
+			});
 			break;
 
 		default:

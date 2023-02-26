@@ -28,10 +28,16 @@ export default class GenesysCombat extends Combat {
 
 			// Initiative roll result
 			const skillId = combatant.actor.items.find((i) => i.type === 'skill' && i.name.toLowerCase() === 'cool')?.id ?? '-';
+			let skillName = 'Cool';
 			let roll: Roll | undefined;
 
 			if (prompt) {
-				roll = await DicePrompt.promptForInitiative(combatant.actor, skillId, { startingDifficulty: 0 });
+				let promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillId, { startingDifficulty: 0 });
+
+				if (promptedRoll.roll) {
+					roll = promptedRoll.roll;
+					skillName = promptedRoll.skillName ?? 'Unskilled';
+				}
 			}
 
 			if (!roll) {
@@ -43,7 +49,7 @@ export default class GenesysCombat extends Combat {
 			updates.push({ _id: combatant.id, initiative: results.netSuccess + results.netAdvantage / 100 });
 
 			const rollData = {
-				description: game.i18n.format('Genesys.Rolls.Description.Initiative', { skill: 'Cool' }),
+				description: game.i18n.format('Genesys.Rolls.Description.Initiative', { skill: skillName }),
 				results,
 			};
 			const html = await renderTemplate('systems/genesys/templates/chat/rolls/skill.hbs', rollData);
