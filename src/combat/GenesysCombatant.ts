@@ -13,8 +13,11 @@ import GenesysCombat from '@/combat/GenesysCombat';
 import GenesysItem from '@/item/GenesysItem';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import MinionDataModel from '@/actor/data/MinionDataModel';
+import { Characteristic } from '@/data/Characteristics';
 
 export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysActor> {
+	initiativeSkillName?: string;
+
 	get disposition() {
 		switch ((this.actor.token ?? (this.actor.prototypeToken as any)).disposition) {
 			case CONST.TOKEN_DISPOSITIONS.FRIENDLY:
@@ -31,11 +34,11 @@ export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysAc
 		}
 	}
 
-	override getInitiativeRoll(_: string = ''): Roll {
-		// TODO: Support both Cool (Pr) and Vigilance (Will). Should pull from a setting and the Skills Compendium to determine characteristic.
-		const characteristicValue = (this.actor.systemData as CharacterDataModel | AdversaryDataModel).characteristics.presence;
+	override getInitiativeRoll(skillName: string = 'Unskilled'): Roll {
+		const skill = this.actor.items.find((i) => i.type === 'skill' && i.name.toLowerCase() === skillName.toLowerCase()) as GenesysItem<SkillDataModel> | undefined;
+		const characteristic = skill?.systemData?.characteristic ?? Characteristic.Brawn;
+		const characteristicValue = (this.actor.systemData as CharacterDataModel | AdversaryDataModel).characteristics[characteristic];
 
-		const skill = this.actor.items.find((i) => i.type === 'skill' && i.name.toLowerCase() === 'cool') as GenesysItem<SkillDataModel> | undefined;
 		let skillValue = skill?.systemData?.rank ?? 0;
 		if (skill && this.actor.type === 'minion') {
 			skillValue = Math.max(0, (this.actor.systemData as MinionDataModel).remainingMembers - 1);

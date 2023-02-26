@@ -11,6 +11,8 @@ import GenesysRoller from '@/dice/GenesysRoller';
 import DicePrompt from '@/app/DicePrompt';
 
 export default class GenesysCombat extends Combat {
+	initiativeSkills: string[] = [];
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	override async rollInitiative(ids: string | string[], { formula = null, updateTurn = true, messageOptions = {} }: RollInitiativeOptions = {}, prompt: boolean = false) {
 		ids = typeof ids === 'string' ? [ids] : ids;
@@ -27,12 +29,12 @@ export default class GenesysCombat extends Combat {
 			}
 
 			// Initiative roll result
-			const skillId = combatant.actor.items.find((i) => i.type === 'skill' && i.name.toLowerCase() === 'cool')?.id ?? '-';
-			let skillName = 'Cool';
+			let skillName = combatant.initiativeSkillName ?? this.initiativeSkills[0] ?? 'Unskilled';
+			const skillId = combatant.actor.items.find((i) => i.type === 'skill' && i.name.toLowerCase() === skillName.toLowerCase())?.id ?? '-';
 			let roll: Roll | undefined;
 
 			if (prompt) {
-				let promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillId, { startingDifficulty: 0 });
+				const promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillId, { startingDifficulty: 0 });
 
 				if (promptedRoll.roll) {
 					roll = promptedRoll.roll;
@@ -41,7 +43,7 @@ export default class GenesysCombat extends Combat {
 			}
 
 			if (!roll) {
-				roll = combatant.getInitiativeRoll();
+				roll = combatant.getInitiativeRoll(skillName);
 			}
 
 			await roll.evaluate({ async: true });

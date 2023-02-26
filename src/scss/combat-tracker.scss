@@ -15,6 +15,19 @@
 		}
 	}
 
+	.initiative-skill {
+		display: inline-flex;
+		align-items: center;
+		color: black;
+		background: #aaa;
+		border: 1px solid colors.$blue;
+		border-radius: 4px;
+		padding: 2px;
+		font-size: 0.8em;
+		margin-right: 2px;
+		text-shadow: none;
+	}
+
 	.disposition-friendly {
 		background: transparentize(#155786, 0.7);
 	}
