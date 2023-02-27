@@ -9,7 +9,9 @@
 		padding-right: 0.5em;
 	}
 
-	.disposition-friendly, .disposition-hostile, .disposition-neutral {
+	.disposition-friendly,
+	.disposition-hostile,
+	.disposition-neutral {
 		&:not(.active) {
 			border-bottom: 1px dashed transparentize(colors.$gold, 0.6);
 		}
