@@ -10,13 +10,14 @@ import AdversaryDataModel from '@/actor/data/AdversaryDataModel';
 import GenesysItem from '@/item/GenesysItem';
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
 import TalentDataModel from '@/item/data/TalentDataModel';
-import VueActorSheet from '@/vue/VueActorSheet';
 import SkillDataModel from '@/item/data/SkillDataModel';
+import VueSheet from '@/vue/VueSheet';
+import GenesysActorSheet from '@/actor/GenesysActorSheet';
 
 /**
  * Actor sheet used for Player Characters
  */
-export default abstract class AdversarySheet<DataModel extends AdversaryDataModel = AdversaryDataModel> extends VueActorSheet<DataModel> {
+export default class AdversarySheet extends VueSheet(GenesysActorSheet<AdversaryDataModel>) {
 	static override get defaultOptions() {
 		return {
 			...super.defaultOptions,

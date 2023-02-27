@@ -9,8 +9,8 @@
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_STORY_POINTS, type StoryPointData } from '@/settings/storyPoints';
 import { emit as socketEmit, SOCKET_NAME, SocketOperation, SocketPayload } from '@/socket';
-import VueApplication from '@/vue/VueApplication';
 import VueStoryPointTracker from '@/vue/apps/StoryPointTracker.vue';
+import VueSheet from '@/vue/VueSheet';
 
 export interface StoryPointTrackerContext {
 	/**
@@ -27,7 +27,7 @@ export interface StoryPointTrackerContext {
 /**
  * Singleton application used to track the current pools of Story Points.
  */
-export default class StoryPointTracker extends VueApplication<StoryPointTrackerContext> {
+export default class StoryPointTracker extends VueSheet(Application) {
 	static #instance?: StoryPointTracker;
 
 	static get instance(): StoryPointTracker | undefined {
@@ -45,14 +45,14 @@ export default class StoryPointTracker extends VueApplication<StoryPointTrackerC
 		};
 	}
 
-	protected override async _renderInner(data: object, options: RenderOptions = {}) {
+	override async _renderInner(data: object, options: RenderOptions = {}) {
 		return super._renderInner(data, {
 			...options,
 			classes: options.classes ?? ['genesys', 'story-point-tracker'],
 		});
 	}
 
-	protected get vueComponent() {
+	override get vueComponent() {
 		return VueStoryPointTracker;
 	}
 
@@ -60,7 +60,7 @@ export default class StoryPointTracker extends VueApplication<StoryPointTrackerC
 		return <StoryPointData>game.settings.get(SETTINGS_NAMESPACE, KEY_STORY_POINTS);
 	}
 
-	protected async getVueContext(): Promise<StoryPointTrackerContext> {
+	override async getVueContext(): Promise<StoryPointTrackerContext> {
 		const storyPoints = this.storyPoints;
 
 		return {

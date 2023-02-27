@@ -8,12 +8,13 @@
 
 import CareerDataModel from '@/item/data/CareerDataModel';
 import VueCareerSheet from '@/vue/sheets/item/CareerSheet.vue';
-import VueItemSheet from '@/vue/VueItemSheet';
-import { DropData } from '@/item/GenesysItemSheet';
+import GenesysItemSheet, { DropData } from '@/item/GenesysItemSheet';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import GenesysItem from '@/item/GenesysItem';
+import VueSheet from '@/vue/VueSheet';
+import { GenesysItemSheetData, ItemSheetContext } from '@/vue/SheetContext';
 
-export default class CareerSheet extends VueItemSheet<CareerDataModel> {
+export default class CareerSheet extends VueSheet(GenesysItemSheet<CareerDataModel>) {
 	static override get defaultOptions() {
 		return {
 			...super.defaultOptions,
@@ -23,8 +24,15 @@ export default class CareerSheet extends VueItemSheet<CareerDataModel> {
 		};
 	}
 
-	protected override get vueComponent() {
+	override get vueComponent() {
 		return VueCareerSheet;
+	}
+
+	override async getVueContext(): Promise<ItemSheetContext | undefined> {
+		return {
+			sheet: this,
+			data: (await this.getData()) as GenesysItemSheetData<CareerDataModel>,
+		};
 	}
 
 	protected override async _onDropItem(event: DragEvent, data: DropData): Promise<void> {

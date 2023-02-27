@@ -6,9 +6,9 @@
  * @file XP Award Prompt Application
  */
 
-import VueApplication from '@/vue/VueApplication';
 import VueAwardXPPrompt from '@/vue/apps/AwardXPPrompt.vue';
 import { ContextBase } from '@/vue/SheetContext';
+import VueSheet from '@/vue/VueSheet';
 
 type AwardData = {
 	/**
@@ -29,8 +29,8 @@ export interface AwardXPContext extends ContextBase {
 /**
  * Prompt the user for an XP Award.
  */
-export default class AwardXPPrompt extends VueApplication<AwardXPContext> {
-	protected override get vueComponent() {
+export default class AwardXPPrompt extends VueSheet(Application) {
+	override get vueComponent() {
 		return VueAwardXPPrompt;
 	}
 
@@ -53,7 +53,7 @@ export default class AwardXPPrompt extends VueApplication<AwardXPContext> {
 
 	#resolvePromise?: (value: AwardData | undefined) => void;
 
-	protected override async getVueContext(): Promise<AwardXPContext> {
+	override async getVueContext(): Promise<AwardXPContext> {
 		return {
 			resolvePromise: async (data) => {
 				this.#resolvePromise?.(data);

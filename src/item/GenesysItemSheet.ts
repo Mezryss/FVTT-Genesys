@@ -19,7 +19,7 @@ export type DropData = {
 /**
  * Basic functionality shared by all ItemSheets.
  */
-export default abstract class GenesysItemSheet<ItemDataModel extends BaseItemDataModel = BaseItemDataModel> extends ItemSheet<GenesysItem<ItemDataModel>> {
+export default class GenesysItemSheet<ItemDataModel extends BaseItemDataModel = BaseItemDataModel> extends ItemSheet<GenesysItem<ItemDataModel>> {
 	static override get defaultOptions() {
 		return {
 			...super.defaultOptions,

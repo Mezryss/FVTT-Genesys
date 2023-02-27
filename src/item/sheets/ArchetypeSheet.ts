@@ -7,20 +7,21 @@
  */
 
 import ArchetypeDataModel from '@/item/data/ArchetypeDataModel';
-import VueItemSheet from '@/vue/VueItemSheet';
 import VueArchetypeSheet from '@/vue/sheets/item/ArchetypeSheet.vue';
 
 import './WeaponSheet.scss';
-import { DropData } from '@/item/GenesysItemSheet';
+import GenesysItemSheet, { DropData } from '@/item/GenesysItemSheet';
 import GenesysItem from '@/item/GenesysItem';
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
+import VueSheet from '@/vue/VueSheet';
+import { GenesysItemSheetData, ItemSheetContext } from '@/vue/SheetContext';
 
 /**
  * List of item types that are not allowed to be granted by an archetype.
  */
 const BLOCK_GRANTED_ITEM_TYPES = ['archetype', 'career', 'quality'];
 
-export default class ArchetypeSheet extends VueItemSheet<ArchetypeDataModel> {
+export default class ArchetypeSheet extends VueSheet(GenesysItemSheet<ArchetypeDataModel>) {
 	static override get defaultOptions() {
 		return {
 			...super.defaultOptions,
@@ -30,8 +31,15 @@ export default class ArchetypeSheet extends VueItemSheet<ArchetypeDataModel> {
 		};
 	}
 
-	protected override get vueComponent() {
+	override get vueComponent() {
 		return VueArchetypeSheet;
+	}
+
+	override async getVueContext(): Promise<ItemSheetContext | undefined> {
+		return {
+			sheet: this,
+			data: (await this.getData()) as GenesysItemSheetData<ArchetypeDataModel>,
+		};
 	}
 
 	protected override async _onDropItem(event: DragEvent, data: DropData): Promise<void> {

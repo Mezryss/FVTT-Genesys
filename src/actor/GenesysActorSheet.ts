@@ -12,7 +12,7 @@ import GenesysItem from '@/item/GenesysItem';
 import './GenesysActorSheet.scss';
 import DicePrompt from '@/app/DicePrompt';
 
-export default abstract class GenesysActorSheet<ActorDataModel extends foundry.abstract.DataModel = foundry.abstract.DataModel, ItemDataModel extends BaseItemDataModel = BaseItemDataModel> extends ActorSheet<
+export default class GenesysActorSheet<ActorDataModel extends foundry.abstract.DataModel = foundry.abstract.DataModel, ItemDataModel extends BaseItemDataModel = BaseItemDataModel> extends ActorSheet<
 	GenesysActor<ActorDataModel>,
 	GenesysItem<ItemDataModel>
 > {

@@ -10,9 +10,9 @@ import GenesysActor from '@/actor/GenesysActor';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import GenesysItem from '@/item/GenesysItem';
 import { ContextBase } from '@/vue/SheetContext';
-import VueApplication from '@/vue/VueApplication';
 import VueDicePrompt from '@/vue/apps/DicePrompt.vue';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
+import VueSheet from '@/vue/VueSheet';
 
 export enum RollType {
 	Skill,
@@ -48,8 +48,8 @@ type DicePromptOptions = {
 /**
  * Dice pool prompt.
  */
-export default class DicePrompt extends VueApplication<DicePromptContext> {
-	protected override get vueComponent() {
+export default class DicePrompt extends VueSheet(Application) {
+	override get vueComponent() {
 		return VueDicePrompt;
 	}
 
@@ -106,7 +106,7 @@ export default class DicePrompt extends VueApplication<DicePromptContext> {
 		await super.close(options);
 	}
 
-	protected override async getVueContext(): Promise<DicePromptContext> {
+	override async getVueContext(): Promise<DicePromptContext> {
 		return {
 			actor: this.actor,
 			skills: this.actorSkills,

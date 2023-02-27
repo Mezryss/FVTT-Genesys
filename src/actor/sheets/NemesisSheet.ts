@@ -6,14 +6,13 @@
  * @file Nemesis Sheet
  */
 
-import NemesisDataModel from '@/actor/data/NemesisDataModel';
 import AdversarySheet from '@/actor/sheets/AdversarySheet';
 import VueNemesisSheet from '@/vue/sheets/actor/NemesisSheet.vue';
 
 /**
  * Actor sheet used for Player Characters
  */
-export default class NemesisSheet extends AdversarySheet<NemesisDataModel> {
+export default class NemesisSheet extends AdversarySheet {
 	override get vueComponent() {
 		return VueNemesisSheet;
 	}

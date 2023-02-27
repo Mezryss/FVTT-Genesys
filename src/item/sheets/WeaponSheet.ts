@@ -6,17 +6,25 @@
  * @file Weapon ItemSheet
  */
 
-import { DropData } from '@/item/GenesysItemSheet';
+import GenesysItemSheet, { DropData } from '@/item/GenesysItemSheet';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
-import VueItemSheet from '@/vue/VueItemSheet';
 import VueWeaponSheet from '@/vue/sheets/item/WeaponSheet.vue';
 import GenesysItem from '@/item/GenesysItem';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import ItemQualityDataModel from '@/item/data/ItemQualityDataModel';
+import VueSheet from '@/vue/VueSheet';
+import { GenesysItemSheetData, ItemSheetContext } from '@/vue/SheetContext';
 
-export default class WeaponSheet extends VueItemSheet<WeaponDataModel> {
-	protected override get vueComponent() {
+export default class WeaponSheet extends VueSheet(GenesysItemSheet<WeaponDataModel>) {
+	override get vueComponent() {
 		return VueWeaponSheet;
+	}
+
+	override async getVueContext(): Promise<ItemSheetContext | undefined> {
+		return {
+			sheet: this,
+			data: (await this.getData()) as GenesysItemSheetData<WeaponDataModel>,
+		};
 	}
 
 	protected override async _onDropItem(event: DragEvent, data: DropData): Promise<void> {

@@ -9,8 +9,8 @@
 import GenesysActor from '@/actor/GenesysActor';
 import GenesysItem from '@/item/GenesysItem';
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
-import VueItemSheet from '@/vue/VueItemSheet';
-import VueActorSheet from '@/vue/VueActorSheet';
+import GenesysItemSheet from '@/item/GenesysItemSheet';
+import GenesysActorSheet from '@/actor/GenesysActorSheet';
 
 export type ContextBase = { [key: string]: any };
 
@@ -48,7 +48,7 @@ export interface GenesysActorSheetData<ActorDataModel extends foundry.abstract.D
  */
 export interface ActorSheetContext<
 	ActorDataModel extends foundry.abstract.DataModel = foundry.abstract.DataModel,
-	SheetType extends VueActorSheet<ActorDataModel> = VueActorSheet<ActorDataModel>,
+	SheetType extends GenesysActorSheet<ActorDataModel> = GenesysActorSheet<ActorDataModel>,
 	SheetDataType extends GenesysActorSheetData<ActorDataModel> = GenesysActorSheetData<ActorDataModel>,
 > extends ContextBase {
 	/**
@@ -71,7 +71,7 @@ export interface GenesysItemSheetData<ItemDataModel extends BaseItemDataModel = 
  */
 export interface ItemSheetContext<
 	ItemDataModel extends BaseItemDataModel = BaseItemDataModel,
-	SheetType extends VueItemSheet<ItemDataModel> = VueItemSheet<ItemDataModel>,
+	SheetType extends GenesysItemSheet<ItemDataModel> = GenesysItemSheet<ItemDataModel>,
 	SheetDataType extends GenesysItemSheetData<ItemDataModel> = GenesysItemSheetData<ItemDataModel>,
 > extends ContextBase {
 	/**

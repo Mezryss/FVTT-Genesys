@@ -6,7 +6,6 @@
  * @file Player Character Sheet
  */
 
-import VueActorSheet from '@/vue/VueActorSheet';
 import VueCharacterSheet from '@/vue/sheets/actor/CharacterSheet.vue';
 import GenesysItem from '@/item/GenesysItem';
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
@@ -17,13 +16,23 @@ import SkillDataModel from '@/item/data/SkillDataModel';
 import { EntryType } from '@/actor/data/character/ExperienceJournal';
 import CareerSkillPrompt from '@/app/CareerSkillPrompt';
 import TalentDataModel from '@/item/data/TalentDataModel';
+import VueSheet from '@/vue/VueSheet';
+import GenesysActorSheet from '@/actor/GenesysActorSheet';
+import { ActorSheetContext } from '@/vue/SheetContext';
 
 /**
  * Actor sheet used for Player Characters
  */
-export default class CharacterSheet extends VueActorSheet<CharacterDataModel> {
+export default class CharacterSheet extends VueSheet(GenesysActorSheet<CharacterDataModel>) {
 	override get vueComponent() {
 		return VueCharacterSheet;
+	}
+
+	override async getVueContext(): Promise<ActorSheetContext<CharacterDataModel>> {
+		return {
+			sheet: this,
+			data: await this.getData(),
+		};
 	}
 
 	static override get defaultOptions() {

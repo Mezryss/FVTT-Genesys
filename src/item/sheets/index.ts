@@ -6,7 +6,6 @@
  * @file Item Sheet Registration
  */
 
-import VueItemSheet from '@/vue/VueItemSheet';
 import AbilitySheet from '@/vue/sheets/item/AbilitySheet.vue';
 import ArmorSheet from '@/vue/sheets/item/ArmorSheet.vue';
 import EquipmentSheet from '@/vue/sheets/item/EquipmentSheet.vue';
@@ -17,15 +16,25 @@ import TalentSheet from '@/vue/sheets/item/TalentSheet.vue';
 import WeaponSheet from '@/item/sheets/WeaponSheet';
 import ArchetypeSheet from '@/item/sheets/ArchetypeSheet';
 import CareerSheet from '@/item/sheets/CareerSheet';
+import VueSheet from '@/vue/VueSheet';
+import GenesysItemSheet from '@/item/GenesysItemSheet';
+import { GenesysItemSheetData, ItemSheetContext } from '@/vue/SheetContext';
 
 /**
- * Constructs a VueItemSheet subclass with no extra processing - just the sheet itself.
+ * Constructs a vue-based ItemSheet subclass with no extra processing - just the sheet itself.
  * @param sheetClass Vue component to use for the sheet.
  */
 function basicSheet(sheetClass: any) {
-	return class extends VueItemSheet {
+	return class extends VueSheet(GenesysItemSheet) {
 		override get vueComponent() {
 			return sheetClass;
+		}
+
+		override async getVueContext(): Promise<ItemSheetContext | undefined> {
+			return {
+				sheet: this,
+				data: (await this.getData()) as GenesysItemSheetData,
+			};
 		}
 	};
 }
