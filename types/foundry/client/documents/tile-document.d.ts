@@ -1,11 +1,11 @@
-import { TileDocumentConstructor } from "./constructors";
+import { TileDocumentConstructor } from './constructors';
 
 declare global {
-    class TileDocument extends TileDocumentConstructor {}
+	class TileDocument extends TileDocumentConstructor {}
 
-    interface TileDocument {
-        readonly parent: Scene | null;
+	interface TileDocument {
+		readonly parent: Scene | null;
 
-        readonly _object: Tile;
-    }
+		readonly _object: Tile;
+	}
 }

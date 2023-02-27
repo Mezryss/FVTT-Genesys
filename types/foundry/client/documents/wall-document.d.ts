@@ -1,11 +1,11 @@
-import { WallDocumentConstructor } from "./constructors";
+import { WallDocumentConstructor } from './constructors';
 
 declare global {
-    class WallDocument extends WallDocumentConstructor {}
+	class WallDocument extends WallDocumentConstructor {}
 
-    interface WallDocument {
-        readonly parent: Scene | null;
+	interface WallDocument {
+		readonly parent: Scene | null;
 
-        readonly _object: Wall;
-    }
+		readonly _object: Wall;
+	}
 }

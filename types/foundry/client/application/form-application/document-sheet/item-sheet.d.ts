@@ -1,6 +1,6 @@
 declare interface ItemSheetData<I extends Item> extends DocumentSheetData<I> {
-    item: object;
-    data: object;
+	item: object;
+	data: object;
 }
 
 /**
@@ -15,25 +15,25 @@ declare interface ItemSheetData<I extends Item> extends DocumentSheetData<I> {
  * @param [options] Additional options which modify the rendering of the item.
  */
 declare class ItemSheet<TItem extends Item = Item> extends DocumentSheet<TItem> {
-    constructor(item: TItem, options?: Partial<DocumentSheetOptions>);
+	constructor(item: TItem, options?: Partial<DocumentSheetOptions>);
 
-    static override get defaultOptions(): DocumentSheetOptions;
+	static override get defaultOptions(): DocumentSheetOptions;
 
-    override get id(): string;
+	override get id(): string;
 
-    /**
-     * A convenience reference to the Item entity
-     */
-    get item(): TItem;
+	/**
+	 * A convenience reference to the Item entity
+	 */
+	get item(): TItem;
 
-    /** The Actor instance which owns this item. This may be null if the item is unowned. */
-    get actor(): TItem["parent"];
+	/** The Actor instance which owns this item. This may be null if the item is unowned. */
+	get actor(): TItem['parent'];
 
-    override getData(option?: Partial<this["options"]>): ItemSheetData<TItem> | Promise<ItemSheetData<TItem>>;
+	override getData(option?: Partial<this['options']>): ItemSheetData<TItem> | Promise<ItemSheetData<TItem>>;
 
-    /**
-     * Activate listeners which provide interactivity for item sheet events
-     * @param html The HTML object returned by template rendering
-     */
-    override activateListeners(html: JQuery): void;
+	/**
+	 * Activate listeners which provide interactivity for item sheet events
+	 * @param html The HTML object returned by template rendering
+	 */
+	override activateListeners(html: JQuery): void;
 }

@@ -34,7 +34,7 @@ type DicePreset = {
 	/**
 	 * Array of bumpMap textures that should follow the exact same order as labels.
 	 */
-	bumpMaps?: (string|undefined)[];
+	bumpMaps?: (string | undefined)[];
 
 	/**
 	 * Min and max value on the die.
@@ -74,32 +74,32 @@ type ColorSet = {
 	/**
 	 * Colors of the labels.
 	 */
-	foreground?: string|string[];
+	foreground?: string | string[];
 
 	/**
 	 * Colors of the dice.
 	 */
-	background?: string|string[];
+	background?: string | string[];
 
 	/**
 	 * Colors of the label outline. Can be 'none'.
 	 */
-	outline?: string|string[];
+	outline?: string | string[];
 
 	/**
 	 * Colors of the edges. Can be 'none'.
 	 */
-	edge?: string|string[];
+	edge?: string | string[];
 
 	/**
 	 * Array of ID, or a single ID of the texture to use if "None / Auto (Theme)" is selected in settings. If it is a custom texture, make sure to call this function after the Promise from `addTexture` is resolved.
 	 */
-	texture?: string|string[];
+	texture?: string | string[];
 
 	/**
 	 * ID of the material to use if "Auto (Theme)" is selected in settings.
 	 */
-	material?: 'plastic'|'metal'|'glass'|'wood'|'pristine'|'iridescent'|'chrome';
+	material?: 'plastic' | 'metal' | 'glass' | 'wood' | 'pristine' | 'iridescent' | 'chrome';
 
 	/**
 	 * Name of the font family. This can be a Webfont too (ex: Arial, monospace, etc)
@@ -114,7 +114,7 @@ type ColorSet = {
 	/**
 	 * Set to 'hidden' if you do not want this colorset to be visible in the players' theme list. Useful for internal colorsets.
 	 */
-	visibility?: 'visible'|'hidden';
+	visibility?: 'visible' | 'hidden';
 };
 
 declare class Dice3d {
@@ -129,7 +129,7 @@ declare class Dice3d {
 	 *
 	 * @see {@link https://gitlab.com/riccisi/foundryvtt-dice-so-nice/-/wikis/API/Customization#adding-a-custom-model-system-aka-dice-face-preset}
 	 */
-	addSystem(system: {id: string, name: string}, mode: 'preferred'|'default'): void;
+	addSystem(system: { id: string; name: string }, mode: 'preferred' | 'default'): void;
 
 	/**
 	 * A custom DicePreset will override a default dice type when its system is selected in the "Dice So Nice" settings.
@@ -151,7 +151,7 @@ declare class Dice3d {
 	 *
 	 * @see {@link https://gitlab.com/riccisi/foundryvtt-dice-so-nice/-/wikis/API/Customization#adding-a-custom-texture}
 	 */
-	addTexture(textureID: string, data: {name: string, composite: string, source: string, bump?: string}): Promise<unknown>;
+	addTexture(textureID: string, data: { name: string; composite: string; source: string; bump?: string }): Promise<unknown>;
 
 	/**
 	 * Add a colorset (theme)
@@ -161,7 +161,7 @@ declare class Dice3d {
 	 *
 	 * @see {@link https://gitlab.com/riccisi/foundryvtt-dice-so-nice/-/wikis/API/Customization#adding-a-custom-colorset-theme}
 	 */
-	addColorset(colorset: ColorSet, mode: 'default'|'preferred')
+	addColorset(colorset: ColorSet, mode: 'default' | 'preferred');
 
 	/**
 	 * Change the default value of the showExtraDice settings.

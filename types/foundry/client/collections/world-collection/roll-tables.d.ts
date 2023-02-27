@@ -5,10 +5,10 @@
  * @see {@link RollTableDirectory} The RollTableDirectory sidebar directory
  */
 declare class RollTables extends WorldCollection<RollTable> {
-    static override documentName: "RollTable";
+	static override documentName: 'RollTable';
 
-    override get directory(): RollTableDirectory;
+	override get directory(): RollTableDirectory;
 
-    /** Register world settings related to RollTable entities */
-    static registerSettings(): void;
+	/** Register world settings related to RollTable entities */
+	static registerSettings(): void;
 }

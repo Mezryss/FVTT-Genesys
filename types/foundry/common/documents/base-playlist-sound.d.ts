@@ -1,29 +1,25 @@
 declare module foundry {
-    module documents {
-        /** The PlaylistSound document model. */
-        class BasePlaylistSound extends abstract.Document {
-            static override get schema(): typeof data.PlaylistSoundData;
+	module documents {
+		/** The PlaylistSound document model. */
+		class BasePlaylistSound extends abstract.Document {
+			static override get schema(): typeof data.PlaylistSoundData;
 
-            static override get metadata(): PlaylistSoundMetadata;
+			static override get metadata(): PlaylistSoundMetadata;
 
-            testUserPermission(
-                user: documents.BaseUser,
-                permission: DocumentOwnershipString | DocumentOwnershipLevel,
-                { exact }?: { exact?: boolean }
-            ): boolean;
-        }
+			testUserPermission(user: documents.BaseUser, permission: DocumentOwnershipString | DocumentOwnershipLevel, { exact }?: { exact?: boolean }): boolean;
+		}
 
-        interface BasePlaylistSound {
-            readonly data: data.PlaylistSoundData<this>;
+		interface BasePlaylistSound {
+			readonly data: data.PlaylistSoundData<this>;
 
-            readonly parent: BasePlaylist | null;
-        }
+			readonly parent: BasePlaylist | null;
+		}
 
-        interface PlaylistSoundMetadata extends abstract.DocumentMetadata {
-            name: "PlaylistSound";
-            collection: "sounds";
-            label: "DOCUMENT.PlaylistSound";
-            isEmbedded: true;
-        }
-    }
+		interface PlaylistSoundMetadata extends abstract.DocumentMetadata {
+			name: 'PlaylistSound';
+			collection: 'sounds';
+			label: 'DOCUMENT.PlaylistSound';
+			isEmbedded: true;
+		}
+	}
 }

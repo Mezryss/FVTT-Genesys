@@ -1,5 +1,5 @@
-import { DataModel } from "../abstract/data.mjs";
-import { RawObject } from "../abstract/data.mjs";
+import { DataModel } from '../abstract/data.mjs';
+import { RawObject } from '../abstract/data.mjs';
 
 /**
  * Wrap a callback in a debounced timeout.
@@ -8,10 +8,7 @@ import { RawObject } from "../abstract/data.mjs";
  * @param delay An amount of time in milliseconds to delay
  * @return A wrapped function which can be called to debounce execution
  */
-export function debounce<T extends (...args: any[]) => unknown>(
-    callback: T,
-    delay: number
-): (...args: Parameters<T>) => void;
+export function debounce<T extends (...args: any[]) => unknown>(callback: T, delay: number): (...args: Parameters<T>) => void;
 
 /**
  * Quickly clone a simple piece of data, returning a copy which can be mutated safely.
@@ -62,12 +59,7 @@ export function duplicate<T>(original: T): T;
  * @example <caption>Deleting an existing object key</caption>
  * mergeObject({k1: "v1", k2: "v2"}, {"-=k1": null});   // {k2: "v2"}
  */
-export function mergeObject<T extends object, U extends object = T>(
-    original: T,
-    other?: U,
-    { insertKeys, insertValues, overwrite, inplace, enforceTypes }?: MergeObjectOptions,
-    _d?: number
-): T & U;
+export function mergeObject<T extends object, U extends object = T>(original: T, other?: U, { insertKeys, insertValues, overwrite, inplace, enforceTypes }?: MergeObjectOptions, _d?: number): T & U;
 
 /**
  * Learn the named type of a token - extending the functionality of typeof to recognize some core Object types
@@ -131,10 +123,7 @@ export function isObjectEmpty(obj: object): boolean;
  * @param other
  * @return
  */
-export function diffObject<T extends Record<string, unknown> = Record<string, unknown>>(
-    original: object,
-    other: object
-): T;
+export function diffObject<T extends Record<string, unknown> = Record<string, unknown>>(original: object, other: object): T;
 
 /**
  * A helper function which tests whether an object has a property or nested property given a string key.
@@ -258,34 +247,34 @@ export function isNewerVersion(v1: number | string | null, v0: number | string):
 export function randomID(length?: number): string;
 
 interface MergeObjectOptions {
-    insertKeys?: boolean;
-    insertValues?: boolean;
-    overwrite?: boolean;
-    inplace?: boolean;
-    enforceTypes?: boolean;
+	insertKeys?: boolean;
+	insertValues?: boolean;
+	overwrite?: boolean;
+	inplace?: boolean;
+	enforceTypes?: boolean;
 }
 
 declare global {
-    namespace globalThis {
-        /* eslint-disable no-var */
-        var deepClone: typeof foundry.utils.deepClone;
-        var diffObject: typeof foundry.utils.diffObject;
-        var duplicate: typeof foundry.utils.duplicate;
-        var expandObject: typeof foundry.utils.expandObject;
-        var flattenObject: typeof foundry.utils.flattenObject;
-        var getType: typeof foundry.utils.getType;
-        var getProperty: typeof foundry.utils.getProperty;
-        var isObjectEmpty: typeof foundry.utils.isObjectEmpty;
-        var mergeObject: typeof foundry.utils.mergeObject;
-        var setProperty: typeof foundry.utils.setProperty;
-        var randomID: typeof foundry.utils.randomID;
-        /* eslint-enable no-var */
+	namespace globalThis {
+		/* eslint-disable no-var */
+		var deepClone: typeof foundry.utils.deepClone;
+		var diffObject: typeof foundry.utils.diffObject;
+		var duplicate: typeof foundry.utils.duplicate;
+		var expandObject: typeof foundry.utils.expandObject;
+		var flattenObject: typeof foundry.utils.flattenObject;
+		var getType: typeof foundry.utils.getType;
+		var getProperty: typeof foundry.utils.getProperty;
+		var isObjectEmpty: typeof foundry.utils.isObjectEmpty;
+		var mergeObject: typeof foundry.utils.mergeObject;
+		var setProperty: typeof foundry.utils.setProperty;
+		var randomID: typeof foundry.utils.randomID;
+		/* eslint-enable no-var */
 
-        /**
-         * Load a single texture and return a Promise which resolves once the texture is ready to use
-         * @param src       The requested texture source
-         * @param fallback  A fallback texture to use if the requested source is unavailable or invalid
-         */
-        function loadTexture(src: string, { fallback }?: { fallback?: ImageFilePath }): Promise<PIXI.Texture>;
-    }
+		/**
+		 * Load a single texture and return a Promise which resolves once the texture is ready to use
+		 * @param src       The requested texture source
+		 * @param fallback  A fallback texture to use if the requested source is unavailable or invalid
+		 */
+		function loadTexture(src: string, { fallback }?: { fallback?: ImageFilePath }): Promise<PIXI.Texture>;
+	}
 }

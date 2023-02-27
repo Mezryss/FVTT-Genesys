@@ -1,3 +1,3 @@
-import "./base";
-import "./filters";
-import "./shaders";
+import './base';
+import './filters';
+import './shaders';

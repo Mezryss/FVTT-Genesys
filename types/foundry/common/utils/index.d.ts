@@ -1,5 +1,5 @@
-import "./collection";
-import "./color";
-import "./geometry";
-import "./helpers";
-import "./primitives";
+import './collection';
+import './color';
+import './geometry';
+import './helpers';
+import './primitives';

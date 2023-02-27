@@ -4,11 +4,11 @@
  * @param options Additional Application options
  */
 declare class NoteConfig<TDocument extends NoteDocument = NoteDocument> extends DocumentSheet<TDocument> {
-    /**
-     * Extend the logic applied when the application is closed to clear any preview notes
-     */
-    close(): Promise<void>;
+	/**
+	 * Extend the logic applied when the application is closed to clear any preview notes
+	 */
+	close(): Promise<void>;
 
-    /** @override */
-    protected _updateObject(event: Event, formData: {}): Promise<void>;
+	/** @override */
+	protected _updateObject(event: Event, formData: {}): Promise<void>;
 }

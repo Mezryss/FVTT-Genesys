@@ -3,14 +3,14 @@
  * This Collection is accessible within the Game object as game.folders.
  */
 declare class Folders<TFolder extends Folder = Folder> extends WorldCollection<TFolder> {
-    constructor(data?: foundry.data.FolderSource[]);
+	constructor(data?: foundry.data.FolderSource[]);
 
-    protected _expanded: Record<string, boolean>;
+	protected _expanded: Record<string, boolean>;
 
-    static override documentName: "Folder";
+	static override documentName: 'Folder';
 
-    override render(force: boolean, options?: RenderOptions): void;
+	override render(force: boolean, options?: RenderOptions): void;
 
-    /** Refresh the display of any active JournalSheet instances where the folder list will change. */
-    protected _refreshJournalEntrySheets(): void;
+	/** Refresh the display of any active JournalSheet instances where the folder list will change. */
+	protected _refreshJournalEntrySheets(): void;
 }

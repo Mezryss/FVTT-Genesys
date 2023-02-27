@@ -1,6 +1,6 @@
-import * as Constants from "./constants.mjs";
-import "./data";
+import * as Constants from './constants.mjs';
+import './data';
 
 declare global {
-    const CONST: typeof Constants;
+	const CONST: typeof Constants;
 }

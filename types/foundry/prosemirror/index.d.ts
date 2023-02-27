@@ -17,7 +17,7 @@ declare global {
 		const defaultSchema: Schema;
 		const dom: {
 			parseHTMLString(htmlString: string, schema?: Schema): Node;
-			serializeString: (doc: Node, {schema, spaces}?: { schema?: Schema, spaces?: string|number }) => string;
+			serializeString: (doc: Node, { schema, spaces }?: { schema?: Schema; spaces?: string | number }) => string;
 		};
 	}
 }

@@ -1,12 +1,6 @@
-export const AmbientLightDocumentConstructor: CanvasDocumentMixin<
-    typeof foundry.documents.BaseAmbientLight,
-    LightingLayer<AmbientLight>
->;
+export const AmbientLightDocumentConstructor: CanvasDocumentMixin<typeof foundry.documents.BaseAmbientLight, LightingLayer<AmbientLight>>;
 
-export const AmbientSoundDocumentConstructor: CanvasDocumentMixin<
-    typeof foundry.documents.BaseAmbientSound,
-    SoundsLayer
->;
+export const AmbientSoundDocumentConstructor: CanvasDocumentMixin<typeof foundry.documents.BaseAmbientSound, SoundsLayer>;
 
 export const ActiveEffectConstructor: ClientDocumentMixin<typeof foundry.documents.BaseActiveEffect>;
 
@@ -34,10 +28,7 @@ export const JournalEntryPageConstructor: ClientDocumentMixin<typeof foundry.doc
 
 export const MacroConstructor: ClientDocumentMixin<typeof foundry.documents.BaseMacro>;
 
-export const MeasuredTemplateDocumentConstructor: CanvasDocumentMixin<
-    typeof foundry.documents.BaseMeasuredTemplate,
-    TemplateLayer
->;
+export const MeasuredTemplateDocumentConstructor: CanvasDocumentMixin<typeof foundry.documents.BaseMeasuredTemplate, TemplateLayer>;
 
 export const PlaylistConstructor: ClientDocumentMixin<typeof foundry.documents.BasePlaylist>;
 

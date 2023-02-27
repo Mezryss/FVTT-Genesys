@@ -1,2 +1,2 @@
-export * from "./data.mjs";
-export * from "./embedded-collection.mjs";
+export * from './data.mjs';
+export * from './embedded-collection.mjs';

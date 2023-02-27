@@ -1,2 +1,2 @@
-import "./interaction";
-import "./shapes";
+import './interaction';
+import './shapes';

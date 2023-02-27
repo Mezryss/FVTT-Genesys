@@ -1,44 +1,36 @@
 declare module foundry {
-    module documents {
-        /**
-         * The ActiveEffect document model.
-         * @param data Initial data from which to construct the document.
-         * @property data The constructed data object for the document.
-         */
-        class BaseActiveEffect extends abstract.Document {
-            static override get schema(): typeof data.ActiveEffectData;
+	module documents {
+		/**
+		 * The ActiveEffect document model.
+		 * @param data Initial data from which to construct the document.
+		 * @property data The constructed data object for the document.
+		 */
+		class BaseActiveEffect extends abstract.Document {
+			static override get schema(): typeof data.ActiveEffectData;
 
-            static override get metadata(): ActiveEffectMetadata;
+			static override get metadata(): ActiveEffectMetadata;
 
-            protected override _preCreate(
-                data: PreDocumentId<data.ActiveEffectSource>,
-                options: DocumentModificationContext,
-                user: BaseUser
-            ): Promise<void>;
+			protected override _preCreate(data: PreDocumentId<data.ActiveEffectSource>, options: DocumentModificationContext, user: BaseUser): Promise<void>;
 
-            override testUserPermission(
-                user: BaseUser,
-                permission: DocumentOwnershipString | DocumentOwnershipLevel,
-                { exact }?: { exact?: boolean }
-            ): boolean;
-        }
+			override testUserPermission(user: BaseUser, permission: DocumentOwnershipString | DocumentOwnershipLevel, { exact }?: { exact?: boolean }): boolean;
+		}
 
-        interface BaseActiveEffect {
-            readonly data: data.ActiveEffectData<this>;
+		interface BaseActiveEffect {
+			readonly data: data.ActiveEffectData<this>;
 
-            readonly parent: BaseActor | BaseItem;
+			readonly parent: BaseActor | BaseItem;
 
 			readonly origin: string;
 
 			readonly _id: string;
 			readonly label: string;
-        }
+		}
 
-        interface ActiveEffectMetadata extends abstract.DocumentMetadata {
-            name: "ActiveEffect";
-            collection: "effects";
-            label: "DOCUMENT.ActiveEffect";
-            isEmbedded: true;
-        }
-    }
+		interface ActiveEffectMetadata extends abstract.DocumentMetadata {
+			name: 'ActiveEffect';
+			collection: 'effects';
+			label: 'DOCUMENT.ActiveEffect';
+			isEmbedded: true;
+		}
+	}
 }

@@ -1,12 +1,12 @@
-import { AmbientLightDocumentConstructor } from "./constructors";
+import { AmbientLightDocumentConstructor } from './constructors';
 
 declare global {
-    class AmbientLightDocument extends AmbientLightDocumentConstructor {
-        /** Is this ambient light source global in nature? */
-        get isGlobal(): boolean;
-    }
+	class AmbientLightDocument extends AmbientLightDocumentConstructor {
+		/** Is this ambient light source global in nature? */
+		get isGlobal(): boolean;
+	}
 
-    interface AmbientLightDocument {
-        readonly parent: Scene | null;
-    }
+	interface AmbientLightDocument {
+		readonly parent: Scene | null;
+	}
 }
