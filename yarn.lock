@@ -548,6 +548,11 @@
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.47.tgz#e597ef75086c6e896ff5478a6bfc0a7aa4bbd14c"
   integrity sha512-BHGyyGN3Q97EZx0taMQ+OLNuZcW3d37ZEVmEAyeoA9ERdGvm9Irc/0Fua8SNyOtV1w6BS4q25wbMzJujO9HIfQ==
 
+"@yeger/vue-masonry-wall@^3.4.4":
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/@yeger/vue-masonry-wall/-/vue-masonry-wall-3.4.4.tgz#c81a4f13b39cbf2db4df16f54783a5b5125d97cc"
+  integrity sha512-LSQmLVsntTNTdc2N79dpkuUySYGZUnj/hvFTXPEuNG3eLwy1EKgd2otllVmX5eQeXEp3NVV0HKaRf8y+TsglIw==
+
 accepts@~1.3.4:
   version "1.3.8"
   resolved "https://registry.yarnpkg.com/accepts/-/accepts-1.3.8.tgz#0bf0be125b67014adcb0b0921e62db7bffe16b2e"

@@ -58,3 +58,9 @@ Some components of this project are used under alternative licensing terms. Each
 > **License:** [MIT](assets/fonts/FFG-Genesys-Glyphs-and-Dice/LICENSE)
 >
 > https://github.com/themensch/FFG-Genesys-Glyphs-and-Dice
+
+#### Vue 3
+> **License:** [MIT](https://github.com/vuejs/core/blob/main/LICENSE)
+
+#### Vue-Masonry-Wall
+> **License:** [MIT](https://github.com/DerYeger/yeger/blob/main/packages/vue-masonry-wall/LICENSE)

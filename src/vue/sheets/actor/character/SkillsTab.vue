@@ -17,6 +17,7 @@ import XPContainer from '@/vue/components/character/XPContainer.vue';
 import DicePrompt from '@/app/DicePrompt';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
+import MasonryWall from '@yeger/vue-masonry-wall';
 
 const context = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 const system = computed(() => context.data.actor.systemData);
@@ -138,65 +139,69 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 		</div>
 
 		<div class="skills-row">
-			<div v-for="skillCategory in skillCategories" :key="skillCategory" class="skill-category">
-				<div class="header">
-					<label><Localized :label="`Genesys.Labels.${skillCategory.capitalize()}Skills`" /></label>
-					<div class="blank" />
+			<MasonryWall :column-width="300" :items="skillCategories" :gap="8">
+				<template #default="{ item: skillCategory }">
+					<div class="skill-category">
+						<div class="header">
+							<label><Localized :label="`Genesys.Labels.${skillCategory.capitalize()}Skills`" /></label>
+							<div class="blank" />
 
-					<label style="position: relative; left: -3px"><Localized label="Genesys.Labels.Rank" /></label>
-					<div class="blank" />
-				</div>
+							<label style="position: relative; left: -3px"><Localized label="Genesys.Labels.Rank" /></label>
+							<div class="blank" />
+						</div>
 
-				<div class="body">
-					<ContextMenu v-for="skill in skills.filter(s => s.systemData.category === skillCategory).sort((l: GenesysItem, r: GenesysItem) => (l.name < r.name) ? -1 : (l.name > r.name) ? 1 : 0)" :key="skill.id" class="skill row">
-						<template v-slot:menu-items>
-							<MenuItem @click="toggleCareerSkill(skill)" v-if="context.data.editable">
-								<template v-slot:icon><i :class="`${skill.systemData.career ? 'fat' : 'fas'} fa-stars`"></i></template>
-								{{ skill.systemData.career ? unmarkCareerLabel : markCareerLabel }}
-							</MenuItem>
+						<div class="body">
+							<ContextMenu v-for="skill in skills.filter(s => s.systemData.category === skillCategory).sort((l: GenesysItem, r: GenesysItem) => (l.name < r.name) ? -1 : (l.name > r.name) ? 1 : 0)" :key="skill.id" class="skill row">
+								<template v-slot:menu-items>
+									<MenuItem @click="toggleCareerSkill(skill)" v-if="context.data.editable">
+										<template v-slot:icon><i :class="`${skill.systemData.career ? 'fat' : 'fas'} fa-stars`"></i></template>
+										{{ skill.systemData.career ? unmarkCareerLabel : markCareerLabel }}
+									</MenuItem>
 
-							<MenuItem @click="freeSkillRank(skill, 1)" v-if="context.data.editable">
-								<template v-slot:icon><i class="fas fa-circle-up"></i></template>
-								{{ freeRankUpLabel }}
-							</MenuItem>
+									<MenuItem @click="freeSkillRank(skill, 1)" v-if="context.data.editable">
+										<template v-slot:icon><i class="fas fa-circle-up"></i></template>
+										{{ freeRankUpLabel }}
+									</MenuItem>
 
-							<MenuItem @click="freeSkillRank(skill, -1)" v-if="context.data.editable">
-								<template v-slot:icon><i class="fas fa-circle-down"></i></template>
-								{{ freeRankDownLabel }}
-							</MenuItem>
+									<MenuItem @click="freeSkillRank(skill, -1)" v-if="context.data.editable">
+										<template v-slot:icon><i class="fas fa-circle-down"></i></template>
+										{{ freeRankDownLabel }}
+									</MenuItem>
 
-							<MenuItem @click="editSkill(skill)">
-								<template v-slot:icon><i class="fas fa-edit"></i></template>
-								{{ editLabel }}
-							</MenuItem>
+									<MenuItem @click="editSkill(skill)">
+										<template v-slot:icon><i class="fas fa-edit"></i></template>
+										{{ editLabel }}
+									</MenuItem>
 
-							<MenuItem @click="deleteSkill(skill)" v-if="context.data.editable">
-								<template v-slot:icon><i class="fas fa-trash"></i></template>
-								{{ deleteLabel }}
-							</MenuItem>
-						</template>
+									<MenuItem @click="deleteSkill(skill)" v-if="context.data.editable">
+										<template v-slot:icon><i class="fas fa-trash"></i></template>
+										{{ deleteLabel }}
+									</MenuItem>
+								</template>
 
-						<img :src="skill.img" :alt="skill.name" />
-						<a class="name" @click="rollSkill(skill)">
-							<span>{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.system.characteristic.capitalize()}`" />)</span>
-							<i v-if="skill.system.career" class="fas fa-stars"></i>
-						</a>
+								<img :src="skill.img" :alt="skill.name" />
+								<a class="name" @click="rollSkill(skill)">
+									<span>{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.system.characteristic.capitalize()}`" />)</span>
+									<i v-if="skill.system.career" class="fas fa-stars"></i>
+								</a>
 
-						<span class="rank-display">
-							{{ skill.system.rank }}
+								<span class="rank-display">
+									{{ skill.system.rank }}
 
-							<a
-								v-if="(skill.systemData.rank < 5 && skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1)) || (!skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1) + 5)"
-								@click="purchaseSkillRank(skill)"
-							>
-								<i class="fas fa-arrow-circle-up" />
-							</a>
-						</span>
+									<a
+										v-if="(skill.systemData.rank < 5 && skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1)) || (!skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1) + 5)"
+										@click="purchaseSkillRank(skill)"
+									>
+										<i class="fas fa-arrow-circle-up" />
+									</a>
+								</span>
 
-						<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="system.characteristics[skill.systemData.characteristic]" />
-					</ContextMenu>
-				</div>
-			</div>
+								<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="system.characteristics[skill.systemData.characteristic]" />
+							</ContextMenu>
+						</div>
+					</div>
+				</template>
+			</MasonryWall>
 		</div>
 
 		<section class="experience">
@@ -222,14 +227,6 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 
 	.skills-row {
 		grid-column: 1 / span all;
-	}
-
-	.experience {
-		display: grid;
-		grid-template-columns: auto 1fr auto;
-		width: 100%;
-		padding-top: 0;
-		padding-bottom: 0;
 	}
 }
 
@@ -262,8 +259,8 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 }
 
 .skills-row {
-	column-count: 2;
-	column-fill: balance;
+	//column-count: 2;
+	//column-fill: balance;
 	width: 100%;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
