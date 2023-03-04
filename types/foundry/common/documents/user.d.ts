@@ -43,7 +43,7 @@ declare module foundry {
 			 * @param permission The permission name from USER_PERMISSIONS to test
 			 * @return Does the user have at least this permission
 			 */
-			hasPermission(permission: UserPermission): boolean;
+			hasPermission(permission: UserPermission | string): boolean;
 
 			/**
 			 * Test whether the User has at least the permission level of a certain role

@@ -26,7 +26,34 @@ export enum SocketOperation {
 	 * Forcibly update the StoryPointTracker data.
 	 */
 	UpdateStoryPointTracker,
+
+	/**
+	 * Called when a player wants to claim an initiative slot.
+	 */
+	ClaimInitiativeSlot,
 }
+
+export type ClaimInitiativeSlotData = {
+	/**
+	 * Combat ID to claim a slot in.
+	 */
+	combatId: string;
+
+	/**
+	 * Combatant ID claiming the slot.
+	 */
+	combatantId: string;
+
+	/**
+	 * Round to claim a slot in.
+	 */
+	round: number;
+
+	/**
+	 * Slot to claim.
+	 */
+	slot: number;
+};
 
 /**
  * Socket Payload typing
@@ -35,6 +62,11 @@ export type SocketPayload<T extends { [key: string]: unknown }> = {
 	operation: SocketOperation;
 	data?: T;
 };
+
+/**
+ * Claim an Initiative slot.
+ */
+export function emit(operation: SocketOperation.ClaimInitiativeSlot, data: ClaimInitiativeSlotData): void;
 
 /**
  * Spend a Story Point.

@@ -54,6 +54,9 @@ declare global {
 		/** Has this combatant been marked as defeated? */
 		get isDefeated(): boolean;
 
+		/** Combatant's current scene */
+		get sceneId(): string;
+
 		/* -------------------------------------------- */
 		/*  Methods                                     */
 		/* -------------------------------------------- */

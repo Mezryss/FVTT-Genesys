@@ -15,6 +15,7 @@ import GenesysCombatTracker from '@/combat/GenesysCombatTracker';
 
 declare global {
 	const ui: FoundryUI;
+	const canvas: Canvas;
 
 	// Override the typings for various CONFIG values in order to provide strongly-typed config within the system.
 	const CONFIG: Config<

@@ -167,7 +167,6 @@ export function register() {
 			 * Player has spent a story point.
 			 */
 			case SocketOperation.PlayerSpendStoryPoint:
-				console.log('STORY POINT SPENDING');
 				// Only GM clients should process the operation.
 				if (!game.user.isGM) {
 					return;
@@ -175,25 +174,20 @@ export function register() {
 
 				// 1. Update the story point settings.
 				const storyPoints = StoryPointTracker.instance!.storyPoints;
-				console.log(storyPoints);
 
 				// Do nothing if there are no player points to actually spend.
 				if (storyPoints.player === 0) {
 					return;
 				}
-				console.log('There are player points to spend.');
 
 				await game.settings.set(SETTINGS_NAMESPACE, KEY_STORY_POINTS, {
 					gm: storyPoints.gm + 1,
 					player: storyPoints.player - 1,
 				});
-				console.log('Setting updated');
 
 				// 2. Force re-render locally & tell other to re-render.
 				StoryPointTracker.forceRender();
 				socketEmit(SocketOperation.UpdateStoryPointTracker);
-
-				console.log('This should have worked..');
 
 				break;
 

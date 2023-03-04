@@ -123,7 +123,7 @@ declare class CombatTracker<TCombat extends Combat | null, TOptions extends Comb
 	 * Attach context menu options to elements in the tracker
 	 * @param html The HTML element to which context options are attached
 	 */
-	protected _contextMenu(html: HTMLElement): void;
+	protected _contextMenu(html: JQuery<HTMLElement>): void;
 
 	/**
 	 * Get the sidebar directory entry context options

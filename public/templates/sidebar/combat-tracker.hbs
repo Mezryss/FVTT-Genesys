@@ -59,11 +59,9 @@
 	</header>
 
 	<ol id="combat-tracker" class="directory-list">
-		{{#if round}}
-			<h1>STARTED</h1>
-		{{else}}
-			{{#each turns}}
-				<li class="combatant actor directory-item flexrow {{css}} disposition-{{disposition}}" data-combatant-id="{{id}}">
+		{{#each turns}}
+			{{#if claimed}}
+				<li class="combatant actor directory-item flexrow {{css}} disposition-{{disposition}} claimed" data-combatant-id="{{id}}">
 					<img class="token-image" data-src="{{img}}" alt="{{name}}" />
 					<div class="token-name flexcol">
 						<h4>{{name}}</h4>
@@ -102,8 +100,28 @@
 						{{/if}}
 					</div>
 				</li>
-			{{/each}}
-		{{/if}}
+			{{else}}
+				<li class="combatant actor directory-item flexrow {{css}} disposition-{{disposition}}">
+					<div class="token-name flexcol">
+						{{#if canClaim}}
+							<a data-claim-slot="{{@index}}">Claim This Initiative Slot</a>
+						{{else}}
+							<h4>Unclaimed</h4>
+						{{/if}}
+					</div>
+
+					<div class="token-initiative">
+						{{#if hasRolled}}
+							<span class="initiative font-genesys-symbols">
+								{{#repeat (floor initiative)}}s{{/repeat}}{{#repeat (mul 100 (toFixed (sub initiative (floor initiative)) 2))}}a{{/repeat}}
+							</span>
+						{{else if owner}}
+							<a class="combatant-control roll" data-tooltip="COMBAT.InitiativeRoll" data-control="rollInitiative"></a>
+						{{/if}}
+					</div>
+				</li>
+			{{/if}}
+		{{/each}}
 	</ol>
 
 	<nav id="combat-controls" class="directory-footer flexrow" data-tooltip-direction="UP">

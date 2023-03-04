@@ -9,9 +9,50 @@
 import GenesysCombatant from '@/combat/GenesysCombatant';
 import GenesysRoller from '@/dice/GenesysRoller';
 import DicePrompt from '@/app/DicePrompt';
+import { ClaimInitiativeSlotData, emit as socketEmit, SOCKET_NAME, SocketOperation, SocketPayload } from '@/socket';
+
+const FLAG_CLAIMANTS = 'claimants';
+
+type ClaimantData = Record<number, Record<number, string>>;
 
 export default class GenesysCombat extends Combat {
 	initiativeSkills: string[] = [];
+
+	claimantForSlot(round: number, slot: number): string | undefined {
+		const claimants = this.getFlag('genesys', FLAG_CLAIMANTS) as ClaimantData | undefined;
+
+		if (!claimants) {
+			return undefined;
+		}
+
+		return claimants[round]?.[slot];
+	}
+
+	async claimSlot(round: number, slot: number, combatantId: string) {
+		if (!game.user.isGM) {
+			socketEmit(SocketOperation.ClaimInitiativeSlot, {
+				combatId: this.id,
+				combatantId,
+				round,
+				slot,
+			});
+			return;
+		}
+
+		console.error(`${combatantId} CLAIMING SLOT ${slot} IN ROUND ${round}!`);
+
+		const claimants = { ...(this.getFlag('genesys', FLAG_CLAIMANTS) as ClaimantData | undefined) };
+
+		if (!claimants[round]) {
+			claimants[round] = {};
+		}
+
+		claimants[round][slot] = combatantId;
+
+		await this.setFlag('genesys', FLAG_CLAIMANTS, claimants);
+
+		console.error(this.flags);
+	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	override async rollInitiative(ids: string | string[], { formula = null, updateTurn = true, messageOptions = {} }: RollInitiativeOptions = {}, prompt: boolean = false) {
@@ -84,4 +125,23 @@ export default class GenesysCombat extends Combat {
 		await ChatMessage.implementation.create(messages);
 		return this;
 	}
+}
+
+/**
+ * Register socket listener for Genesys Combats
+ */
+export function register() {
+	game.socket.on(SOCKET_NAME, async (payload: SocketPayload<ClaimInitiativeSlotData>) => {
+		if (payload.operation !== SocketOperation.ClaimInitiativeSlot || !payload.data) {
+			return;
+		}
+
+		const combat = game.combats.get(payload.data.combatId) as GenesysCombat | undefined;
+		if (!combat) {
+			console.error(`Socket received Claim Initiative payload with invalid combat ID ${payload.data.combatId}`);
+			return;
+		}
+
+		await combat.claimSlot(payload.data.round, payload.data.slot, payload.data.combatantId);
+	});
 }
