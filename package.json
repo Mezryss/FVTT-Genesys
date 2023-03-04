@@ -13,7 +13,8 @@
 		"dev": "concurrently \"gulp watch\" \"vite\"",
 		"watch:data": "gulp watch",
 		"lint": "eslint src --ext .vue,.js,.ts",
-		"format": "prettier --write src/ types/"
+		"format": "prettier --write src/ types/",
+		"release": "yarn build && gulp zip"
 	},
 	"devDependencies": {
 		"@rushstack/eslint-patch": "^1.2.0",
@@ -27,6 +28,7 @@
 		"@yeger/vue-masonry-wall": "^3.4.4",
 		"concurrently": "^7.6.0",
 		"eslint": "^8.34.0",
+		"eslint-config-prettier": "^8.6.0",
 		"eslint-plugin-vue": "^9.9.0",
 		"gulp": "^4.0.2",
 		"gulp-clean": "^0.4.0",
