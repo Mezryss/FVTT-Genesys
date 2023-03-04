@@ -6,13 +6,14 @@
  * @file Shared functionality between the Minion, Rival, and Nemesis Sheets.
  */
 
+import GenesysActorSheet from '@/actor/GenesysActorSheet';
 import AdversaryDataModel from '@/actor/data/AdversaryDataModel';
 import GenesysItem from '@/item/GenesysItem';
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
 import TalentDataModel from '@/item/data/TalentDataModel';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import VueSheet from '@/vue/VueSheet';
-import GenesysActorSheet from '@/actor/GenesysActorSheet';
+import { ActorSheetContext } from '@/vue/SheetContext';
 
 /**
  * Actor sheet used for Player Characters
@@ -29,6 +30,13 @@ export default class AdversarySheet extends VueSheet(GenesysActorSheet<Adversary
 				},
 			],
 			width: 480,
+		};
+	}
+
+	override async getVueContext(): Promise<ActorSheetContext<AdversaryDataModel>> {
+		return {
+			sheet: this,
+			data: await this.getData(),
 		};
 	}
 

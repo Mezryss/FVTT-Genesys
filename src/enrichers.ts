@@ -73,7 +73,7 @@ export function register() {
 		 * Enricher to easily add Genesys symbols into the document.
 		 */
 		{
-			pattern: /@symbols?\[(?<symbols>\w+)]/gim,
+			pattern: /@sym(bols?)?\[(?<symbols>\w+)]/gim,
 			enricher: async (match, _) => {
 				const span = document.createElement('span');
 				span.className = 'font-genesys-symbols nolig';
