@@ -12,7 +12,7 @@ const system = computed(() => context.data.item.systemData);
 </script>
 
 <template>
-	<BasicItemSheet show-effects-tab>
+	<BasicItemSheet>
 		<template v-slot:data>
 			<section class="data-grid">
 				<div class="row">
