@@ -7,7 +7,7 @@
  */
 
 import AbilitySheet from '@/vue/sheets/item/AbilitySheet.vue';
-import ArmorSheet from '@/vue/sheets/item/ArmorSheet.vue';
+import ArmorSheet from '@/item/sheets/ArmorSheet';
 import EquipmentSheet from '@/vue/sheets/item/EquipmentSheet.vue';
 import InjurySheet from '@/vue/sheets/item/InjurySheet.vue';
 import ItemQualitySheet from '@/vue/sheets/item/ItemQualitySheet.vue';
@@ -50,7 +50,7 @@ export function register() {
 		makeDefault: true,
 	});
 
-	Items.registerSheet('genesys', basicSheet(ArmorSheet), {
+	Items.registerSheet('genesys', ArmorSheet, {
 		types: ['armor'],
 		makeDefault: true,
 	});

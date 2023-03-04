@@ -128,6 +128,13 @@ function damageForWeapon(weapon: GenesysItem<WeaponDataModel>) {
 					</div>
 					<div class="soak">{{ armor.systemData.soak }}</div>
 					<div class="defense">{{ armor.systemData.defense }}</div>
+					<div v-if="armor.systemData.qualities.length > 0" class="qualities">
+						<Tooltip v-for="quality in armor.systemData.qualities" :key="quality.name" :content="quality.description">
+							<div class="quality">
+								{{ quality.name }} <template v-if="quality.isRated">{{ quality.rating }}</template>
+							</div>
+						</Tooltip>
+					</div>
 					<div class="description"><Enriched :value="armor.systemData.description" /></div>
 				</div>
 			</div>
@@ -224,6 +231,17 @@ function damageForWeapon(weapon: GenesysItem<WeaponDataModel>) {
 
 	.armor {
 		grid-template-columns: 1.5rem 1fr repeat(2, 60px);
+		grid-template-rows: repeat(3, auto);
+
+		.qualities {
+			grid-row: 2 / span 1;
+			grid-column: 1 / span all;
+		}
+
+		.description {
+			grid-row: 3 / span 1;
+			grid-column: 1 / span all;
+		}
 	}
 
 	.weapon {
@@ -236,21 +254,24 @@ function damageForWeapon(weapon: GenesysItem<WeaponDataModel>) {
 		.qualities {
 			grid-column: 1 / span all;
 			grid-row: 2 / span 1;
-			justify-self: left;
-			padding-left: 1em;
+		}
+	}
 
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			gap: 0.25em;
+	.qualities {
+		justify-self: left;
+		padding-left: 1em;
 
-			.quality {
-				background: transparentize(colors.$gold, 0.7);
-				border: 1px dashed colors.$gold;
-				border-radius: 0.25em;
-				padding: 0.25em;
-				font-family: 'Bebas Neue', sans-serif;
-			}
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0.25em;
+
+		.quality {
+			background: transparentize(colors.$gold, 0.7);
+			border: 1px dashed colors.$gold;
+			border-radius: 0.25em;
+			padding: 0.25em;
+			font-family: 'Bebas Neue', sans-serif;
 		}
 	}
 

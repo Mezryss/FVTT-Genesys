@@ -9,6 +9,15 @@ import ArmorDataModel from '@/item/data/ArmorDataModel';
 const context = inject<ItemSheetContext<ArmorDataModel>>(RootContext)!;
 
 const system = computed(() => context.data.item.systemData);
+
+async function deleteQuality(index: number) {
+	const updatedQualities = [...system.value.qualities];
+	updatedQualities.splice(index, 1);
+
+	await context.data.item.update({
+		'system.qualities': updatedQualities,
+	});
+}
 </script>
 
 <template>
@@ -44,7 +53,35 @@ const system = computed(() => context.data.item.systemData);
 					<label><Localized label="Genesys.Labels.Source" /></label>
 					<input type="text" name="system.source" :value="system.source" />
 				</div>
+
+				<div class="row">
+					<label><Localized label="Genesys.Labels.Qualities" /></label>
+					<div>
+						<div v-for="(quality, index) in system.qualities" :key="index" class="data">
+							<div>
+								{{ quality.name }} <span v-if="quality.isRated">{{ quality.rating }}</span>
+							</div>
+							<a @click="deleteQuality(index)"><i class="fas fa-trash"></i></a>
+						</div>
+					</div>
+				</div>
 			</section>
 		</template>
 	</BasicItemSheet>
 </template>
+
+<style lang="scss" scoped>
+@use '@scss/vars/colors.scss';
+
+.data {
+	display: grid;
+	grid-template-columns: /* Name */ 1fr /* Delete Button */ auto;
+	align-items: center;
+	border-bottom: 1px dashed colors.$blue;
+	padding: 2px;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+</style>

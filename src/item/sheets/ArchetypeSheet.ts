@@ -9,12 +9,13 @@
 import ArchetypeDataModel from '@/item/data/ArchetypeDataModel';
 import VueArchetypeSheet from '@/vue/sheets/item/ArchetypeSheet.vue';
 
-import './WeaponSheet.scss';
 import GenesysItemSheet, { DropData } from '@/item/GenesysItemSheet';
 import GenesysItem from '@/item/GenesysItem';
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
 import VueSheet from '@/vue/VueSheet';
 import { GenesysItemSheetData, ItemSheetContext } from '@/vue/SheetContext';
+
+import './ArchetypeSheet.scss';
 
 /**
  * List of item types that are not allowed to be granted by an archetype.

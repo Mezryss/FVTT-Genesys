@@ -164,6 +164,7 @@ Item:
       - equipment
     defense: 0
     soak: 0
+    qualities: []
   career:
     templates: [basic]
     # Item Data for career skills granted by this career.
