@@ -14,6 +14,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
 
+      - name: Install Dependencies
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+
       - name: Build Project
         uses: borales/actions-yarn@v4
         with:
