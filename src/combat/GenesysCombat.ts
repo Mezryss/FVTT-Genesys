@@ -13,7 +13,7 @@ import { ClaimInitiativeSlotData, emit as socketEmit, SOCKET_NAME, SocketOperati
 
 const FLAG_CLAIMANTS = 'claimants';
 
-type ClaimantData = Record<number, Record<number, string>>;
+type ClaimantData = Record<number, Record<number, string | undefined>>;
 
 export default class GenesysCombat extends Combat {
 	initiativeSkills: string[] = [];
@@ -39,8 +39,6 @@ export default class GenesysCombat extends Combat {
 			return;
 		}
 
-		console.error(`${combatantId} CLAIMING SLOT ${slot} IN ROUND ${round}!`);
-
 		const claimants = { ...(this.getFlag('genesys', FLAG_CLAIMANTS) as ClaimantData | undefined) };
 
 		if (!claimants[round]) {
@@ -50,8 +48,14 @@ export default class GenesysCombat extends Combat {
 		claimants[round][slot] = combatantId;
 
 		await this.setFlag('genesys', FLAG_CLAIMANTS, claimants);
+	}
 
-		console.error(this.flags);
+	async revokeSlot(round: number, slot: number) {
+		if (!game.user.isGM) {
+			return;
+		}
+
+		await this.unsetFlag('genesys', `claimants.${round}.${slot}`);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

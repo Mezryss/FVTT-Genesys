@@ -167,6 +167,10 @@ Genesys:
   Enrichers:
     Difficulty: '{difficulty} [{symbols}] {skill} check'  # e.g. Average [♦♦] Coercion Check
 
+  # Combat Tracker
+  CombatTracker:
+    RevokeInitiativeClaim: Revoke Initiative Claim
+
   # Sheet Tab names
   Tabs:
     Skills: Skills

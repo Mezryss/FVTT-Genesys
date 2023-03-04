@@ -30,15 +30,11 @@
 		text-shadow: none;
 	}
 
-	.disposition-friendly {
+	.slot-pc {
 		background: transparentize(#155786, 0.7);
 	}
 
-	.disposition-neutral {
-		background: transparentize(#aab1b9, 0.7);
-	}
-
-	.disposition-hostile {
+	.slot-npc {
 		background: transparentize(#923414, 0.7);
 	}
 }

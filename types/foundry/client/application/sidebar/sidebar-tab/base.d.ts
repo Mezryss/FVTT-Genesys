@@ -40,7 +40,7 @@ declare global {
 	interface EntryContextOption {
 		name: string;
 		icon: string;
-		condition: ContextOptionCondition;
+		condition?: ContextOptionCondition;
 		callback: (li: JQuery) => void;
 	}
 }

@@ -57,8 +57,11 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 			return;
 		}
 
-		// Ensure our token disposition matches that of the slot.
-		if (combatant.disposition !== (this.viewed.turns[slotIndex] as GenesysCombatant).disposition) {
+		// Ensure the selected combatant matches the PC/NPC side of the slot.
+		if (
+			(combatant.disposition === 'friendly' && (this.viewed.turns[slotIndex] as GenesysCombatant).disposition !== 'friendly') ||
+			(combatant.disposition !== 'friendly' && (this.viewed.turns[slotIndex] as GenesysCombatant).disposition === 'friendly')
+		) {
 			ui.notifications.warn(`You can't claim this initiative slot with ${combatant.name} - it's on the wrong side!`);
 			return;
 		}
@@ -75,8 +78,6 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 	override async getData(options: CombatTrackerOptions) {
 		const data = await super.getData(options);
 		const initiativeSkills = await this.initiativeSkills();
-
-		console.warn(this.viewed?.flags);
 
 		if (this.viewed) {
 			this.viewed.initiativeSkills = initiativeSkills;
@@ -126,7 +127,7 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 			return {
 				...t,
 				...claimantOverride,
-				disposition: combatant.disposition,
+				slotType: combatant.disposition === 'friendly' ? 'pc' : 'npc',
 				initiativeSkill: combatant.initiativeSkillName ?? initiativeSkills[0],
 				claimed,
 				canClaim,
@@ -146,6 +147,7 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 	protected override _getEntryContextOptions(): EntryContextOption[] {
 		const baseEntries = super._getEntryContextOptions();
 
+		// Update the Reroll Initiative behavior.
 		const rerollIndex = baseEntries.findIndex((e) => e.name === 'COMBAT.CombatantReroll');
 
 		if (rerollIndex >= 0) {
@@ -155,7 +157,19 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 			};
 		}
 
-		return baseEntries;
+		// Allow GMs to revoke an initiative slot claim.
+		const revokeClaim = {
+			name: 'Genesys.CombatTracker.RevokeInitiativeClaim',
+			icon: '<i class="fas fa-broom"></i>',
+			callback: async (li: JQuery<HTMLElement>) => {
+				const index = +li.data('slot-index');
+				if (!isNaN(index)) {
+					await this.viewed.revokeSlot(this.viewed.round, index);
+				}
+			},
+		};
+
+		return [...baseEntries, revokeClaim];
 	}
 
 	protected override async _onCombatantControl(event: JQuery.ClickEvent<HTMLElement, HTMLElement, HTMLElement>) {

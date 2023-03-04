@@ -61,7 +61,7 @@
 	<ol id="combat-tracker" class="directory-list">
 		{{#each turns}}
 			{{#if claimed}}
-				<li class="combatant actor directory-item flexrow {{css}} disposition-{{disposition}} claimed" data-combatant-id="{{id}}">
+				<li class="combatant actor directory-item flexrow {{css}} slot-{{slotType}} claimed" data-combatant-id="{{id}}" data-slot-index="{{@index}}">
 					<img class="token-image" data-src="{{img}}" alt="{{name}}" />
 					<div class="token-name flexcol">
 						<h4>{{name}}</h4>
@@ -101,12 +101,12 @@
 					</div>
 				</li>
 			{{else}}
-				<li class="combatant actor directory-item flexrow {{css}} disposition-{{disposition}}">
+				<li class="combatant actor directory-item flexrow {{css}} slot-{{slotType}}">
 					<div class="token-name flexcol">
-						{{#if canClaim}}
+						{{#if (and canClaim active)}}
 							<a data-claim-slot="{{@index}}">Claim This Initiative Slot</a>
 						{{else}}
-							<h4>Unclaimed</h4>
+							<h4>{{toUpperCase slotType}} Slot</h4>
 						{{/if}}
 					</div>
 
