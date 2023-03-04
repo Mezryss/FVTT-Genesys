@@ -60,8 +60,7 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 
 		// If it's an archetype, delete the old one and apply the new one.
 		if (droppedItem.type === 'archetype') {
-			// Don't allow an archetype change if we've already started making changes to the character!
-			if (this.actor.systemData.experienceJournal.entries.length > 1) {
+			if (!this.canRemoveArchetype()) {
 				return false;
 			}
 
@@ -167,6 +166,10 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 
 			'system.experienceJournal.entries': workingData.experienceJournal.entries,
 		});
+	}
+
+	canRemoveArchetype() {
+		return this.actor.systemData.experienceJournal.entries.length <= 1;
 	}
 
 	/**

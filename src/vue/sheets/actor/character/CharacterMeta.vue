@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, onBeforeMount, onUpdated, ref, toRaw } from 'vue';
+import { computed, inject, onBeforeMount, onUpdated, ref, toRaw } from 'vue';
 
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import { vLocalize } from '@/vue/directives';
@@ -72,7 +72,7 @@ onUpdated(updateArchetypeAndCareer);
 								{{ editLabel }}
 							</MenuItem>
 
-							<MenuItem v-if="rootContext.data.editable" @click="removeArchetype(archetype)">
+							<MenuItem v-if="rootContext.data.editable && rootContext.sheet.canRemoveArchetype()" @click="removeArchetype(archetype)">
 								<template v-slot:icon><i class="fas fa-trash"></i></template>
 								{{ deleteLabel }}
 							</MenuItem>
