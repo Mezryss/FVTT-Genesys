@@ -1,3 +1,3 @@
 # Alpha 0.1.0
 
-Alpha testing has begun!
+Alpha testing has begun! You'll have to wait for future changes before details are added to changelog...
