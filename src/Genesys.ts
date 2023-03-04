@@ -91,9 +91,9 @@ Hooks.once('init', async () => {
 
 	// Misc. modules with one-time registrations
 	registerCombat();
-	registerDice();
 	registerEnrichers();
 	registerFonts();
+	registerDice();
 	registerHandlebarsHelpers();
 	registerSettings();
 
