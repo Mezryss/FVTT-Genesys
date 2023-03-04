@@ -58,5 +58,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./genesys-${{ steps.version.outputs.version }}.zip
-          asset_name: genesys-${{ steps.version.outputs.version }}.zip
+          asset_name: genesys.zip
           asset_content_type: application/zip
