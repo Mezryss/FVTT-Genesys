@@ -27,6 +27,8 @@ packs:
     type: Item
 socket: true
 url: https://github.com/Mezryss/FVTT-Genesys
+bugs: https://github.com/Mezryss/FVTT-Genesys/issues
+changelog: https://github.com/Mezryss/FVTT-Genesys/blob/release/CHANGELOG.md
 license: https://github.com/Mezryss/FVTT-Genesys/blob/main/LICENSE
 manifest: https://github.com/Mezryss/FVTT-Genesys/releases/latest/download/manifest.json
 download: https://github.com/Mezryss/FVTT-Genesys/releases/latest/download/genesys.zip
