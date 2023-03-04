@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject, onBeforeMount, onUpdated, ref, toRaw } from 'vue';
+import { inject, onBeforeMount, onUpdated, ref, toRaw } from 'vue';
 
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import { vLocalize } from '@/vue/directives';
