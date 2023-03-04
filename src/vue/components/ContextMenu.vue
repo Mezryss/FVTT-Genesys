@@ -64,7 +64,7 @@ function closeContextMenu(event: Event) {
 	@include backgrounds.crossboxes;
 	border: 1px solid colors.$gold;
 	border-radius: 0.5em;
-	z-index: 100;
 	padding: 0.25em;
+	z-index: 1;
 }
 </style>

@@ -117,7 +117,7 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 					name: claimant.name,
 					img: claimant.img ?? CONST.DEFAULT_TOKEN,
 					owner: claimant.isOwner,
-					defeated: claimant.isDefeated,
+					defeated,
 					hidden: claimant.hidden,
 					canPing: claimant.sceneId === canvas.scene?.id && game.user.hasPermission('PING_CANVAS'),
 					effects,

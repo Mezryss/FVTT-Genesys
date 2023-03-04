@@ -140,8 +140,8 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 
 		<div class="skills-row">
 			<MasonryWall :column-width="300" :items="skillCategories" :gap="8">
-				<template #default="{ item: skillCategory }">
-					<div class="skill-category">
+				<template #default="{ item: skillCategory, index }">
+					<div class="skill-category" :style="`position: relative; z-index: ${skillCategories.length - index}`">
 						<div class="header">
 							<label><Localized :label="`Genesys.Labels.${skillCategory.capitalize()}Skills`" /></label>
 							<div class="blank" />
@@ -151,7 +151,11 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 						</div>
 
 						<div class="body">
-							<ContextMenu v-for="skill in skills.filter(s => s.systemData.category === skillCategory).sort((l: GenesysItem, r: GenesysItem) => (l.name < r.name) ? -1 : (l.name > r.name) ? 1 : 0)" :key="skill.id" class="skill row">
+							<ContextMenu
+								v-for="skill in skills.filter(s => s.systemData.category === skillCategory).sort((l: GenesysItem, r: GenesysItem) => (l.name < r.name) ? -1 : (l.name > r.name) ? 1 : 0)"
+								:key="skill.id"
+								class="skill row"
+							>
 								<template v-slot:menu-items>
 									<MenuItem @click="toggleCareerSkill(skill)" v-if="context.data.editable">
 										<template v-slot:icon><i :class="`${skill.systemData.career ? 'fat' : 'fas'} fa-stars`"></i></template>
@@ -189,7 +193,10 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 									{{ skill.system.rank }}
 
 									<a
-										v-if="(skill.systemData.rank < 5 && skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1)) || (!skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1) + 5)"
+										v-if="
+											(skill.systemData.rank < 5 && skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1)) ||
+											(!skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1) + 5)
+										"
 										@click="purchaseSkillRank(skill)"
 									>
 										<i class="fas fa-arrow-circle-up" />
@@ -259,8 +266,8 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 }
 
 .skills-row {
-	//column-count: 2;
-	//column-fill: balance;
+	position: relative;
+	z-index: 1;
 	width: 100%;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
