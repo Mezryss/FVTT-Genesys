@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
+import { computed, inject, toRaw } from 'vue';
 
 import { ItemSheetContext, RootContext } from '@/vue/SheetContext';
 import BasicItemSheet from '@/vue/sheets/item/BasicItemSheet.vue';
@@ -15,7 +15,7 @@ async function deleteSkill(index: number) {
 	const updatedSkills = [...system.value.skills];
 	updatedSkills.splice(index, 1);
 
-	await context.data.item.update({
+	await toRaw(context.data.item).update({
 		'system.skills': updatedSkills,
 	});
 }
@@ -24,7 +24,7 @@ async function deleteQuality(index: number) {
 	const updatedQualities = [...system.value.qualities];
 	updatedQualities.splice(index, 1);
 
-	await context.data.item.update({
+	await toRaw(context.data.item).update({
 		'system.qualities': updatedQualities,
 	});
 }

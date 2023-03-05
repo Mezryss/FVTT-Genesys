@@ -43,13 +43,15 @@ async function doAlphaNotice() {
 		Hello! Thank you for giving the Genesys system a try! Please note that this system is currently in an alpha state; it is ready for some early playtesting and experimentation, but there are many features that are yet unimplemented and may be bugs!
 	</p>
 	<div style="text-align: center">@symbol[satfhd]</div>
-	<h4 style="font-family: 'Bebas Neue', sans-serif">Major Known Issues</h4>
-	<p>Please know that there currently a couple of major known issues (this is an alpha, after all). In particular, the following are known:</p>
+	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li>Unsortable Inventory in Character Sheet.</li>
-		<li>Skills Tab in Character Sheet has some major performance problems.</li>
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/32">#32</a>] Deleting qualities & skills on an item embedded in an Actor failed with a proxy error.</li>
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/31">#31</a>] Quantity adjustment for items in inventory doesn't work.</li>
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/27">#27</a>] Disallow archetype removal if XP has changed since Archetype was applied.</li>
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/25">#25</a>] Allow adding item qualities to Armor.</li>
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/22">#22</a>] In skills tab, context menu can appear below XP Container and other skill categories.</li>
+		<li>Disallowed adding ActiveEffects to Item Qualities until a better solution is implemented for referencing or embedding them in items.</li>
 	</ul>
-	<p>The current Character Sheet is poorly implemented, and the product of a rapid rewrite from Handlebars + JQuery into Vue 3. I intend to rewrite the sheet entirely before 1.0, but for now The Show Must Go On.</p>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
 		<li><strong>1.0:</strong> Core Rulebook Compatibility</li>
@@ -58,6 +60,7 @@ async function doAlphaNotice() {
 		<li><strong>1.3:</strong> Community Feature Focus</li>
 		<li><strong>1.4:</strong> Automation Focus</li>
 	</ul>
+	<div style="text-align: center">@dice[apbdcs]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Useful Links</h4>
 	<ul style="margin-top: 0">
 		<li><a href="https://github.com/Mezryss/FVTT-Genesys/wiki">Project Wiki</a></li>
@@ -66,8 +69,6 @@ async function doAlphaNotice() {
 		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues">Report Bugs &amp; Suggest Features</a></li>
 		<li><a href="https://github.com/Mezryss/FVTT-Genesys/blob/main/LICENSE">Licensed under the MIT License</a></li>
 	</ul>
-	<div style="text-align: center">@dice[apbdcs]</div>
-	<p>And finally, I'd like to give a special thanks to the folks on the <a href="https://discord.com/invite/GVpYH8x9YB">Genesys RPG Community</a> Discord server for letting me bounce ideas off them, supporting me with their enthusiasm, and generally putting up with my bullshit!</p>
 	`,
 		{ async: true },
 	);

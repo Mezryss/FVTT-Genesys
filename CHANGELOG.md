@@ -1,9 +1,13 @@
+## Alpha 0.1.3
+### Bug Fixes:
+- Fix [#32](https://github.com/Mezryss/FVTT-Genesys/issues/32): Deleting qualities & skills on an item embedded in an Actor failed with a proxy error.
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.1.2
 ### Bug Fixes:
 - Fix [#31](https://github.com/Mezryss/FVTT-Genesys/issues/31): Quantity adjustment for items in inventory doesn't work.
-
-<details>
-<summary>Alpha 0.1.1</summary>
 
 ## Alpha 0.1.1
 ### Updates:
