@@ -51,6 +51,18 @@ async function cycleCarryState(item: GenesysItem<EquipmentDataModel>) {
 		'system.state': newState,
 	});
 }
+
+async function adjustQuantity(item: GenesysItem<EquipmentDataModel>, amount: number) {
+	const adjustedQuantity = item.systemData.quantity + amount;
+
+	if (adjustedQuantity <= 0) {
+		await item.delete();
+	} else {
+		await item.update({
+			'system.quantity': adjustedQuantity,
+		});
+	}
+}
 </script>
 
 <template>
@@ -71,9 +83,9 @@ async function cycleCarryState(item: GenesysItem<EquipmentDataModel>) {
 					<a>{{ item.name }}</a>
 				</div>
 				<div class="quantity">
-					<a v-if="rootContext.data.editable"><i class="fas fa-minus"></i></a>
+					<a v-if="rootContext.data.editable" @click="adjustQuantity(item, -1)"><i class="fas fa-minus"></i></a>
 					<span>{{ item.systemData.quantity }}</span>
-					<a v-if="rootContext.data.editable"><i class="fas fa-plus"></i></a>
+					<a v-if="rootContext.data.editable" @click="adjustQuantity(item, 1)"><i class="fas fa-plus"></i></a>
 				</div>
 				<div>
 					<template v-if="item.systemData.encumbrance < 0">+{{ Math.abs(item.systemData.encumbrance) }}</template>
