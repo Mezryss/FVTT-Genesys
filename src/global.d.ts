@@ -12,33 +12,39 @@ import GenesysItem from '@/item/GenesysItem';
 import GenesysCombat from '@/combat/GenesysCombat';
 import GenesysCombatant from '@/combat/GenesysCombatant';
 import GenesysCombatTracker from '@/combat/GenesysCombatTracker';
+import { GENESYS_CONFIG } from '@/config';
 
 declare global {
 	const ui: FoundryUI;
 	const canvas: Canvas;
 
+	interface GenesysConfig
+		extends Config<
+			AmbientLightDocument,
+			GenesysEffect,
+			GenesysActor,
+			ActorDirectory<GenesysActor>,
+			ChatLog,
+			ChatMessage,
+			GenesysCombat,
+			GenesysCombatant,
+			GenesysCombatTracker,
+			CompendiumDirectory,
+			Hotbar,
+			GenesysItem,
+			Macro,
+			MeasuredTemplateDocument,
+			TileDocument,
+			TokenDocument,
+			Scene,
+			User,
+			EffectsCanvasGroup
+		> {
+		genesys: typeof GENESYS_CONFIG;
+	}
+
 	// Override the typings for various CONFIG values in order to provide strongly-typed config within the system.
-	const CONFIG: Config<
-		AmbientLightDocument,
-		GenesysEffect,
-		GenesysActor,
-		ActorDirectory<GenesysActor>,
-		ChatLog,
-		ChatMessage,
-		GenesysCombat,
-		GenesysCombatant,
-		GenesysCombatTracker,
-		CompendiumDirectory,
-		Hotbar,
-		GenesysItem,
-		Macro,
-		MeasuredTemplateDocument,
-		TileDocument,
-		TokenDocument,
-		Scene,
-		User,
-		EffectsCanvasGroup
-	>;
+	const CONFIG: GenesysConfig;
 
 	const game: Game<GenesysActor, Actors, ChatMessage, GenesysCombat, GenesysItem, Macro, Scene, User>;
 }

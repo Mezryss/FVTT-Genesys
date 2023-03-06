@@ -59,6 +59,9 @@ Some components of this project are used under alternative licensing terms. Each
 >
 > https://github.com/themensch/FFG-Genesys-Glyphs-and-Dice
 
+#### Font: Genesys Glyphs & Dice (Magical Girl Theme)
+> Symbols provided by and used with permission from [MilkMyth](http://MilkMyth.com)!
+
 #### Vue 3
 > **License:** [MIT](https://github.com/vuejs/core/blob/main/LICENSE)
 

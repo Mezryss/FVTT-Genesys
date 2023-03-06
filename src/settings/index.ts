@@ -8,6 +8,7 @@
 
 import { register as registerCampaignSettings } from './campaign';
 import { register as registerStoryPoints } from './storyPoints';
+import { register as registerUser } from './user';
 
 import { register as registerAlpha } from './alpha';
 
@@ -22,6 +23,7 @@ export const NAMESPACE = 'genesys';
 export function register() {
 	registerCampaignSettings(NAMESPACE);
 	registerStoryPoints(NAMESPACE);
+	registerUser(NAMESPACE);
 
 	registerAlpha(NAMESPACE);
 }

@@ -6,6 +6,7 @@
  * @file System Entry Point
  */
 
+import { register as registerConfig, ready as readyConfigs } from '@/config';
 import { register as registerCombat } from '@/combat';
 import { register as registerDice } from '@/dice';
 import { register as registerEnrichers } from '@/enrichers';
@@ -45,12 +46,7 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/32">#32</a>] Deleting qualities & skills on an item embedded in an Actor failed with a proxy error.</li>
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/31">#31</a>] Quantity adjustment for items in inventory doesn't work.</li>
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/27">#27</a>] Disallow archetype removal if XP has changed since Archetype was applied.</li>
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/25">#25</a>] Allow adding item qualities to Armor.</li>
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/22">#22</a>] In skills tab, context menu can appear below XP Container and other skill categories.</li>
-		<li>Disallowed adding ActiveEffects to Item Qualities until a better solution is implemented for referencing or embedding them in items.</li>
+		<li>Special thanks to <a href="http://milkmyth.com">MilkMyth</a> for allowing me to use their Magical Girl symbol set! Go to Settings to switch to it; also supported in Dice So Nice!</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
@@ -97,6 +93,7 @@ Hooks.once('init', async () => {
 	registerDice();
 	registerHandlebarsHelpers();
 	registerSettings();
+	registerConfig();
 
 	console.debug('Genesys | Initialization Complete.');
 });
@@ -104,4 +101,6 @@ Hooks.once('init', async () => {
 Hooks.once('ready', async () => {
 	registerStoryPointTracker();
 	await doAlphaNotice();
+
+	readyConfigs();
 });

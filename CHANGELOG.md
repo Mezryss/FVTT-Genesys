@@ -1,9 +1,12 @@
-## Alpha 0.1.3
-### Bug Fixes:
-- Fix [#32](https://github.com/Mezryss/FVTT-Genesys/issues/32): Deleting qualities & skills on an item embedded in an Actor failed with a proxy error.
+## Alpha 0.1.4: The Magical Update!
+- With permission, added [MilkMyth](http://milkmyth.com)'s updated Magical Girl custom Dice Symbols to the system! These can be enabled in settings, are client-specific (so each user can use them or not, at their own discretion), and are also available for use in Dice So Nice!
 
 <details>
 <summary>Previous Releases</summary>
+
+## Alpha 0.1.3
+### Bug Fixes:
+- Fix [#32](https://github.com/Mezryss/FVTT-Genesys/issues/32): Deleting qualities & skills on an item embedded in an Actor failed with a proxy error.
 
 ## Alpha 0.1.2
 ### Bug Fixes:

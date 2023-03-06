@@ -76,7 +76,7 @@ export function register() {
 			pattern: /@sym(bols?)?\[(?<symbols>\w+)]/gim,
 			enricher: async (match, _) => {
 				const span = document.createElement('span');
-				span.className = 'font-genesys-symbols nolig';
+				span.className = `font-genesys-symbols nolig ${CONFIG.genesys.useMagicalGirlSymbols ? 'mg' : ''}`;
 
 				span.innerText = match.groups?.['symbols']?.toLowerCase() ?? '';
 

@@ -41,6 +41,8 @@ Genesys:
     ShowDamageOnFailureHint: Whether to show Damage, Critical, and Qualities on attack roll chat cards even when the roll was a failure.
     SkillForInjuries: Resilience Skill Name
     SkillForInjuriesHint: Name of the skill used when recovering from Critical Injuries.
+    UseMagicalGirlSymbols: Use Magical Girl Symbols by MilkMyth (Client-Only)
+    UseMagicalGirlSymbolsHint: Swap the Genesys symbol set for MilkMyth's Magical Girls symbol set. This will not affect other users.
 
   # Tooltips
   Tooltips:
@@ -84,6 +86,7 @@ Genesys:
   # Dice So Nice strings
   DiceCat:
     Normal: Genesys Dice
+    MagicalGirl: Magical Girl by MilkMyth
     Custom: Genesys Dice (Customizable)
   DiceColors:
     Boost: Boost Die

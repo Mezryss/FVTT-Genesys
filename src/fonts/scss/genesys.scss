@@ -14,9 +14,21 @@
 	src: url('assets/fonts/GenesysSymbols-Regular-Ligatures.woff2') format('woff2');
 }
 
+@font-face {
+	font-family: 'Genesys Symbols - Magical Girl';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('assets/fonts/GenesysSymbols-MagicalGirl-Regular-Ligatures.woff2') format('woff2');
+}
+
 .font-genesys-symbols {
 	font-family: 'Genesys Symbols', sans-serif;
 	min-height: 24px;
+
+	&.mg {
+		font-family: 'Genesys Symbols - Magical Girl', 'Genesys Symbols', sans-serif;
+	}
 
 	&.nolig {
 		font-variant-ligatures: none;
