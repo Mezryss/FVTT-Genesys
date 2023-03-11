@@ -4,6 +4,7 @@ import Localized from '@/vue/components/Localized.vue';
 import { computed, inject } from 'vue';
 import { ItemSheetContext, RootContext } from '@/vue/SheetContext';
 import CareerDataModel from '@/item/data/CareerDataModel';
+import Editor from '@/vue/components/Editor.vue';
 
 const context = inject<ItemSheetContext<CareerDataModel>>(RootContext)!;
 
