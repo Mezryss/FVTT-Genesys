@@ -19,7 +19,7 @@ const passiveAbilities = computed(() => toRaw(context.data.actor).items.filter((
 
 const allTalents = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[]);
 const activeTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'active'));
-const activeTalentTypes = computed(() => Array.from(new Set(activeTalents.value.map((t) => t.systemData.activation.detail.toLowerCase()))));
+const activeTalentTypes = computed(() => Array.from(new Set(activeTalents.value.filter((t) => t.systemData.activation.detail.trim() !== '').map((t) => t.systemData.activation.detail.toLowerCase()))));
 const passiveTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'passive'));
 
 function atTier(tier: number) {

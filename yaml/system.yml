@@ -1,11 +1,11 @@
 id: genesys
 title: Genesys
 description: (ALPHA) Unofficial implementation of EDGE Studio's Genesys RPG System.
-version: 0.1.5
+version: 0.1.6
 compatibility:
   minimum: 10
   verified: 10
-  maximum: 10
+  maximum: 11
 templateVersion: 1
 authors:
   - name: Mezryss
