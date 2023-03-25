@@ -1,9 +1,13 @@
-## Alpha 0.1.6
+## Alpha 0.1.7
 ### Bug Fixes
-- Fix [#35](https://github.com/Mezryss/FVTT-Genesys/issues/35): Active talents with no active category were listed twice.
+- Fix [#20](https://github.com/Mezryss/FVTT-Genesys/issues/20): The HTML mode of the text editor was improperly sized.
 
 <details>
 <summary>Previous Releases</summary>
+
+## Alpha 0.1.6
+### Bug Fixes
+- Fix [#35](https://github.com/Mezryss/FVTT-Genesys/issues/35): Active talents with no active category were listed twice.
 
 ## Alpha 0.1.5
 ### Bug Fixes
