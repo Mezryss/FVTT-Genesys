@@ -1,9 +1,13 @@
-## Alpha 0.1.7
+## Alpha 0.1.8
 ### Bug Fixes
-- Fix [#20](https://github.com/Mezryss/FVTT-Genesys/issues/20): The HTML mode of the text editor was improperly sized.
+- Fix [#40](https://github.com/Mezryss/FVTT-Genesys/issues/40): Upgrading ranked talents was too restrictive.
 
 <details>
 <summary>Previous Releases</summary>
+
+## Alpha 0.1.7
+### Bug Fixes
+- Fix [#20](https://github.com/Mezryss/FVTT-Genesys/issues/20): The HTML mode of the text editor was improperly sized.
 
 ## Alpha 0.1.6
 ### Bug Fixes

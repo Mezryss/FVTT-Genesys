@@ -23,18 +23,30 @@ const activeTalentTypes = computed(() => Array.from(new Set(activeTalents.value.
 const passiveTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'passive'));
 
 function atTier(tier: number) {
-	const baseTier = allTalents.value.filter((t) => t.systemData.tier === tier).length;
-	const ranked = allTalents.value.filter(
-		(t) =>
-			// Lower Tier
-			t.systemData.tier < tier &&
-			// Rank purchased at this tier
-			t.systemData.tier + (t.systemData.rank - 1) >= tier,
+	const talentsCount = allTalents.value.reduce(
+		(accumulator, talent) => {
+			if (tier === 5 && talent.systemData.effectiveTier === 5) {
+				// If we want to count talents of tier 5 it requires that we consider the ranking of the talent if appropriate;
+			    // ranked talents that are at tier 5 remain at that tier for any future purchases.
+				return accumulator + talent.systemData.rank - (talent.systemData.effectiveTier - talent.systemData.tier);
+
+			} else if (talent.systemData.tier === tier) {
+				// Count the talent if it matches the desired tier.
+				return accumulator + 1;
+
+			} else if (talent.systemData.tier < tier && talent.systemData.effectiveTier >= tier) {
+				// Count the talent if it's from a lower tier but it has been purchased enough times that at some point it was
+				// considered as a talent of the desired tier.
+				return accumulator + 1;
+
+			} else {
+				return accumulator;
+			}
+		},
+		0
 	);
 
-	const rankedTier5 = (tier === 5 && ranked.reduce((total, t) => total + Math.max(0, t.systemData.tier + t.systemData.rank - 6), 0)) || 0;
-
-	return baseTier + ranked.length + rankedTier5;
+	return talentsCount;
 }
 
 const tier1Talents = computed(() => atTier(1));
@@ -43,10 +55,11 @@ const tier3Talents = computed(() => atTier(3));
 const tier4Talents = computed(() => atTier(4));
 const tier5Talents = computed(() => atTier(5));
 const canUpgradeTalent = computed(() => [
-	system.value.availableXP > 10 && atTier(1) > atTier(2) + 1,
-	system.value.availableXP > 15 && atTier(2) > atTier(3) + 1,
-	system.value.availableXP > 20 && atTier(3) > atTier(4) + 1,
-	system.value.availableXP > 25 && atTier(4) > atTier(5) + 1,
+	system.value.availableXP >= 10 && atTier(1) > atTier(2) + 1,
+	system.value.availableXP >= 15 && atTier(2) > atTier(3) + 1,
+	system.value.availableXP >= 20 && atTier(3) > atTier(4) + 1,
+	system.value.availableXP >= 25 && atTier(4) > atTier(5) + 1,
+	system.value.availableXP >= 25 && atTier(4) > atTier(5) + 1,
 ]);
 
 async function upgradeTalent(talent: GenesysItem<TalentDataModel>) {
@@ -55,7 +68,7 @@ async function upgradeTalent(talent: GenesysItem<TalentDataModel>) {
 		return false;
 	}
 
-	const newEffectiveTier = Math.min(5, talent.systemData.tier + talent.systemData.rank);
+	const newEffectiveTier = talent.systemData.effectiveNextTier;
 	const cost = talent.systemData.advanceCost;
 
 	await toRaw(talent).update({
