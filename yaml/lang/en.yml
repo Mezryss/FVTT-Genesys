@@ -341,3 +341,6 @@ Genesys:
     GroupSize: Group Size
     SkillNotFound: Skill Not Found
     IsInitiative: Initiative Skill?
+    Equipped: Equipped
+    Carried: Carried
+    Dropped: Dropped

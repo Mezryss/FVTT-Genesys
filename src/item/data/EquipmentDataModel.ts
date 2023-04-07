@@ -5,7 +5,21 @@
  * @author Mezryss
  * @file Base data model for Equipment-type Items.
  */
+
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
+
+export enum EquipmentState {
+	Carried = 'carried',
+	Dropped = 'dropped',
+	Equipped = 'equipped',
+}
+
+export enum EquipmentDamageState {
+	Undamaged = 'undamaged',
+	Minor = 'minor',
+	Moderate = 'moderate',
+	Major = 'major',
+}
 
 export default abstract class EquipmentDataModel extends BaseItemDataModel {
 	/**
@@ -26,7 +40,7 @@ export default abstract class EquipmentDataModel extends BaseItemDataModel {
 	/**
 	 * Damage state of the item.
 	 */
-	abstract damage: 'undamaged' | 'minor' | 'moderate' | 'major';
+	abstract damage: EquipmentDamageState;
 
 	/**
 	 * (Owned Only) Quantity of the item possessed.
@@ -41,7 +55,7 @@ export default abstract class EquipmentDataModel extends BaseItemDataModel {
 	/**
 	 * (Owned Only) State of the item (carried, dropped, or equipped)
 	 */
-	abstract state: 'carried' | 'dropped' | 'equipped';
+	abstract state: EquipmentState;
 
 	static override defineSchema() {
 		const fields = foundry.data.fields;
@@ -52,14 +66,14 @@ export default abstract class EquipmentDataModel extends BaseItemDataModel {
 			encumbrance: new fields.NumberField({ integer: true, initial: 0 }),
 			price: new fields.NumberField({ initial: 0 }),
 			damage: new fields.StringField({
-				initial: 'undamaged',
-				choices: ['undamaged', 'minor', 'moderate', 'major'],
+				initial: EquipmentDamageState.Undamaged,
+				choices: [EquipmentDamageState.Undamaged, EquipmentDamageState.Minor, EquipmentDamageState.Moderate, EquipmentDamageState.Major],
 			}),
 			container: new fields.StringField(),
 			quantity: new fields.NumberField({ integer: true, initial: 1 }),
 			state: new fields.StringField({
-				initial: 'carried',
-				choices: ['carried', 'dropped', 'equipped'],
+				initial: EquipmentState.Carried,
+				choices: [EquipmentState.Carried, EquipmentState.Dropped, EquipmentState.Equipped],
 			}),
 		};
 	}
