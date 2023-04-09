@@ -11,7 +11,7 @@ import { EntryType, ExperienceJournal } from '@/actor/data/character/ExperienceJ
 import IHasPreCreate from '@/data/IHasPreCreate';
 import GenesysItem from '@/item/GenesysItem';
 import ArmorDataModel from '@/item/data/ArmorDataModel';
-import EquipmentDataModel from '@/item/data/EquipmentDataModel';
+import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_SKILLS_COMPENDIUM, DEFAULT_SKILLS_COMPENDIUM } from '@/settings/campaign';
 import { CharacteristicsContainer } from '@/data/Characteristics';
@@ -150,7 +150,7 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 
 	#additionalEncumbranceThreshold() {
 		return (<CharacterActor>(<unknown>this.parent)).items
-			.filter((i) => (<EquipmentItem>i).systemData.encumbrance !== undefined && (<EquipmentItem>i).systemData.encumbrance < 0)
+			.filter((i) => (<EquipmentItem>i).systemData.encumbrance !== undefined && (i as EquipmentItem).systemData.state !== EquipmentState.Dropped && (i as EquipmentItem).systemData.encumbrance < 0)
 			.reduce((total, i) => Math.abs((<EquipmentItem>i).systemData.encumbrance), 0);
 	}
 

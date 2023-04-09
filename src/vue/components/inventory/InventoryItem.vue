@@ -16,10 +16,12 @@ import MenuItem from '@/vue/components/MenuItem.vue';
 const props = withDefaults(
 	defineProps<{
 		item: GenesysItem<EquipmentDataModel>;
-		dragging: boolean;
+		dragging?: boolean;
+		mini?: boolean;
 	}>(),
 	{
 		dragging: false,
+		mini: false,
 	},
 );
 
@@ -37,10 +39,12 @@ const isBasicItem = computed(() => ['consumable', 'gear'].includes(props.item.ty
 const system = computed(() => props.item.systemData);
 
 const armorData = computed(() => system.value as ArmorDataModel);
-//const containerData = computed(() => system.value as ContainerDataModel);
 const weaponData = computed(() => system.value as WeaponDataModel);
 
 const dimForDrag = computed(() => props.dragging && props.item.type !== 'container');
+
+const displayContainerContents = ref(false);
+const containedItems = computed(() => toRaw(rootContext.data.actor).items.filter((i) => (i as GenesysItem<EquipmentDataModel>).systemData.container === props.item.id) as GenesysItem<EquipmentDataModel>[]);
 
 const weaponDamage = computed(() => {
 	if (weaponData.value.damageCharacteristic === '-') {
@@ -70,6 +74,14 @@ async function deleteItem() {
 }
 
 async function setItemState(state: EquipmentState) {
+	await Promise.all(
+		containedItems.value.map((i) =>
+			i.update({
+				'system.state': state,
+			}),
+		),
+	);
+
 	await props.item.update({
 		'system.state': state,
 	});
@@ -128,6 +140,16 @@ function dragLeave() {
 	dragCounter.value = Math.max(0, dragCounter.value - 1);
 }
 
+async function changeItemQuantity(item: GenesysItem, value: number) {
+	if (value <= 0) {
+		await toRaw(item).delete();
+	} else {
+		await toRaw(item).update({
+			'system.quantity': value,
+		});
+	}
+}
+
 async function drop(event: DragEvent) {
 	dragCounter.value = 0;
 
@@ -148,6 +170,7 @@ async function drop(event: DragEvent) {
 
 	await item.update({
 		'system.container': props.item.id,
+		'system.state': props.item.systemData.state,
 	});
 }
 </script>
@@ -156,6 +179,7 @@ async function drop(event: DragEvent) {
 	<div
 		:class="{
 			'inventory-item': true,
+			mini: props.mini,
 			[system.state]: true,
 			hover: dragCounter > 0,
 			'drag-dim': dimForDrag && !isBeingDragged,
@@ -170,7 +194,7 @@ async function drop(event: DragEvent) {
 		<img :src="item.img" :alt="item.name" />
 
 		<!-- Basic, single-row item -->
-		<span v-if="isBasicItem" class="name" @dragenter="dragEnter" @dragleave="dragLeave">
+		<span v-if="mini || isBasicItem" class="name" @dragenter="dragEnter" @dragleave="dragLeave">
 			<a @click="openItem">{{ item.name }}</a>
 		</span>
 		<!-- Complex item with additional details row -->
@@ -179,7 +203,7 @@ async function drop(event: DragEvent) {
 				<a @click="openItem">{{ item.name }}</a>
 			</span>
 
-			<div>
+			<div :data-item-type="item.type">
 				<!-- Weapon Details -->
 				<template v-if="item.type === 'weapon'">
 					<!-- Skill -->
@@ -224,12 +248,18 @@ async function drop(event: DragEvent) {
 
 				<!-- Container Details -->
 				<template v-else-if="item.type === 'container'">
-					<em>...</em>
+					<a v-if="displayContainerContents" @click="displayContainerContents = false"><i class="fas fa-box-open"></i> Close Container</a>
+					<a v-else @click="displayContainerContents = true"><i class="fas fa-box"></i> {{ containedItems.length }} Items</a>
 				</template>
 			</div>
 		</div>
 
-		<div class="weight">{{ system.encumbrance }} <i class="fas fa-weight-hanging"></i></div>
+		<a class="quantity" @click="changeItemQuantity(item, item.systemData.quantity + 1)" @contextmenu="changeItemQuantity(item, item.systemData.quantity - 1)" v-if="item.type !== 'container'">
+			{{ item.systemData.quantity }}
+			<i class="fas fa-backpack"></i>
+		</a>
+
+		<div class="weight">{{ system.encumbrance < 0 ? '+' : null }}{{ Math.abs(system.encumbrance) }} <i class="fas fa-weight-hanging"></i></div>
 
 		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable">
 			<template v-slot:menu-items>
@@ -280,6 +310,25 @@ async function drop(event: DragEvent) {
 				<i class="fas fa-ellipsis-vertical"></i>
 			</a>
 		</ContextMenu>
+
+		<Transition name="container-contents">
+			<div v-if="displayContainerContents" class="contents">
+				<InventoryItem
+					v-for="item in containedItems"
+					:item="item"
+					mini
+					draggable="true"
+					@dragstart="
+						$event.stopPropagation();
+						emit('dragstart', $event);
+					"
+					@dragend="
+						$event.stopPropagation();
+						emit('dragend', $event);
+					"
+				/>
+			</div>
+		</Transition>
 	</div>
 </template>
 
@@ -288,7 +337,8 @@ async function drop(event: DragEvent) {
 
 .inventory-item {
 	display: grid;
-	grid-template-columns: [icon] 2rem [name] auto [spacer] 1fr [weight] auto [actions] auto;
+	grid-template-columns: [icon] 2rem [name] auto [spacer] 1fr [quantity] 2.5em [weight] 2.5em [actions] auto;
+	grid-template-rows: auto auto;
 	align-items: center;
 	column-gap: 0.5em;
 
@@ -302,39 +352,60 @@ async function drop(event: DragEvent) {
 
 	margin-bottom: 0.25em;
 
-	&.hover {
-		background: transparentize(colors.$light-blue, 0.4) !important;
-		border: 1px solid transparentize(colors.$light-blue, 0.2) !important;
-	}
+	&:not(.mini) {
+		&.hover {
+			background: transparentize(colors.$light-blue, 0.4) !important;
+			border: 1px solid transparentize(colors.$light-blue, 0.2) !important;
+		}
 
-	&.drag-source {
-		background: transparentize(colors.$light-blue, 0.6) !important;
-		border: 1px solid transparentize(colors.$light-blue, 0.4) !important;
-	}
+		&.drag-source {
+			background: transparentize(colors.$light-blue, 0.6) !important;
+			border: 1px solid transparentize(colors.$light-blue, 0.4) !important;
+		}
 
-	&.dropped {
-		background: transparentize(#333, 0.9);
-		border: 1px solid transparentize(#333, 0.85);
+		&.dropped {
+			background: transparentize(#333, 0.9);
+			border: 1px solid transparentize(#333, 0.85);
 
-		img,
-		.name,
-		.weight {
+			& > :not(.actions) {
+				opacity: 65%;
+			}
+
+			&:hover {
+				background: transparentize(#333, 0.75);
+				border: 1px solid transparentize(#333, 0.5);
+			}
+		}
+
+		&.drag-dim {
+			position: relative;
+
+			background: transparentize(#333, 0.85);
+			border: 1px solid transparentize(#333, 0.7);
+
 			opacity: 65%;
 		}
-
-		&:hover {
-			background: transparentize(#333, 0.75);
-			border: 1px solid transparentize(#333, 0.5);
-		}
 	}
 
-	&.drag-dim {
-		position: relative;
+	&.mini {
+		grid-template-columns: [icon] 1.5em [name] auto [spacer] 1fr [quantity] 2.5em [weight] 2.5em [actions] auto;
+		height: 2em;
+		overflow: hidden;
+		font-size: 0.8em;
+		margin-left: 1.5em;
 
-		background: transparentize(#333, 0.85);
-		border: 1px solid transparentize(#333, 0.7);
+		background: transparentize(colors.$blue, 0.8);
+		border: 1px solid transparentize(colors.$blue, 0.5);
 
-		opacity: 65%;
+		&:hover {
+			background: transparentize(colors.$blue, 0.6);
+			border: 1px solid transparentize(colors.$blue, 0.5);
+		}
+
+		.quantity,
+		.weight {
+			color: colors.$blue;
+		}
 	}
 
 	&:hover {
@@ -344,10 +415,20 @@ async function drop(event: DragEvent) {
 
 	img {
 		grid-column: icon / span 1;
+		border-radius: 0.25em;
 	}
 
 	& > .name {
 		grid-column: name / span 1;
+	}
+
+	.contents {
+		grid-column: icon / span all;
+		grid-row: 2 / span all;
+		transform-origin: top center;
+		max-height: 100px;
+		overflow-y: scroll;
+		padding-right: 0.5em;
 	}
 
 	.name {
@@ -363,12 +444,15 @@ async function drop(event: DragEvent) {
 
 		& > div {
 			grid-row: 2 / span 1;
-			margin-left: 0.5em;
 			display: flex;
 			flex-wrap: wrap;
 			font-size: 0.9em;
 			color: colors.$dark-blue;
 			gap: 0.25em;
+
+			&:not([data-item-type='container']) {
+				margin-left: 0.5em;
+			}
 
 			& > div {
 				&:after {
@@ -403,19 +487,26 @@ async function drop(event: DragEvent) {
 		}
 	}
 
+	.weight {
+		grid-column: weight / span 1;
+	}
+
 	.quantity {
 		grid-column: quantity / span 1;
 	}
 
-	.weight {
+	.weight,
+	.quantity {
+		grid-row: 1 / span 1;
 		display: flex;
 		align-items: center;
 		column-gap: 0.25em;
-		grid-column: weight / span 1;
 		font-family: 'Bebas Neue', sans-serif;
 		font-size: 1.25em;
 		text-align: center;
 		color: colors.$dark-blue;
+		width: 100%;
+		justify-content: flex-end;
 
 		i {
 			position: relative;
@@ -426,8 +517,27 @@ async function drop(event: DragEvent) {
 
 	.actions {
 		grid-column: actions / span 1;
-		width: 1.5em;
+		width: 1.25em;
 		text-align: center;
+	}
+}
+
+.container-contents-enter-active {
+	animation: expand 0.5s;
+}
+
+.container-contents-leave-active {
+	animation: expand 0.5s reverse;
+}
+
+@keyframes expand {
+	0% {
+		transform: scaleY(0);
+		max-height: 0;
+	}
+	100% {
+		transform: scaleY(1);
+		max-height: 100px;
 	}
 }
 </style>

@@ -29,7 +29,9 @@ function sortItems(left: GenesysItem, right: GenesysItem) {
 }
 
 async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, sortIndex: number) {
+	console.log('SORTING');
 	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
+	console.log(dragSource);
 
 	if (!dragSource.id) {
 		return;
@@ -41,6 +43,7 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 	if (!item || (sortCategory === EquipmentState.Equipped && !['weapon', 'armor'].includes(item.type))) {
 		return;
 	}
+	console.log(item);
 
 	let sortedInventory = equippedItems;
 	switch (sortCategory) {
@@ -66,6 +69,8 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 			newSort = Math.floor((newSort + sortedInventory.value[sortIndex + 1].sort) / 2);
 		}
 	}
+
+	console.log('UPDATING');
 
 	await item.update({
 		'system.container': '',
