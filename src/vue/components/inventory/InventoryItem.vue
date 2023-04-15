@@ -301,10 +301,10 @@ async function drop(event: DragEvent) {
 
 				<hr />
 
-				<MenuItem>
+				<!-- <MenuItem>
 					<template v-slot:icon><i class="fas fa-comment"></i></template>
 					To Chat
-				</MenuItem>
+				</MenuItem> -->
 
 				<MenuItem @click="openItem">
 					<template v-slot:icon><i class="fas fa-edit"></i></template>
