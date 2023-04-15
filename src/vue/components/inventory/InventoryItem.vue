@@ -3,7 +3,6 @@ import { computed, inject, ref, toRaw } from 'vue';
 
 import GenesysItem from '@/item/GenesysItem';
 import ArmorDataModel from '@/item/data/ArmorDataModel';
-// import ContainerDataModel from '@/item/data/ContainerDataModel';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
 import Localized from '@/vue/components/Localized.vue';
@@ -12,6 +11,7 @@ import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
+import DicePrompt, { RollType } from '@/app/DicePrompt';
 
 const props = withDefaults(
 	defineProps<{
@@ -53,6 +53,16 @@ const weaponDamage = computed(() => {
 
 	return rootContext.data.actor.systemData.characteristics[weaponData.value.damageCharacteristic] + weaponData.value.baseDamage;
 });
+
+async function rollAttack() {
+	const [_, skillId] = skillForWeapon();
+	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), skillId, {
+		rollType: RollType.Attack,
+		rollData: {
+			weapon: props.item,
+		},
+	});
+}
 
 async function openItem() {
 	await toRaw(props.item).sheet?.render(true);
@@ -201,6 +211,7 @@ async function drop(event: DragEvent) {
 		<div v-else class="details" @dragenter="dragEnter" @dragleave="dragLeave">
 			<span class="name">
 				<a @click="openItem">{{ item.name }}</a>
+				<button class="attack" v-if="item.type === 'weapon' && system.state === EquipmentState.Equipped" @click="rollAttack">Attack</button>
 			</span>
 
 			<div :data-item-type="item.type">
@@ -434,6 +445,21 @@ async function drop(event: DragEvent) {
 	.name {
 		font-family: 'Roboto Serif', serif;
 		font-size: 1.15em;
+		display: flex;
+		align-items: center;
+		gap: 0.25em;
+
+		button.attack {
+			height: 1.5em;
+			padding: 0;
+			margin: 0;
+			width: auto !important;
+			line-height: 1em;
+			padding: 2px;
+
+			background: colors.$gold;
+			color: white;
+		}
 	}
 
 	.details {
