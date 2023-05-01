@@ -46,7 +46,9 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/40">#40</a>: Upgrading ranked talents was too restrictive.</li> 
+		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/40">#40</a>: Upgrading ranked talents was too restrictive.</li>
+		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/42">#42</a>: Journal entries for skill upgrades are showing the wrong rank.</li>
+		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/44">#44</a>: Ranked Talent effects don't stack per rank.</li>
 		<li>Work on <a href="https://github.com/Mezryss/FVTT-Genesys/issues/2">#2</a>: Inventory 2.0. There is still more work to be done on this!</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
