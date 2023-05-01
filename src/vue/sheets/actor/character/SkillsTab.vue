@@ -95,7 +95,7 @@ async function purchaseSkillRank(skill: GenesysItem<SkillDataModel>) {
 				data: {
 					name: skill.name,
 					id: skill.id,
-					rank: skill.systemData.rank + 1,
+					rank: skill.systemData.rank,
 				},
 			},
 		],
