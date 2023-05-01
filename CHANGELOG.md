@@ -1,11 +1,17 @@
+## Alpha 0.1.9
+
+### Bug Fixes
+
+-   Fix [#40](https://github.com/Mezryss/FVTT-Genesys/issues/40): Upgrading ranked talents was too restrictive.
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.1.8
 
 ### Updates
 
 -   Work on [#2](https://github.com/Mezryss/FVTT-Genesys/issues/2): Inventory 2.0. There is still more work to be done on this!
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.1.7
 
