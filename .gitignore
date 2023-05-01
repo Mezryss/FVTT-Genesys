@@ -12,3 +12,6 @@ yarn-*.log
 
 # IDEs
 .vscode/
+
+# Misc Files
+.env

@@ -15,17 +15,20 @@ export default class GenesysEffect extends ActiveEffect {
 	}
 
 	get originItem(): GenesysItem | undefined {
-		if (!origin || this.parent instanceof GenesysActor || !origin.includes('.Item.')) {
+		if (!this.origin || !(this.parent instanceof GenesysActor) || !this.origin.includes('.Item.')) {
 			return undefined;
 		}
 
-		const itemId = origin.split('.Item.')[1];
+		const itemId = this.origin.split('.Item.')[1];
 
-		return <GenesysItem>(<GenesysActor>this.parent).items.get(itemId);
+		return (this.parent as GenesysActor).items.get(itemId) as GenesysItem|undefined;
 	}
 
 	override apply(actor: Actor, change: ApplicableChangeData<this>): unknown {
 		const originItem = this.originItem;
+
+		console.error('Applying Effect!')
+		console.log(originItem);
 
 		if (originItem && originItem.systemData instanceof TalentDataModel) {
 			const talentData = <TalentDataModel>originItem.systemData;

@@ -1,6 +1,15 @@
 import { AliasOptions, defineConfig } from 'vite';
+import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
 import pluginVue from '@vitejs/plugin-vue';
 import path from 'path';
+import process from 'process';
+
+const env = dotenv.config();
+dotenvExpand.expand(env);
+
+const PROXY_HOST = process.env.VITE_PROXY_HOST ?? 'localhost';
+const PROXY_PORT = process.env.VITE_PROXY_PORT ?? 30000;
 
 /**
  * A list of aliases to be applied only in production.
@@ -21,12 +30,12 @@ export default defineConfig({
 	base: '/systems/genesys',
 	server: {
 		port: 30001,
-		open: true,
+		open: false,
 		proxy: {
-			'^/assets': 'http://localhost:30000/systems/genesys/',
-			'^(?!/systems/genesys)': 'http://localhost:30000/',
+			'^/assets': `http://${ PROXY_HOST }:${ PROXY_PORT }/systems/genesys/`,
+			'^(?!/systems/genesys)': `http://${ PROXY_HOST }:${ PROXY_PORT }/`,
 			'/socket.io': {
-				target: 'ws://localhost:30000',
+				target: `ws://${ PROXY_HOST }:${ PROXY_PORT }`,
 				ws: true,
 			},
 		},
