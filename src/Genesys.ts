@@ -46,6 +46,7 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
+		<li>Send to Chat implemented for Inventory Items! Equivalent functionality for Abilities & Talents will come with the Talents tab updates.</li>
 		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/40">#40</a>: Upgrading ranked talents was too restrictive.</li>
 		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/42">#42</a>: Journal entries for skill upgrades are showing the wrong rank.</li>
 		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/44">#44</a>: Ranked Talent effects don't stack per rank.</li>

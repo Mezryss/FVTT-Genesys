@@ -1,5 +1,9 @@
 ## Alpha 0.1.9
 
+### Features
+
+-   Send to Chat implemented for Inventory Items! Equivalent functionality for Abilities & Talents will come with the Talents tab updates.
+
 ### Bug Fixes
 
 -   Fix [#40](https://github.com/Mezryss/FVTT-Genesys/issues/40): Upgrading ranked talents was too restrictive.

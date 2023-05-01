@@ -83,6 +83,51 @@ async function deleteItem() {
 	await toRaw(props.item).delete();
 }
 
+async function sendItemToChat() {
+	const enrichedDescription = await TextEditor.enrichHTML(system.value.description, { async: true });
+
+	let qualities = undefined;
+
+	if (['armor', 'weapon'].includes(props.item.type)) {
+		const itemQualities = (system.value as WeaponDataModel | ArmorDataModel).qualities;
+
+		await Promise.all(
+			itemQualities.map(async (quality) => {
+				quality.description = await TextEditor.enrichHTML(quality.description, { async: true });
+			}),
+		);
+
+		qualities = itemQualities;
+	}
+
+	const weapon = (props.item.type !== 'weapon') ? undefined : {
+		skill: skillForWeapon()[0],
+		damage: (system.value as WeaponDataModel).baseDamage.toString() + (
+			(system.value as WeaponDataModel).damageCharacteristic !== '-'
+				? (' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${ (system.value as WeaponDataModel).damageCharacteristic.capitalize() }`))
+				: ''
+		)
+	};
+
+	const chatTemplate = await renderTemplate('systems/genesys/templates/chat/item.hbs', {
+		img: props.item.img,
+		name: props.item.name,
+		type: props.item.type,
+		system: system.value,
+		description: enrichedDescription,
+		weapon,
+		qualities,
+	});
+	await ChatMessage.create({
+		user: game.user.id,
+		speaker: {
+			actor: game.user.character?.id,
+		},
+		content: chatTemplate,
+		type: CONST.CHAT_MESSAGE_TYPES.IC,
+	});
+}
+
 async function setItemState(state: EquipmentState) {
 	await Promise.all(
 		containedItems.value.map((i) =>
@@ -237,7 +282,7 @@ async function drop(event: DragEvent) {
 
 					<!-- Qualities -->
 					<div v-if="weaponData.qualities.length > 0" class="item-qualities">
-						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description"> {{ quality.name }}{{ quality.isRated && ` ${quality.rating}` }} </Tooltip>
+						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description"> {{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }} </Tooltip>
 					</div>
 				</template>
 
@@ -253,7 +298,7 @@ async function drop(event: DragEvent) {
 
 					<!-- Qualities -->
 					<div v-if="armorData.qualities.length > 0" class="item-qualities">
-						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description"> {{ quality.name }}{{ quality.isRated && ` ${quality.rating}` }} </Tooltip>
+						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description"> {{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }} </Tooltip>
 					</div>
 				</template>
 
@@ -301,10 +346,10 @@ async function drop(event: DragEvent) {
 
 				<hr />
 
-				<!-- <MenuItem>
+				<MenuItem @click="sendItemToChat">
 					<template v-slot:icon><i class="fas fa-comment"></i></template>
 					To Chat
-				</MenuItem> -->
+				</MenuItem>
 
 				<MenuItem @click="openItem">
 					<template v-slot:icon><i class="fas fa-edit"></i></template>
@@ -327,6 +372,7 @@ async function drop(event: DragEvent) {
 				<InventoryItem
 					v-for="item in containedItems"
 					:item="item"
+					:key="item.id"
 					mini
 					draggable="true"
 					@dragstart="
