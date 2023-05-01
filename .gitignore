@@ -9,3 +9,6 @@
 # Node
 /node_modules
 yarn-*.log
+
+# IDEs
+.vscode/

@@ -1,123 +1,128 @@
 <script lang="ts" setup>
-import { computed, inject, toRaw } from 'vue';
+import { computed, inject, ref, toRaw } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_MONEY_NAME } from '@/settings/campaign';
 import Localized from '@/vue/components/Localized.vue';
-import { vLocalize } from '@/vue/directives';
-import EquipmentDataModel from '@/item/data/EquipmentDataModel';
+import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import GenesysItem from '@/item/GenesysItem';
-import Enriched from '@/vue/components/Enriched.vue';
+import InventoryItem from '@/vue/components/inventory/InventoryItem.vue';
+import InventorySortSlot from '@/vue/components/inventory/InventorySortSlot.vue';
+
+const EQUIPMENT_TYPES = ['weapon', 'armor', 'consumable', 'gear', 'container'];
 
 const rootContext = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 const inventory = computed(() => toRaw(rootContext.data.actor).items.filter((i) => EQUIPMENT_TYPES.includes(i.type)) as GenesysItem<EquipmentDataModel>[]);
 const system = computed(() => toRaw(rootContext.data.actor).systemData);
 
+const equippedItems = computed(() => inventory.value.filter((i) => i.systemData.state === 'equipped').sort(sortItems));
+const carriedItems = computed(() => inventory.value.filter((i) => i.systemData.state === 'carried' && i.systemData.container === '').sort(sortItems));
+const droppedItems = computed(() => inventory.value.filter((i) => i.systemData.state === 'dropped' && i.systemData.container === '').sort(sortItems));
+
+const draggingItem = ref(false);
+
 const CURRENCY_LABEL = game.settings.get(SETTINGS_NAMESPACE, KEY_MONEY_NAME);
 
-const EQUIPMENT_TYPES = ['weapon', 'armor', 'consumable', 'gear', 'container'];
-
-async function editItem(item: GenesysItem) {
-	await item.sheet?.render(true);
+function sortItems(left: GenesysItem, right: GenesysItem) {
+	return left.sort - right.sort;
 }
 
-async function deleteItem(item: GenesysItem) {
-	await item.delete();
-}
+async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, sortIndex: number) {
+	console.log('SORTING');
+	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
+	console.log(dragSource);
 
-async function cycleCarryState(item: GenesysItem<EquipmentDataModel>) {
-	let newState: typeof item.systemData.state = 'carried';
+	if (!dragSource.id) {
+		return;
+	}
 
-	switch (item.systemData.state) {
-		case 'carried':
-			if (item.type === 'weapon' || item.type === 'armor') {
-				newState = 'equipped';
-			} else {
-				newState = 'dropped';
-			}
+	const actor = toRaw(rootContext.data.actor);
+
+	const item = actor.items.get(dragSource.id);
+	if (!item || (sortCategory === EquipmentState.Equipped && !['weapon', 'armor'].includes(item.type))) {
+		return;
+	}
+	console.log(item);
+
+	let sortedInventory = equippedItems;
+	switch (sortCategory) {
+		case EquipmentState.Carried:
+			sortedInventory = carriedItems;
 			break;
 
-		case 'dropped':
-			newState = 'carried';
-			break;
-
-		case 'equipped':
-			newState = 'dropped';
+		case EquipmentState.Dropped:
+			sortedInventory = droppedItems;
 			break;
 	}
+
+	let newSort = item.sort;
+	if (sortIndex === -1) {
+		// Sort the item at the beginning of the list.
+		if (sortedInventory.value.length > 0) {
+			newSort = sortedInventory.value[0].sort - 1;
+		}
+	} else {
+		newSort = sortedInventory.value[sortIndex].sort + 1;
+
+		if (sortedInventory.value.length > sortIndex + 1) {
+			newSort = Math.floor((newSort + sortedInventory.value[sortIndex + 1].sort) / 2);
+		}
+	}
+
+	console.log('UPDATING');
 
 	await item.update({
-		'system.state': newState,
+		'system.container': '',
+		'system.state': sortCategory,
+		sort: newSort,
 	});
-}
-
-async function adjustQuantity(item: GenesysItem<EquipmentDataModel>, amount: number) {
-	const adjustedQuantity = item.systemData.quantity + amount;
-
-	if (adjustedQuantity <= 0) {
-		await item.delete();
-	} else {
-		await item.update({
-			'system.quantity': adjustedQuantity,
-		});
-	}
 }
 </script>
 
 <template>
-	<section class="tab-inventory item-list">
-		<div v-for="equipmentType in EQUIPMENT_TYPES" :key="equipmentType" class="block">
-			<div class="section-header" :data-section-type="equipmentType">
-				<div></div>
-				<div class="name"><Localized :label="`Genesys.Inventory.Sections.${equipmentType.capitalize()}`" /></div>
-				<div><Localized label="Genesys.Labels.Quantity" /></div>
-				<div class="encumbrance"><i class="fas fa-weight-hanging"></i></div>
-				<div class="actions"></div>
-			</div>
-
-			<div v-for="item in inventory.filter((i) => i.type === equipmentType)" :key="item.id" class="item inventory-item" :data-item-id="item.id" :data-item-type="item.type">
-				<div></div>
-				<img :src="item.img" :alt="item.name" />
-				<div class="name">
-					<a>{{ item.name }}</a>
-				</div>
-				<div class="quantity">
-					<a v-if="rootContext.data.editable" @click="adjustQuantity(item, -1)"><i class="fas fa-minus"></i></a>
-					<span>{{ item.systemData.quantity }}</span>
-					<a v-if="rootContext.data.editable" @click="adjustQuantity(item, 1)"><i class="fas fa-plus"></i></a>
-				</div>
-				<div>
-					<template v-if="item.systemData.encumbrance < 0">+{{ Math.abs(item.systemData.encumbrance) }}</template>
-					<template v-else>{{ Math.abs(item.systemData.encumbrance) }}</template>
-				</div>
-				<div v-if="rootContext.data.editable" class="actions">
-					<!-- Container: Open/Closed -->
-					<span v-if="item.type === 'container'" :class="`container-state ${item.system.open ? 'open' : 'closed'}`">
-						<a v-if="item.system.open"><i class="fas fa-box"></i></a>
-						<a v-if="!item.system.open"><i class="fas fa-box-open"></i></a>
-					</span>
-
-					<!-- Carried/Equipped/Dropped state only shows when outside a container. -->
-					<span v-if="item.systemData.container === ''">
-						<a @click="cycleCarryState(item)">
-							<i v-if="item.type === 'weapon' && item.systemData.state === 'equipped'" class="fas fa-sword"></i>
-							<i v-else-if="item.type === 'armor' && item.systemData.state === 'equipped'" class="fas fa-shield"></i>
-							<i v-else-if="item.systemData.state === 'carried'" class="fas fa-sack"></i>
-							<i v-else class="fas fa-shelves-empty"></i>
-						</a>
-					</span>
-
-					<!-- Edit & Delete -->
-					<a @click="editItem(item)"><i class="fas fa-edit"></i></a>
-					<a @click="deleteItem(item)"><i class="fas fa-trash"></i></a>
-				</div>
-				<div class="description"><Enriched :value="item.systemData.description" /></div>
-				<div v-if="item.type === 'container'" :class="`container-contents ${item.system.open ? 'open' : ''}`">
-					<div>CONTAINER ITEMS!</div>
-				</div>
-			</div>
+	<section class="tab-inventory">
+		<div class="section-header">
+			<span><Localized label="Genesys.Labels.Equipped" /></span>
 		</div>
+
+		<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Equipped, -1)" />
+
+		<TransitionGroup name="inv">
+			<template v-for="(item, index) in equippedItems" :key="item.id">
+				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" />
+
+				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Equipped, index)" />
+			</template>
+		</TransitionGroup>
+
+		<div class="section-header">
+			<span><Localized label="Genesys.Labels.Carried" /></span>
+		</div>
+
+		<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Carried, -1)" />
+
+		<TransitionGroup name="inv">
+			<template v-for="(item, index) in carriedItems" :key="item.id">
+				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" />
+
+				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Carried, index)" />
+			</template>
+		</TransitionGroup>
+
+		<div class="section-header">
+			<span><Localized label="Genesys.Labels.Dropped" /></span>
+		</div>
+
+		<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Dropped, -1)" />
+
+		<TransitionGroup name="inv">
+			<template v-for="(item, index) in droppedItems" :key="item.id">
+				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" />
+
+				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Dropped, index)" />
+			</template>
+		</TransitionGroup>
 
 		<div class="encumbrance-currency-row">
 			<div class="currency-row">
@@ -127,7 +132,7 @@ async function adjustQuantity(item: GenesysItem<EquipmentDataModel>, amount: num
 
 			<div :class="`encumbrance-row ${system.isEncumbered ? 'encumbered' : ''}`">
 				<span v-if="system.isEncumbered"><Localized label="Genesys.Labels.Encumbered" /></span>
-				<span><i class="fas fa-weight-hanging" v-localize:title="'Genesys.Labels.Encumbrance'"></i></span>
+				<span><i class="fas fa-weight-hanging"></i></span>
 				<span>{{ system.currentEncumbrance.value }}/{{ system.currentEncumbrance.threshold }}</span>
 			</div>
 		</div>
@@ -142,8 +147,20 @@ async function adjustQuantity(item: GenesysItem<EquipmentDataModel>, amount: num
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
-	gap: 0.5em;
 	padding: 0.5em;
+
+	.inv-move,
+	.inv-enter-active,
+	.inv-leave-active {
+		transition: all 0.5s ease;
+	}
+
+	.inv-enter-from,
+	.inv-leave-to {
+		height: 0;
+		opacity: 0;
+		transform: translateY(50px);
+	}
 
 	.encumbrance-currency-row {
 		display: grid;
@@ -208,116 +225,10 @@ async function adjustQuantity(item: GenesysItem<EquipmentDataModel>, amount: num
 		}
 	}
 
-	.block {
-		background: transparentize(colors.$light-blue, 0.8);
-		border-radius: 0.5em;
-		padding-bottom: 0.5em;
-
-		img {
-			border: none;
-			padding: 2px;
-			border-radius: 0.25rem;
-		}
-
-		.container-state {
-			&.closed > [data-toggle-container='close'] {
-				display: none;
-			}
-
-			&.open > [data-toggle-container='open'] {
-				display: none;
-			}
-		}
-
-		.section-header,
-		.inventory-item {
-			display: grid;
-			grid-template-columns: /* Padding */ 0.5em /* Icon */ 2em /* Name */ 1fr /* Quantity */ 60px /* Encumbrance */ 40px /* Actions */ 80px;
-			align-items: center;
-			justify-items: center;
-			column-gap: 0.25em;
-
-			.name {
-				justify-self: left;
-			}
-		}
-
-		.section-header {
-			font-family: 'Bebas Neue', sans-serif;
-			border-bottom: 1px solid black;
-			padding-top: 0.25em;
-
-			.name {
-				font-size: 1.25em;
-				grid-column: 2 / span 2;
-			}
-		}
-
-		.quantity {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: nowrap;
-			align-items: center;
-
-			a {
-				font-size: 0.75em;
-				position: relative;
-				top: 0.15em;
-			}
-
-			span {
-				margin-left: 0.25em;
-				margin-right: 0.25em;
-			}
-		}
-
-		.actions {
-			justify-self: right;
-			padding-right: 0.5em;
-			display: flex;
-			gap: 0.25em;
-		}
-
-		.inventory-item {
-			border-bottom: 1px dashed black;
-			font-family: 'Roboto Serif', serif;
-			grid-template-rows: auto auto;
-
-			.container-contents,
-			.description {
-				grid-column: 1 / span all;
-				justify-self: left;
-				border-left: 4px solid colors.$light-blue;
-				margin-left: 1em;
-				padding-left: 0.5em;
-			}
-
-			.description {
-				grid-row: 2 / span 1;
-				max-height: 0;
-				transition: max-height 0.5s ease-in-out;
-				overflow: hidden;
-				padding-right: 0.5em;
-
-				&.active {
-					max-height: 200px;
-				}
-			}
-
-			.container-contents {
-				grid-row: 3 / span 1;
-				width: calc(100% - 1em);
-				display: none;
-
-				&.open {
-					display: block;
-				}
-			}
-
-			&:last-of-type {
-				border-bottom: none;
-			}
-		}
+	.section-header {
+		display: flex;
+		font-size: 1.25em;
+		font-family: 'Bebas Neue', sans-serif;
 	}
 }
 </style>

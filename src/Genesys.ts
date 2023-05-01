@@ -46,10 +46,8 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-        <li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/40">#40</a>: Upgrading ranked talents was too restrictive.</li> 
-        <li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/20">#20</a>: The HTML mode of the text editor was improperly sized.</li>
-		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/35">#35</a>: Active talents with no active category were listed twice.</li>
-		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/36">#36</a>: Career item sheet was not showing editor view.</li>
+		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/40">#40</a>: Upgrading ranked talents was too restrictive.</li> 
+		<li>Work on <a href="https://github.com/Mezryss/FVTT-Genesys/issues/2">#2</a>: Inventory 2.0. There is still more work to be done on this!</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
