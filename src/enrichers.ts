@@ -88,7 +88,7 @@ export function register() {
 		 * Enricher to add skill check links in the document.
 		 */
 		{
-			pattern: /@skill-check\[(?<skill>.+),(?<difficulty>\d)]/gim,
+			pattern: /@skill-check\[(?<skill>.+?),(?<difficulty>\d)]/gim,
 			enricher: async (match, _) => {
 				const skill = match.groups?.['skill'];
 				const difficultyString = <string | undefined>match.groups?.['difficulty'];
@@ -96,7 +96,7 @@ export function register() {
 					return null;
 				}
 
-				const difficulty = parseInt(difficultyString ?? '2');
+				let difficulty = parseInt(difficultyString ?? '2');
 				let difficultyName: string;
 
 				switch (difficulty) {
@@ -115,8 +115,12 @@ export function register() {
 					case 4:
 						difficultyName = 'Daunting';
 						break;
+					case 5:
+						difficultyName = 'Formidable';
+						break;
 					default:
 						difficultyName = 'Impossible';
+						difficulty = 5;
 				}
 
 				const container = document.createElement('a');
