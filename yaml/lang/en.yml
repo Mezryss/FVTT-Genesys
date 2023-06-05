@@ -245,6 +245,17 @@ Genesys:
     Long: Long
     Extreme: Extreme
 
+  # Dialog Groups
+  DialogGroups:
+    Item:
+      CharacterCreation: Character Creation
+      Equipment: Equipment
+      Other: Other
+    Actor:
+      Adversary: Adversary
+      Other: Other
+
+
   # Misc. Unsorted Labels (to be cleaned up later)
   Labels:
     Name: Name

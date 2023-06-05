@@ -16,9 +16,9 @@ import { NAMESPACE as SETTINGS_NAMESPACE, register as registerSettings } from '@
 import { KEY_ALPHA_VERSION } from '@/settings/alpha';
 
 import { register as registerStoryPointTracker } from '@/app/StoryPointTracker';
-import { register as registerActors } from '@/actor';
+import { register as registerActors, AdversaryTypes } from '@/actor';
 import { register as registerEffects } from '@/effects';
-import { register as registerItems } from '@/item';
+import { register as registerItems, CharacterCreationItemTypes, EquipmentItemTypes } from '@/item';
 
 import './scss/index.scss';
 
@@ -107,4 +107,44 @@ Hooks.once('ready', async () => {
 	await doAlphaNotice();
 
 	readyConfigs();
+});
+
+function constructOptGroup(select: HTMLSelectElement, groupLabel: string, optValues?: string[]): HTMLOptGroupElement {
+	const options = select.querySelectorAll<HTMLOptionElement>(':scope > option');
+	const optgroup = document.createElement('optgroup');
+
+	optgroup.label = groupLabel;
+	optgroup.append(...Array.from(options).filter(option => !optValues || optValues.includes(option.value)));
+
+	return optgroup;
+}
+
+Hooks.on('renderDialog', (_dialog: Dialog, html: JQuery<HTMLElement>, _data: object) => {
+	const container = html[0];
+
+	// Cheks if it's the item creation dialog and categorize the options from the dropdown
+	if (container.classList.contains('dialog-item-create')) {
+		const select = container.querySelector<HTMLSelectElement>('select[name=type]');
+
+		if (select) {
+			select.append(
+				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Item.CharacterCreation'), CharacterCreationItemTypes),
+				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Item.Equipment'), EquipmentItemTypes),
+				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Item.Other')),
+			);
+            select.querySelector('option')!.selected = true;
+		}
+
+	// Cheks if it's the actor creation dialog and categorize the options from the dropdown
+	} else if (container.classList.contains('dialog-actor-create')) {
+		const select = container.querySelector<HTMLSelectElement>('select[name=type]');
+
+		if (select) {
+			select.append(
+				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Actor.Adversary'), AdversaryTypes),
+				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Actor.Other')),
+			);
+            select.querySelector('option')!.selected = true;
+		}
+	}
 });
