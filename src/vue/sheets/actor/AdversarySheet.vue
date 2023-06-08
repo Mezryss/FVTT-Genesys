@@ -18,6 +18,7 @@ import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
 import Enriched from '@/vue/components/Enriched.vue';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
+import { Characteristic as CharacteristicType } from '@/data/Characteristics';
 
 const context = inject<ActorSheetContext<AdversaryDataModel>>(RootContext)!;
 const actor = computed(() => toRaw(context.data.actor));
@@ -52,6 +53,10 @@ function updateEffects() {
 
 async function rollSkill(skill: GenesysItem<SkillDataModel>) {
 	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.id);
+}
+
+async function rollUnskilled(characteristic: CharacteristicType) {
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), '-', { rollUnskilled: characteristic });
 }
 
 async function rollAttack(weapon: GenesysItem) {
@@ -137,12 +142,18 @@ onBeforeUpdate(updateEffects);
 
 					<div class="characteristics-container">
 						<div class="characteristics-row">
-							<Characteristic label="Genesys.Characteristics.Brawn" :value="system.characteristics.brawn" name="system.characteristics.brawn" can-edit />
-							<Characteristic label="Genesys.Characteristics.Agility" :value="system.characteristics.agility" name="system.characteristics.agility" can-edit />
-							<Characteristic label="Genesys.Characteristics.Intellect" :value="system.characteristics.intellect" name="system.characteristics.intellect" can-edit />
-							<Characteristic label="Genesys.Characteristics.Cunning" :value="system.characteristics.cunning" name="system.characteristics.cunning" can-edit />
-							<Characteristic label="Genesys.Characteristics.Willpower" :value="system.characteristics.willpower" name="system.characteristics.willpower" can-edit />
-							<Characteristic label="Genesys.Characteristics.Presence" :value="system.characteristics.presence" name="system.characteristics.presence" can-edit />
+							<Characteristic label="Genesys.Characteristics.Brawn" :value="system.characteristics.brawn" name="system.characteristics.brawn"
+                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Brawn)" />
+							<Characteristic label="Genesys.Characteristics.Agility" :value="system.characteristics.agility" name="system.characteristics.agility"
+                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Agility)" />
+							<Characteristic label="Genesys.Characteristics.Intellect" :value="system.characteristics.intellect" name="system.characteristics.intellect"
+                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Intellect)" />
+							<Characteristic label="Genesys.Characteristics.Cunning" :value="system.characteristics.cunning" name="system.characteristics.cunning"
+                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Cunning)" />
+							<Characteristic label="Genesys.Characteristics.Willpower" :value="system.characteristics.willpower" name="system.characteristics.willpower"
+                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Willpower)" />
+							<Characteristic label="Genesys.Characteristics.Presence" :value="system.characteristics.presence" name="system.characteristics.presence"
+                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Presence)" />
 						</div>
 					</div>
 

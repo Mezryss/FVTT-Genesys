@@ -13,6 +13,7 @@ import { ContextBase } from '@/vue/SheetContext';
 import VueDicePrompt from '@/vue/apps/DicePrompt.vue';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
 import VueSheet from '@/vue/VueSheet';
+import { Characteristic } from '@/data/Characteristics';
 
 export enum RollType {
 	Skill,
@@ -27,6 +28,7 @@ export interface DicePromptContext extends ContextBase {
 	startingSkillId: string;
 	app: DicePrompt;
 	rollType: RollType;
+    rollUnskilled?: Characteristic;
 	rollData: any;
 }
 
@@ -41,6 +43,7 @@ export type InitiativeRollData = {
 
 type DicePromptOptions = {
 	rollType?: RollType;
+    rollUnskilled?: Characteristic;
 	startingDifficulty?: number;
 	rollData?: { [key: string]: any };
 };
@@ -82,19 +85,21 @@ export default class DicePrompt extends VueSheet(Application) {
 	skillId: string;
 	startingDifficulty: number;
 	rollType: RollType;
+	rollUnskilled?: Characteristic;
 	rollData?: { [key: string]: any };
 
 	get actorSkills(): GenesysItem<SkillDataModel>[] {
 		return <GenesysItem<SkillDataModel>[]>this.actor.items.filter((i) => i.type === 'skill');
 	}
 
-	constructor(actor: GenesysActor, skillId: string, { rollType, startingDifficulty, rollData }: DicePromptOptions = {}) {
+	constructor(actor: GenesysActor, skillId: string, { rollType, startingDifficulty, rollUnskilled, rollData }: DicePromptOptions = {}) {
 		super();
 
 		this.actor = actor;
 		this.skillId = skillId;
 		this.startingDifficulty = startingDifficulty ?? 2;
 		this.rollType = rollType ?? RollType.Skill;
+		this.rollUnskilled = rollUnskilled;
 		this.rollData = rollData;
 	}
 
@@ -114,6 +119,7 @@ export default class DicePrompt extends VueSheet(Application) {
 			startingSkillId: this.skillId,
 			app: this,
 			rollType: this.rollType,
+			rollUnskilled: this.rollUnskilled,
 			rollData: this.rollData,
 		};
 	}

@@ -18,6 +18,11 @@ withDefaults(
 		 */
 		canEdit?: boolean;
 
+        /**
+		 * Can the characteristic be used to directly to roll an unskilled check?
+		 */
+		canRollUnskilled?: boolean;
+
 		/**
 		 * If the field can be directly edited, what is the field name for the input?
 		 */
@@ -31,11 +36,13 @@ withDefaults(
 	{
 		canUpgrade: false,
 		canEdit: false,
+		canRollUnskilled: false,
 	},
 );
 
 const emit = defineEmits<{
 	(e: 'upgrade'): void;
+    (e: 'rollUnskilled'): void;
 }>();
 </script>
 
@@ -46,7 +53,9 @@ const emit = defineEmits<{
 		</div>
 
 		<label>
-			<Localized :label="label" />
+            <a v-if="canRollUnskilled" @click="emit('rollUnskilled')"><Localized :label="label" /></a>
+			<Localized v-else :label="label" />
+
 			<a v-if="canUpgrade" @click="emit('upgrade')"><i class="fas fa-arrow-circle-up"></i></a>
 		</label>
 
