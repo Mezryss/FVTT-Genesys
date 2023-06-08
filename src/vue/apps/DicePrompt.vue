@@ -58,8 +58,8 @@ const positiveDice = ref<DieString[]>([]);
 const negativeDice = ref<DieString[]>(new Array(context.startingDifficulty).fill('D'));
 const positiveSymbols = ref<SymbolString[]>([]);
 const negativeSymbols = ref<SymbolString[]>([]);
-const selectedCharacteristic = ref<Characteristic | '-'>(context.skills.find((s) => s.id === context.startingSkillId)?.systemData.characteristic ?? '-');
-const selectedSkill = ref<GenesysItem<SkillDataModel> | undefined>(context.skills.find((s) => s.id === context.startingSkillId));
+const selectedCharacteristic = ref<Characteristic | '-'>(!context.rollUnskilled ? context.skills.find((s) => s.id === context.startingSkillId)?.systemData.characteristic ?? '-' : context.rollUnskilled);
+const selectedSkill = ref<GenesysItem<SkillDataModel> | undefined>(!context.rollUnskilled ? context.skills.find((s) => s.id === context.startingSkillId) : undefined);
 
 const availableSkills = computed<GenesysItem<SkillDataModel>[]>(() => toRaw(context.skills).sort(sortSkills));
 const canChangeCharacteristic = computed(() => !selectedSkill.value || (game.settings.get(SETTINGS_NAMESPACE, KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS) as boolean));
