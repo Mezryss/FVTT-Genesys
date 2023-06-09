@@ -38,7 +38,7 @@ async function doAlphaNotice() {
 	}
 
 	const enrichedMessage = await TextEditor.enrichHTML(
-		`
+		/*html*/ `
 	<h3 style="font-family: 'Bebas Neue', sans-serif">Genesys Alpha ${game.system.version}</h3>
 	<p>
 		Hello! Thank you for giving the Genesys system a try! Please note that this system is currently in an alpha state; it is ready for some early playtesting and experimentation, but there are many features that are yet unimplemented and may be bugs!
@@ -46,11 +46,11 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li>Send to Chat implemented for Inventory Items! Equivalent functionality for Abilities & Talents will come with the Talents tab updates.</li>
-		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/40">#40</a>: Upgrading ranked talents was too restrictive.</li>
-		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/42">#42</a>: Journal entries for skill upgrades are showing the wrong rank.</li>
-		<li>Fixed <a href="https://github.com/Mezryss/FVTT-Genesys/issues/44">#44</a>: Ranked Talent effects don't stack per rank.</li>
-		<li>Work on <a href="https://github.com/Mezryss/FVTT-Genesys/issues/2">#2</a>: Inventory 2.0. There is still more work to be done on this!</li>
+		<li>A special thanks to Assembling Kings for continuing to support the Genesys system while Mezryss is on a <a href="https://github.com/Mezryss/FVTT-Genesys/discussions/63" target="_blank">temporary hiatus</a>!</li>
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/64">#64</a>]: Support unskilled rolls by clicking Characteristic name in NPC sheets.
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/29">#29</a>]: When editing an Item or Actor's name, make capitalization clear.
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/pull/62">PR #62</a>]: Categorize Item & Actor types with OptGroups
+		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/pull/58">PR #58</a>]: Fix skill check enricher
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
@@ -114,7 +114,7 @@ function constructOptGroup(select: HTMLSelectElement, groupLabel: string, optVal
 	const optgroup = document.createElement('optgroup');
 
 	optgroup.label = groupLabel;
-	optgroup.append(...Array.from(options).filter(option => !optValues || optValues.includes(option.value)));
+	optgroup.append(...Array.from(options).filter((option) => !optValues || optValues.includes(option.value)));
 
 	return optgroup;
 }
@@ -132,19 +132,16 @@ Hooks.on('renderDialog', (_dialog: Dialog, html: JQuery<HTMLElement>, _data: obj
 				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Item.Equipment'), EquipmentItemTypes),
 				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Item.Other')),
 			);
-            select.querySelector('option')!.selected = true;
+			select.querySelector('option')!.selected = true;
 		}
 
-	// Cheks if it's the actor creation dialog and categorize the options from the dropdown
+		// Cheks if it's the actor creation dialog and categorize the options from the dropdown
 	} else if (container.classList.contains('dialog-actor-create')) {
 		const select = container.querySelector<HTMLSelectElement>('select[name=type]');
 
 		if (select) {
-			select.append(
-				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Actor.Adversary'), AdversaryTypes),
-				constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Actor.Other')),
-			);
-            select.querySelector('option')!.selected = true;
+			select.append(constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Actor.Adversary'), AdversaryTypes), constructOptGroup(select, game.i18n.localize('Genesys.DialogGroups.Actor.Other')));
+			select.querySelector('option')!.selected = true;
 		}
 	}
 });
