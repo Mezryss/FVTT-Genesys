@@ -8,6 +8,7 @@ import GenesysItem from '@/item/GenesysItem';
 import Talent from '@/vue/components/character/Talent.vue';
 import AbilityDataModel from '@/item/data/AbilityDataModel';
 import { EntryType } from '@/actor/data/character/ExperienceJournal';
+import ArchetypeDataModel from '@/item/data/ArchetypeDataModel';
 
 const context = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 
@@ -16,6 +17,7 @@ const system = computed(() => context.data.actor.systemData);
 const activeAbilities = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'ability' && (i.system as AbilityDataModel).activation.type === 'active') as GenesysItem<AbilityDataModel>[]);
 const activeAbilityTypes = computed(() => Array.from(new Set(activeAbilities.value.map((t) => t.systemData.activation.detail.toLowerCase()))));
 const passiveAbilities = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'ability' && (i.system as AbilityDataModel).activation.type === 'passive') as GenesysItem<AbilityDataModel>[]);
+const archetypeAbilities = computed(() => (toRaw(context.data.actor).items.find((i) => i.type === 'archetype') as GenesysItem<ArchetypeDataModel>).systemData.grantedItems.filter((g) => g.type === 'ability').map((r) => r.name));
 
 const allTalents = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[]);
 const activeTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'active'));
@@ -112,6 +114,8 @@ async function openItem(item: GenesysItem) {
 					:description="ability.systemData.description"
 					:source="ability.systemData.source"
 					@open="openItem(ability)"
+                    :can-delete="!archetypeAbilities.includes(ability.name)"
+                    @delete="ability.delete()"
 				/>
 
 				<!-- Active Abilities w/Description -->
@@ -125,12 +129,24 @@ async function openItem(item: GenesysItem) {
 						:description="ability.systemData.description"
 						:source="ability.systemData.source"
 						@open="openItem(ability)"
+                        :can-delete="!archetypeAbilities.includes(ability.name)"
+                        @delete="ability.delete()"
 					/>
 				</template>
 
 				<!-- Passive Abilities -->
 				<div v-if="passiveAbilities.length > 0" class="category-header"><Localized label="Genesys.Labels.Passive" /></div>
-				<Talent v-for="ability in passiveAbilities" :key="ability.id" :name="ability.name" :img="ability.img" :description="ability.systemData.description" :source="ability.systemData.source" @open="openItem(ability)" />
+				<Talent
+                    v-for="ability in passiveAbilities"
+                    :key="ability.id"
+                    :name="ability.name"
+                    :img="ability.img"
+                    :description="ability.systemData.description"
+                    :source="ability.systemData.source"
+                    @open="openItem(ability)"
+                    :can-delete="!archetypeAbilities.includes(ability.name)"
+                    @delete="ability.delete()"
+                />
 			</div>
 
 			<div class="header"><Localized label="Genesys.Labels.Talents" /></div>
