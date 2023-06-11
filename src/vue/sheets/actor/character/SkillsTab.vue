@@ -18,6 +18,7 @@ import DicePrompt from '@/app/DicePrompt';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
 import MasonryWall from '@yeger/vue-masonry-wall';
+import { Characteristic as CharacteristicType } from '@/data/Characteristics';
 
 const context = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 const system = computed(() => context.data.actor.systemData);
@@ -43,6 +44,10 @@ const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 
 async function rollSkill(skill: GenesysItem<SkillDataModel>) {
 	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.id);
+}
+
+async function rollUnskilled(characteristic: CharacteristicType) {
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), '-', { rollUnskilled: characteristic });
 }
 
 async function purchaseCharacteristic(characteristic: keyof typeof system.value.characteristics) {
@@ -125,17 +130,29 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 <template>
 	<section class="tab-skills">
 		<div class="characteristics-row">
-			<Characteristic label="Genesys.Characteristics.Brawn" :value="system.characteristics.brawn" :can-upgrade="system.canPurchaseCharacteristicAdvance.brawn" @upgrade="purchaseCharacteristic('brawn')" />
+			<Characteristic label="Genesys.Characteristics.Brawn" :value="system.characteristics.brawn"
+                :can-upgrade="system.canPurchaseCharacteristicAdvance.brawn" @upgrade="purchaseCharacteristic('brawn')"
+                can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Brawn)" />
 
-			<Characteristic label="Genesys.Characteristics.Agility" :value="system.characteristics.agility" :can-upgrade="system.canPurchaseCharacteristicAdvance.agility" @upgrade="purchaseCharacteristic('agility')" />
+			<Characteristic label="Genesys.Characteristics.Agility" :value="system.characteristics.agility"
+                :can-upgrade="system.canPurchaseCharacteristicAdvance.agility" @upgrade="purchaseCharacteristic('agility')"
+                can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Agility)" />
 
-			<Characteristic label="Genesys.Characteristics.Intellect" :value="system.characteristics.intellect" :can-upgrade="system.canPurchaseCharacteristicAdvance.intellect" @upgrade="purchaseCharacteristic('intellect')" />
+			<Characteristic label="Genesys.Characteristics.Intellect" :value="system.characteristics.intellect"
+                :can-upgrade="system.canPurchaseCharacteristicAdvance.intellect" @upgrade="purchaseCharacteristic('intellect')"
+                can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Intellect)" />
 
-			<Characteristic label="Genesys.Characteristics.Cunning" :value="system.characteristics.cunning" :can-upgrade="system.canPurchaseCharacteristicAdvance.cunning" @upgrade="purchaseCharacteristic('cunning')" />
+			<Characteristic label="Genesys.Characteristics.Cunning" :value="system.characteristics.cunning"
+                :can-upgrade="system.canPurchaseCharacteristicAdvance.cunning" @upgrade="purchaseCharacteristic('cunning')"
+                can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Cunning)" />
 
-			<Characteristic label="Genesys.Characteristics.Willpower" :value="system.characteristics.willpower" :can-upgrade="system.canPurchaseCharacteristicAdvance.willpower" @upgrade="purchaseCharacteristic('willpower')" />
+			<Characteristic label="Genesys.Characteristics.Willpower" :value="system.characteristics.willpower"
+                :can-upgrade="system.canPurchaseCharacteristicAdvance.willpower" @upgrade="purchaseCharacteristic('willpower')"
+                can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Willpower)" />
 
-			<Characteristic label="Genesys.Characteristics.Presence" :value="system.characteristics.presence" :can-upgrade="system.canPurchaseCharacteristicAdvance.presence" @upgrade="purchaseCharacteristic('presence')" />
+			<Characteristic label="Genesys.Characteristics.Presence" :value="system.characteristics.presence"
+                :can-upgrade="system.canPurchaseCharacteristicAdvance.presence" @upgrade="purchaseCharacteristic('presence')"
+                can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Presence)" />
 		</div>
 
 		<div class="skills-row">
