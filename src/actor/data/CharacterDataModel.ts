@@ -151,7 +151,7 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 	#additionalEncumbranceThreshold() {
 		return (<CharacterActor>(<unknown>this.parent)).items
 			.filter((i) => (<EquipmentItem>i).systemData.encumbrance !== undefined && (i as EquipmentItem).systemData.state !== EquipmentState.Dropped && (i as EquipmentItem).systemData.encumbrance < 0)
-			.reduce((total, i) => Math.abs((<EquipmentItem>i).systemData.encumbrance), 0);
+			.reduce((total, i) => total + Math.abs((<EquipmentItem>i).systemData.encumbrance), 0);
 	}
 
 	#effectiveEncumbranceForItem(item: EquipmentItem) {
