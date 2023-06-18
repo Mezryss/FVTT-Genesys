@@ -18,6 +18,23 @@ async function deleteQuality(index: number) {
 		'system.qualities': updatedQualities,
 	});
 }
+
+async function updateQualityRating(index: number, event: Event) {
+	const value = parseInt((event.target as HTMLInputElement).value);
+
+	if (isNaN(value)) {
+		return;
+	} else if (value <= 0) {
+		return deleteQuality(index);
+	} else if (system.value.qualities[index].rating !== value) {
+		const qualities = system.value.qualities;
+		qualities[index].rating = value;
+
+		await toRaw(context.data.item).update({
+			'system.qualities': qualities,
+		});
+	}
+}
 </script>
 
 <template>
@@ -57,10 +74,11 @@ async function deleteQuality(index: number) {
 				<div class="row">
 					<label><Localized label="Genesys.Labels.Qualities" /></label>
 					<div>
-						<div v-for="(quality, index) in system.qualities" :key="index" class="data">
-							<div>
-								{{ quality.name }} <span v-if="quality.isRated">{{ quality.rating }}</span>
-							</div>
+						<div v-for="(quality, index) in system.qualities" :key="index" class="data-rated">
+							<div>{{ quality.name }}</div>
+                            <div>
+                                <span v-if="quality.isRated"><input type="text" :value="quality.rating" @blur="updateQualityRating(index, $event)" /></span>
+                            </div>
 							<a @click="deleteQuality(index)"><i class="fas fa-trash"></i></a>
 						</div>
 					</div>
@@ -73,9 +91,9 @@ async function deleteQuality(index: number) {
 <style lang="scss" scoped>
 @use '@scss/vars/colors.scss';
 
-.data {
+.data-rated {
 	display: grid;
-	grid-template-columns: /* Name */ 1fr /* Delete Button */ auto;
+	grid-template-columns: /* Name */ 2fr /* Rating */ 1fr /* Delete Button */ auto;
 	align-items: center;
 	border-bottom: 1px dashed colors.$blue;
 	padding: 2px;
@@ -83,5 +101,9 @@ async function deleteQuality(index: number) {
 	&:last-child {
 		border-bottom: none;
 	}
+
+    a {
+        margin-left: 1rem;
+    }
 }
 </style>
