@@ -9,6 +9,7 @@ import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataMod
 import GenesysItem from '@/item/GenesysItem';
 import InventoryItem from '@/vue/components/inventory/InventoryItem.vue';
 import InventorySortSlot from '@/vue/components/inventory/InventorySortSlot.vue';
+import GenesysEffect from '@/effects/GenesysEffect';
 
 const EQUIPMENT_TYPES = ['weapon', 'armor', 'consumable', 'gear', 'container'];
 
@@ -77,6 +78,31 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 		'system.state': sortCategory,
 		sort: newSort,
 	});
+
+	handleEffectsSuppresion(sortCategory, [item as GenesysItem]);
+}
+
+async function handleEffectsSuppresion(desiredState: EquipmentState, items: GenesysItem[]) {
+	const actor = toRaw(rootContext.data.actor);
+
+	for (const item of items) {
+		// More work is required before we also handle consumables.
+		if (item.type == 'consumable') {
+			continue;
+		}
+
+		const preferredState = ['weapon', 'armor'].includes(item.type) ? EquipmentState.Equipped : EquipmentState.Carried;
+		const shouldDisable = desiredState !== preferredState;
+
+		await Promise.all(
+			actor.effects.filter((effect) => (effect as GenesysEffect).originItem?.id === item.id && effect.disabled !== shouldDisable).map(
+				async (effect) =>
+					await effect.update({
+						disabled: shouldDisable
+					})
+			)
+		);
+	}
 }
 </script>
 
@@ -90,7 +116,7 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in equippedItems" :key="item.id">
-				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" />
+				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
 
 				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Equipped, index)" />
 			</template>
@@ -104,7 +130,7 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in carriedItems" :key="item.id">
-				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" />
+				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
 
 				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Carried, index)" />
 			</template>
@@ -118,7 +144,7 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in droppedItems" :key="item.id">
-				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" />
+				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
 
 				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Dropped, index)" />
 			</template>

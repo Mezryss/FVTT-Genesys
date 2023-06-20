@@ -28,6 +28,7 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(e: 'dragstart', event: DragEvent): void;
 	(e: 'dragend', event: DragEvent): void;
+    (e: 'equipmentStateChange', desiredState: EquipmentState, items: GenesysItem[]): void;
 }>();
 
 const dragCounter = ref(0);
@@ -129,6 +130,10 @@ async function sendItemToChat() {
 }
 
 async function setItemState(state: EquipmentState) {
+	// The 'emit' must happen before the state is updated, otherwise the component will be unmounted and the callback set on the
+	// parent won't fire.
+	emit('equipmentStateChange', state, [...containedItems.value, props.item]);
+
 	await Promise.all(
 		containedItems.value.map((i) =>
 			i.update({
@@ -222,6 +227,8 @@ async function drop(event: DragEvent) {
 	if (!item || item.type === 'container') {
 		return;
 	}
+
+	emit('equipmentStateChange', props.item.systemData.state, [item as GenesysItem]);
 
 	await item.update({
 		'system.container': props.item.id,

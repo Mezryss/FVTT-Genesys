@@ -19,6 +19,7 @@ import TalentDataModel from '@/item/data/TalentDataModel';
 import VueSheet from '@/vue/VueSheet';
 import GenesysActorSheet from '@/actor/GenesysActorSheet';
 import { ActorSheetContext } from '@/vue/SheetContext';
+import GenesysEffect from '@/effects/GenesysEffect';
 
 /**
  * Actor sheet used for Player Characters
@@ -149,6 +150,21 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 			return false;
 		}
 
+		if (['weapon', 'armor'].includes(droppedItem.type)) {
+			const [ equipable ] = await this._onDropItemCreate(droppedItem.toObject());
+
+			await Promise.all(
+				this.actor.effects.filter((effect) => (effect as GenesysEffect).originItem?.id === equipable.id && !effect.disabled).map(
+					async (effect) =>
+						await effect.update({
+							disabled: true
+						})
+				)
+			);
+
+			return false;
+		}
+        
 		return await super._onDropItem(event, data);
 	}
 
