@@ -17,7 +17,7 @@ const system = computed(() => context.data.actor.systemData);
 const activeAbilities = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'ability' && (i.system as AbilityDataModel).activation.type === 'active') as GenesysItem<AbilityDataModel>[]);
 const activeAbilityTypes = computed(() => Array.from(new Set(activeAbilities.value.map((t) => t.systemData.activation.detail.toLowerCase()))));
 const passiveAbilities = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'ability' && (i.system as AbilityDataModel).activation.type === 'passive') as GenesysItem<AbilityDataModel>[]);
-const archetypeAbilities = computed(() => (toRaw(context.data.actor).items.find((i) => i.type === 'archetype') as GenesysItem<ArchetypeDataModel>).systemData.grantedItems.filter((g) => g.type === 'ability').map((r) => r.name));
+const archetypeAbilities = computed(() => (toRaw(context.data.actor).items.find((i) => i.type === 'archetype') as GenesysItem<ArchetypeDataModel>)?.systemData.grantedItems.filter((g) => g.type === 'ability').map((r) => r.name) ?? []);
 
 const allTalents = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[]);
 const activeTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'active'));

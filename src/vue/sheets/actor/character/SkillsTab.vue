@@ -19,6 +19,7 @@ import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
 import MasonryWall from '@yeger/vue-masonry-wall';
 import { Characteristic as CharacteristicType } from '@/data/Characteristics';
+import { CombatPool } from '@/data/Actors';
 
 const context = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 const system = computed(() => context.data.actor.systemData);
@@ -58,8 +59,8 @@ async function purchaseCharacteristic(characteristic: keyof typeof system.value.
 	const currentValue = system.value.characteristics[characteristic];
 
 	// This is only available during character creation XP spends, so we want to increase WT & ST.
-	const woundThreshold = system.value.wounds.max + (characteristic === 'brawn' ? 1 : 0);
-	const strainThreshold = system.value.strain.max + (characteristic === 'willpower' ? 1 : 0);
+	const woundThreshold = (system.value._source.wounds as CombatPool).max + (characteristic === 'brawn' ? 1 : 0);
+	const strainThreshold = (system.value._source.strain as CombatPool).max + (characteristic === 'willpower' ? 1 : 0);
 
 	await toRaw(context.data.actor).update({
 		// Increase Characteristic, WT, and ST

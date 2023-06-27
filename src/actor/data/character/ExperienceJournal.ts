@@ -12,6 +12,7 @@ import SkillDataModel from '@/item/data/SkillDataModel';
 import GenesysItem from '@/item/GenesysItem';
 import TalentDataModel from '@/item/data/TalentDataModel';
 import { Characteristic } from '@/data/Characteristics';
+import { CombatPool } from '@/data/Actors';
 
 /**
  * Different sources of Experience Journal entries.
@@ -128,11 +129,11 @@ export async function removeJournalEntry(actor: GenesysActor<CharacterDataModel>
 			// Reduce Wound Threshold or Strain Threshold.
 			switch (data.characteristic) {
 				case Characteristic.Brawn:
-					additionalChangeKeys['system.wounds.max'] = actor.systemData.wounds.max - 1;
+					additionalChangeKeys['system.wounds.max'] = (actor.systemData._source.wounds as CombatPool).max - 1;
 					break;
 
 				case Characteristic.Willpower:
-					additionalChangeKeys['system.strain.max'] = actor.systemData.strain.max - 1;
+					additionalChangeKeys['system.strain.max'] = (actor.systemData._source.strain as CombatPool).max - 1;
 					break;
 			}
 
