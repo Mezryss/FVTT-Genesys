@@ -46,11 +46,13 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li>A special thanks to Assembling Kings for continuing to support the Genesys system while Mezryss is on a <a href="https://github.com/Mezryss/FVTT-Genesys/discussions/63" target="_blank">temporary hiatus</a>!</li>
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/64">#64</a>]: Support unskilled rolls by clicking Characteristic name in NPC sheets.
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/issues/29">#29</a>]: When editing an Item or Actor's name, make capitalization clear.
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/pull/62">PR #62</a>]: Categorize Item & Actor types with OptGroups
-		<li>[<a href="https://github.com/Mezryss/FVTT-Genesys/pull/58">PR #58</a>]: Fix skill check enricher
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/68">PR #68</a>: Allow PCs to do Unskilled rolls</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/71">PR #71</a>: Can manually edit attached item qualities&#39; rating</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/12">#12</a>: Equipment should provide its passive ActiveEffects only while equipped</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/47">#47</a>: Fix bug preventing deletion of manually-added abilities.</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/69">PR #69</a>: Make case errors more obvious for effect sheets</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/70">PR #70</a>: Bugfix: Add up all containers bonus encumbrance</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/74">#74</a>: Increasing the Brawn attribute after adding Toughened permanently adds 3 to the wound threshold instead of 1</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">

@@ -1,3 +1,22 @@
+## Alpha 0.1.11
+My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
+
+### Features
+
+-   [PR #68](https://github.com/Mezryss/FVTT-Genesys/pull/68): Allow PCs to do Unskilled rolls
+-	[PR #71](https://github.com/Mezryss/FVTT-Genesys/pull/71): Can manually edit attached item qualities' rating
+-	[#12](https://github.com/Mezryss/FVTT-Genesys/issues/12): Equipment should provide its passive ActiveEffects only while equipped
+
+### Bug Fixes/Misc
+
+-	[#47](https://github.com/Mezryss/FVTT-Genesys/issues/47): Fix bug preventing deletion of manually-added abilities.
+-	[PR #69](https://github.com/Mezryss/FVTT-Genesys/pull/69): Make case errors more obvious for effect sheets
+-	[PR #70](https://github.com/Mezryss/FVTT-Genesys/pull/70): Bugfix: Add up all containers bonus encumbrance
+-	[#74](https://github.com/Mezryss/FVTT-Genesys/issues/74): Increasing the Brawn attribute after adding Toughened permanently adds 3 to the wound threshold instead of 1
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.1.10
 
 ### Features (thanks to Assembling Kings)
@@ -10,8 +29,6 @@
 
 -   [PR #58](https://github.com/Mezryss/FVTT-Genesys/pull/58): Fix skill check enricher
 
-<details>
-<summary>Previous Releases</summary>
 ## Alpha 0.1.9
 
 ### Features
