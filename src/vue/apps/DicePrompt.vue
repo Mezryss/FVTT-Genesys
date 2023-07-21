@@ -7,6 +7,7 @@ import GenesysItem from '@/item/GenesysItem';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS } from '@/settings/campaign';
+import { KEY_DICE_POOL_APPROXIMATION } from '@/settings/user';
 import { RootContext } from '@/vue/SheetContext';
 import Localized from '@/vue/components/Localized.vue';
 import MinionDataModel from '@/actor/data/MinionDataModel';
@@ -18,6 +19,11 @@ enum UpgradeType {
 
 type DieString = 'A' | 'P' | 'B' | 'D' | 'C' | 'S';
 type SymbolString = 'a' | 's' | 't' | 'h' | 'f' | 'd';
+
+type DicePool = {
+    dice: Record<DieString, number>,
+    symbols: Record<SymbolString, number>,
+};
 
 const SORT_ORDER: Record<DieString | SymbolString, number> = {
 	// Proficiency & Challenge Dice
@@ -60,9 +66,17 @@ const positiveSymbols = ref<SymbolString[]>([]);
 const negativeSymbols = ref<SymbolString[]>([]);
 const selectedCharacteristic = ref<Characteristic | '-'>(!context.rollUnskilled ? context.skills.find((s) => s.id === context.startingSkillId)?.systemData.characteristic ?? '-' : context.rollUnskilled);
 const selectedSkill = ref<GenesysItem<SkillDataModel> | undefined>(!context.rollUnskilled ? context.skills.find((s) => s.id === context.startingSkillId) : undefined);
+const successApproximation = ref('');
 
 const availableSkills = computed<GenesysItem<SkillDataModel>[]>(() => toRaw(context.skills).sort(sortSkills));
 const canChangeCharacteristic = computed(() => !selectedSkill.value || (game.settings.get(SETTINGS_NAMESPACE, KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS) as boolean));
+
+const DICE_POOL_APPROXIMATION = Math.floor(game.settings.get(SETTINGS_NAMESPACE, KEY_DICE_POOL_APPROXIMATION) as number);
+
+let currentDicePool: DicePool = {
+	dice: { } as Record<DieString, number>,
+	symbols: { } as Record<SymbolString, number>,
+};
 
 onMounted(recalculateDicePool);
 
@@ -148,6 +162,8 @@ function recalculateDicePool() {
 	const green = Math.max(characteristicValue, skillValue) - yellow;
 
 	positiveDice.value = [...new Array(yellow).fill('P'), ...new Array(green).fill('A'), ...boostDice];
+    
+	approximateProbability();
 }
 
 function addDie(dieType: DieString) {
@@ -158,6 +174,8 @@ function addDie(dieType: DieString) {
 		negativeDice.value.push(dieType);
 		negativeDice.value.sort(sortDice);
 	}
+
+	approximateProbability();
 }
 
 function removeDie(dieType: DieString) {
@@ -168,6 +186,8 @@ function removeDie(dieType: DieString) {
 	}
 	let index = diceArrayRef.value.findIndex((s) => s === dieType);
 	diceArrayRef.value.splice(index, 1);
+
+	approximateProbability();
 }
 
 function addSymbol(symbolType: SymbolString) {
@@ -178,6 +198,8 @@ function addSymbol(symbolType: SymbolString) {
 		negativeSymbols.value.push(symbolType);
 		negativeSymbols.value.sort(sortDice);
 	}
+
+	approximateProbability();
 }
 
 function removeSymbol(symbolType: SymbolString) {
@@ -188,6 +210,8 @@ function removeSymbol(symbolType: SymbolString) {
 	}
 	let index = symbolArrayRef.value.findIndex((s) => s === symbolType);
 	symbolArrayRef.value.splice(index, 1);
+
+	approximateProbability();
 }
 
 function upgradeDie(type: UpgradeType) {
@@ -209,6 +233,8 @@ function upgradeDie(type: UpgradeType) {
 		diceArrayRef.value.push(baseDie);
 		diceArrayRef.value.sort(sortDice);
 	}
+
+	approximateProbability();
 }
 
 function downgradeDie(type: UpgradeType) {
@@ -228,15 +254,27 @@ function downgradeDie(type: UpgradeType) {
 		diceArrayRef.value[index] = downgradedDie;
 		diceArrayRef.value.sort(sortDice);
 	}
+
+	approximateProbability();
 }
 
-async function rollPool() {
+function compileDicePool() {
 	const dice = positiveDice.value.concat(negativeDice.value).reduce(reduceDice, {} as Record<DieString | SymbolString, number>);
 	const symbols = positiveSymbols.value.concat(negativeSymbols.value).reduce(reduceDice, {} as Record<DieString | SymbolString, number>);
 
 	const formula = Object.keys(dice)
 		.map((d) => `${dice[d as DieString]}${ICON_TO_FORMULA[d as DieString]}`)
 		.join('+');
+
+	return {
+		formula,
+		dice,
+		symbols,
+	};
+}
+
+async function rollPool() {
+	const { formula, symbols } = compileDicePool();
 
 	const baseRollData = {
 		actor: toRaw(context.actor),
@@ -266,6 +304,49 @@ async function rollPool() {
 	}
 
 	await context.app.close();
+}
+
+function hasSameChanceToSucceed(firstDicePool: DicePool, secondDicePool: DicePool) {
+	const firstPoolDiceEntries = Object.entries(firstDicePool.dice);
+
+	// Dice always contribute to the success rate so any difference implies the pools have different probabilities.
+	if (firstPoolDiceEntries.length !== Object.keys(secondDicePool.dice).length) { return false; }
+
+	for (const [diceKey, diceAmount] of firstPoolDiceEntries) {
+		if (secondDicePool.dice[diceKey as DieString] !== diceAmount) {
+			return false;
+		}
+	}
+
+	// Advantages and threats do not impact the chance to succeed so we ignore them.
+	const firstPoolNetSuccesses = (firstDicePool.symbols['s'] ?? 0) + (firstDicePool.symbols['t'] ?? 0) - (firstDicePool.symbols['f'] ?? 0) - (firstDicePool.symbols['d'] ?? 0);
+	const secondPoolNetSuccesses = (secondDicePool.symbols['s'] ?? 0) + (secondDicePool.symbols['t'] ?? 0) - (secondDicePool.symbols['f'] ?? 0) - (secondDicePool.symbols['d'] ?? 0);
+
+	return firstPoolNetSuccesses === secondPoolNetSuccesses;
+}
+
+async function approximateProbability() {
+	if (DICE_POOL_APPROXIMATION <= 0) { return; }
+
+	const { formula, dice, symbols } = compileDicePool();
+
+	const previousDicePool = currentDicePool;
+	currentDicePool = {
+		dice: (dice as Record<DieString, number>),
+		symbols: (symbols as Record<SymbolString, number>)
+	};
+
+	// No need to run this process again if nothing of importance has changed.
+	if (hasSameChanceToSucceed(previousDicePool, currentDicePool)) { return; }
+
+	const simulation = await Promise.all([...Array(DICE_POOL_APPROXIMATION)].map(async () => {
+		const roll = new Roll(formula, { symbols });
+		const result = await roll.evaluate({async: true});
+		return (await GenesysRoller.parseRollResults(result));
+	}));
+
+	const successfulRolls = simulation.filter(roll => roll.netSuccess > 0);
+	successApproximation.value = (Math.round(successfulRolls.length / simulation.length * 10000) / 100).toFixed(2);
 }
 </script>
 
@@ -326,7 +407,7 @@ async function rollPool() {
 		</div>
 
 		<!-- Characteristic Selection -->
-		<select :value="selectedCharacteristic" :disabled="!canChangeCharacteristic" @change="characteristicChanged">
+		<select name="characteristic" :value="selectedCharacteristic" :disabled="!canChangeCharacteristic" @change="characteristicChanged">
 			<option value="-">—</option>
 			<option :value="Characteristic.Brawn"><Localized label="Genesys.Characteristics.Brawn" /></option>
 			<option :value="Characteristic.Agility"><Localized label="Genesys.Characteristics.Agility" /></option>
@@ -337,10 +418,19 @@ async function rollPool() {
 		</select>
 
 		<!-- Skill Selection -->
-		<select :value="selectedSkill?.id ?? '-'" @change="selectDefaultCharacteristicForSkill">
+		<select name="skill" :value="selectedSkill?.id ?? '-'" @change="selectDefaultCharacteristicForSkill">
 			<option value="-">—</option>
 			<option v-for="skill in availableSkills" :key="skill.id" :value="skill.id">{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.systemData.characteristic.capitalize()}`" />)</option>
 		</select>
+
+        <div v-if="DICE_POOL_APPROXIMATION > 0" class="approximation">
+            <label>
+                <i class="fas fa-circle-info" data-tooltip="Genesys.DicePrompt.ApproximationDisclaimer"></i> <Localized label="Genesys.DicePrompt.Approximation" />
+            </label>
+
+            <i v-if="successApproximation === ''" class="fas fa-spinner fa-spin"></i>
+            <span v-else>{{ successApproximation }}%</span>
+        </div>
 
 		<!-- Roll Button -->
 		<button class="roll-button" @click.prevent="rollPool"><Localized label="Genesys.DicePrompt.Roll" /></button>
@@ -363,7 +453,7 @@ async function rollPool() {
 
 .dice-prompt {
 	display: grid;
-	grid-template-columns: 2fr 3fr;
+	grid-template-columns: 2fr 1fr 2fr;
 	grid-template-rows: /* Header */ auto /* Dice Pool */ 1fr /* Skill & Characteristic */ auto /* Roll Button */ auto;
 	gap: 0.5em;
 
@@ -397,11 +487,20 @@ async function rollPool() {
 	}
 
 	[name='skill'] {
-		grid-column: 2 / span 1;
+		grid-column: 2 / span 2;
+	}
+
+    .approximation {
+		grid-column: 1 / span 2;
+		grid-row: 4 / span 1;
+
+        label {
+            margin-right: 1rem;
+        }
 	}
 
 	.roll-button {
-		grid-column: 2 / span 1;
+		grid-column: 3 / span 1;
 		grid-row: 4 / span 1;
 	}
 	//#endregion
