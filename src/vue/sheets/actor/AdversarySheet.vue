@@ -142,18 +142,54 @@ onBeforeUpdate(updateEffects);
 
 					<div class="characteristics-container">
 						<div class="characteristics-row">
-							<Characteristic label="Genesys.Characteristics.Brawn" :value="system.characteristics.brawn" name="system.characteristics.brawn"
-                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Brawn)" />
-							<Characteristic label="Genesys.Characteristics.Agility" :value="system.characteristics.agility" name="system.characteristics.agility"
-                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Agility)" />
-							<Characteristic label="Genesys.Characteristics.Intellect" :value="system.characteristics.intellect" name="system.characteristics.intellect"
-                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Intellect)" />
-							<Characteristic label="Genesys.Characteristics.Cunning" :value="system.characteristics.cunning" name="system.characteristics.cunning"
-                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Cunning)" />
-							<Characteristic label="Genesys.Characteristics.Willpower" :value="system.characteristics.willpower" name="system.characteristics.willpower"
-                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Willpower)" />
-							<Characteristic label="Genesys.Characteristics.Presence" :value="system.characteristics.presence" name="system.characteristics.presence"
-                                can-edit can-roll-unskilled @rollUnskilled="rollUnskilled(CharacteristicType.Presence)" />
+							<Characteristic
+								label="Genesys.Characteristics.Brawn"
+								:value="system.characteristics.brawn"
+								name="system.characteristics.brawn"
+								can-edit
+								can-roll-unskilled
+								@rollUnskilled="rollUnskilled(CharacteristicType.Brawn)"
+							/>
+							<Characteristic
+								label="Genesys.Characteristics.Agility"
+								:value="system.characteristics.agility"
+								name="system.characteristics.agility"
+								can-edit
+								can-roll-unskilled
+								@rollUnskilled="rollUnskilled(CharacteristicType.Agility)"
+							/>
+							<Characteristic
+								label="Genesys.Characteristics.Intellect"
+								:value="system.characteristics.intellect"
+								name="system.characteristics.intellect"
+								can-edit
+								can-roll-unskilled
+								@rollUnskilled="rollUnskilled(CharacteristicType.Intellect)"
+							/>
+							<Characteristic
+								label="Genesys.Characteristics.Cunning"
+								:value="system.characteristics.cunning"
+								name="system.characteristics.cunning"
+								can-edit
+								can-roll-unskilled
+								@rollUnskilled="rollUnskilled(CharacteristicType.Cunning)"
+							/>
+							<Characteristic
+								label="Genesys.Characteristics.Willpower"
+								:value="system.characteristics.willpower"
+								name="system.characteristics.willpower"
+								can-edit
+								can-roll-unskilled
+								@rollUnskilled="rollUnskilled(CharacteristicType.Willpower)"
+							/>
+							<Characteristic
+								label="Genesys.Characteristics.Presence"
+								:value="system.characteristics.presence"
+								name="system.characteristics.presence"
+								can-edit
+								can-roll-unskilled
+								@rollUnskilled="rollUnskilled(CharacteristicType.Presence)"
+							/>
 						</div>
 					</div>
 
@@ -379,8 +415,8 @@ onBeforeUpdate(updateEffects);
 				border-bottom: 1px solid colors.$dark-blue;
 			}
 
-            &:focus {
-                font-family: 'Modesto Condensed', sans-serif;
+			&:focus {
+				font-family: 'Modesto Condensed', sans-serif;
 			}
 		}
 	}

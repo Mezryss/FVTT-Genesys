@@ -20,11 +20,7 @@ export function register() {
 	registerSheets();
 }
 
-export const AdversaryTypes = [
-	'minion',
-	'nemesis',
-	'rival',
-];
+export const AdversaryTypes = ['minion', 'nemesis', 'rival'];
 
 function registerDataModels() {
 	CONFIG.Actor.systemDataModels.character = CharacterDataModel;

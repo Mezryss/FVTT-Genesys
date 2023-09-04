@@ -12,7 +12,7 @@ withDefaults(
 		description: string;
 		source: string;
 
-        canDelete?: boolean,
+		canDelete?: boolean;
 		canUpgrade?: boolean;
 		ranked?: boolean;
 		rank?: number;
@@ -30,7 +30,7 @@ withDefaults(
 const emit = defineEmits<{
 	(e: 'open'): void;
 	(e: 'upgrade'): void;
-    (e: 'delete'): void;
+	(e: 'delete'): void;
 }>();
 
 const rootContext = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
@@ -53,7 +53,7 @@ const talentRef = ref<HTMLElement | null>(null);
 			<a v-if="ranked && canUpgrade" @click="emit('upgrade')"><i class="fas fa-arrow-circle-up"></i></a>
 		</span>
 		<div></div>
-        <span v-if="canDelete">
+		<span v-if="canDelete">
 			<a @click="emit('delete')"><i class="fas fa-trash"></i></a>
 		</span>
 		<span v-if="rootContext.data.editable">

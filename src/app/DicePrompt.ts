@@ -28,7 +28,7 @@ export interface DicePromptContext extends ContextBase {
 	startingSkillId: string;
 	app: DicePrompt;
 	rollType: RollType;
-    rollUnskilled?: Characteristic;
+	rollUnskilled?: Characteristic;
 	rollData: any;
 }
 
@@ -43,7 +43,7 @@ export type InitiativeRollData = {
 
 type DicePromptOptions = {
 	rollType?: RollType;
-    rollUnskilled?: Characteristic;
+	rollUnskilled?: Characteristic;
 	startingDifficulty?: number;
 	rollData?: { [key: string]: any };
 };

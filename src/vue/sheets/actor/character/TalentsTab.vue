@@ -25,28 +25,22 @@ const activeTalentTypes = computed(() => Array.from(new Set(activeTalents.value.
 const passiveTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'passive'));
 
 function atTier(tier: number) {
-	const talentsCount = allTalents.value.reduce(
-		(accumulator, talent) => {
-			if (tier === 5 && talent.systemData.effectiveTier === 5) {
-				// If we want to count talents of tier 5 it requires that we consider the ranking of the talent if appropriate;
-			    // ranked talents that are at tier 5 remain at that tier for any future purchases.
-				return accumulator + talent.systemData.rank - (talent.systemData.effectiveTier - talent.systemData.tier);
-
-			} else if (talent.systemData.tier === tier) {
-				// Count the talent if it matches the desired tier.
-				return accumulator + 1;
-
-			} else if (talent.systemData.tier < tier && talent.systemData.effectiveTier >= tier) {
-				// Count the talent if it's from a lower tier but it has been purchased enough times that at some point it was
-				// considered as a talent of the desired tier.
-				return accumulator + 1;
-
-			} else {
-				return accumulator;
-			}
-		},
-		0
-	);
+	const talentsCount = allTalents.value.reduce((accumulator, talent) => {
+		if (tier === 5 && talent.systemData.effectiveTier === 5) {
+			// If we want to count talents of tier 5 it requires that we consider the ranking of the talent if appropriate;
+			// ranked talents that are at tier 5 remain at that tier for any future purchases.
+			return accumulator + talent.systemData.rank - (talent.systemData.effectiveTier - talent.systemData.tier);
+		} else if (talent.systemData.tier === tier) {
+			// Count the talent if it matches the desired tier.
+			return accumulator + 1;
+		} else if (talent.systemData.tier < tier && talent.systemData.effectiveTier >= tier) {
+			// Count the talent if it's from a lower tier but it has been purchased enough times that at some point it was
+			// considered as a talent of the desired tier.
+			return accumulator + 1;
+		} else {
+			return accumulator;
+		}
+	}, 0);
 
 	return talentsCount;
 }
@@ -114,8 +108,8 @@ async function openItem(item: GenesysItem) {
 					:description="ability.systemData.description"
 					:source="ability.systemData.source"
 					@open="openItem(ability)"
-                    :can-delete="!archetypeAbilities.includes(ability.name)"
-                    @delete="ability.delete()"
+					:can-delete="!archetypeAbilities.includes(ability.name)"
+					@delete="ability.delete()"
 				/>
 
 				<!-- Active Abilities w/Description -->
@@ -129,24 +123,24 @@ async function openItem(item: GenesysItem) {
 						:description="ability.systemData.description"
 						:source="ability.systemData.source"
 						@open="openItem(ability)"
-                        :can-delete="!archetypeAbilities.includes(ability.name)"
-                        @delete="ability.delete()"
+						:can-delete="!archetypeAbilities.includes(ability.name)"
+						@delete="ability.delete()"
 					/>
 				</template>
 
 				<!-- Passive Abilities -->
 				<div v-if="passiveAbilities.length > 0" class="category-header"><Localized label="Genesys.Labels.Passive" /></div>
 				<Talent
-                    v-for="ability in passiveAbilities"
-                    :key="ability.id"
-                    :name="ability.name"
-                    :img="ability.img"
-                    :description="ability.systemData.description"
-                    :source="ability.systemData.source"
-                    @open="openItem(ability)"
-                    :can-delete="!archetypeAbilities.includes(ability.name)"
-                    @delete="ability.delete()"
-                />
+					v-for="ability in passiveAbilities"
+					:key="ability.id"
+					:name="ability.name"
+					:img="ability.img"
+					:description="ability.systemData.description"
+					:source="ability.systemData.source"
+					@open="openItem(ability)"
+					:can-delete="!archetypeAbilities.includes(ability.name)"
+					@delete="ability.delete()"
+				/>
 			</div>
 
 			<div class="header"><Localized label="Genesys.Labels.Talents" /></div>

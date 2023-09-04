@@ -100,14 +100,14 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 					return false;
 				}
 
-                const newRank = existingTalent.systemData.rank + 1;
+				const newRank = existingTalent.systemData.rank + 1;
 				const newEffectiveTier = existingTalent.systemData.effectiveNextTier;
 				const cost = existingTalent.systemData.advanceCost;
 
-                if (this.actor.systemData.availableXP < cost) {
-                    ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordRankedTalent', { name: talent.name, newRank, cost }));
+				if (this.actor.systemData.availableXP < cost) {
+					ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordRankedTalent', { name: talent.name, newRank, cost }));
 					return false;
-                }
+				}
 
 				await existingTalent.update({
 					'system.rank': newRank,
@@ -134,10 +134,10 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 				// New talent
 				const cost = talent.systemData.tier * 5;
 
-                if (this.actor.systemData.availableXP < cost) {
-                    ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordTalent', { name: talent.name, cost }));
+				if (this.actor.systemData.availableXP < cost) {
+					ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordTalent', { name: talent.name, cost }));
 					return false;
-                }
+				}
 
 				await this.actor.update({
 					'system.experienceJournal.entries': [
@@ -162,20 +162,22 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 		}
 
 		if (['weapon', 'armor'].includes(droppedItem.type)) {
-			const [ equipable ] = await this._onDropItemCreate(droppedItem.toObject());
+			const [equipable] = await this._onDropItemCreate(droppedItem.toObject());
 
 			await Promise.all(
-				this.actor.effects.filter((effect) => (effect as GenesysEffect).originItem?.id === equipable.id && !effect.disabled).map(
-					async (effect) =>
-						await effect.update({
-							disabled: true
-						})
-				)
+				this.actor.effects
+					.filter((effect) => (effect as GenesysEffect).originItem?.id === equipable.id && !effect.disabled)
+					.map(
+						async (effect) =>
+							await effect.update({
+								disabled: true,
+							}),
+					),
 			);
 
 			return false;
 		}
-        
+
 		return await super._onDropItem(event, data);
 	}
 

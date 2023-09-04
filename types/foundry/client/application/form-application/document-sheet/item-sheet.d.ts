@@ -37,8 +37,8 @@ declare class ItemSheet<TItem extends Item = Item> extends DocumentSheet<TItem> 
 	 */
 	override activateListeners(html: JQuery): void;
 
-    /**
-     * Handle changing the item image
-     */
-    protected _onEditImage(event: Event): void;
+	/**
+	 * Handle changing the item image
+	 */
+	protected _onEditImage(event: Event): void;
 }

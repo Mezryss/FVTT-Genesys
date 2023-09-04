@@ -21,8 +21,8 @@ type DieString = 'A' | 'P' | 'B' | 'D' | 'C' | 'S';
 type SymbolString = 'a' | 's' | 't' | 'h' | 'f' | 'd';
 
 type DicePool = {
-    dice: Record<DieString, number>,
-    symbols: Record<SymbolString, number>,
+	dice: Record<DieString, number>;
+	symbols: Record<SymbolString, number>;
 };
 
 const SORT_ORDER: Record<DieString | SymbolString, number> = {
@@ -74,8 +74,8 @@ const canChangeCharacteristic = computed(() => !selectedSkill.value || (game.set
 const DICE_POOL_APPROXIMATION = Math.floor(game.settings.get(SETTINGS_NAMESPACE, KEY_DICE_POOL_APPROXIMATION) as number);
 
 let currentDicePool: DicePool = {
-	dice: { } as Record<DieString, number>,
-	symbols: { } as Record<SymbolString, number>,
+	dice: {} as Record<DieString, number>,
+	symbols: {} as Record<SymbolString, number>,
 };
 
 onMounted(recalculateDicePool);
@@ -162,7 +162,7 @@ function recalculateDicePool() {
 	const green = Math.max(characteristicValue, skillValue) - yellow;
 
 	positiveDice.value = [...new Array(yellow).fill('P'), ...new Array(green).fill('A'), ...boostDice];
-    
+
 	approximateProbability();
 }
 
@@ -310,7 +310,9 @@ function hasSameChanceToSucceed(firstDicePool: DicePool, secondDicePool: DicePoo
 	const firstPoolDiceEntries = Object.entries(firstDicePool.dice);
 
 	// Dice always contribute to the success rate so any difference implies the pools have different probabilities.
-	if (firstPoolDiceEntries.length !== Object.keys(secondDicePool.dice).length) { return false; }
+	if (firstPoolDiceEntries.length !== Object.keys(secondDicePool.dice).length) {
+		return false;
+	}
 
 	for (const [diceKey, diceAmount] of firstPoolDiceEntries) {
 		if (secondDicePool.dice[diceKey as DieString] !== diceAmount) {
@@ -326,27 +328,33 @@ function hasSameChanceToSucceed(firstDicePool: DicePool, secondDicePool: DicePoo
 }
 
 async function approximateProbability() {
-	if (DICE_POOL_APPROXIMATION <= 0) { return; }
+	if (DICE_POOL_APPROXIMATION <= 0) {
+		return;
+	}
 
 	const { formula, dice, symbols } = compileDicePool();
 
 	const previousDicePool = currentDicePool;
 	currentDicePool = {
-		dice: (dice as Record<DieString, number>),
-		symbols: (symbols as Record<SymbolString, number>)
+		dice: dice as Record<DieString, number>,
+		symbols: symbols as Record<SymbolString, number>,
 	};
 
 	// No need to run this process again if nothing of importance has changed.
-	if (hasSameChanceToSucceed(previousDicePool, currentDicePool)) { return; }
+	if (hasSameChanceToSucceed(previousDicePool, currentDicePool)) {
+		return;
+	}
 
-	const simulation = await Promise.all([...Array(DICE_POOL_APPROXIMATION)].map(async () => {
-		const roll = new Roll(formula, { symbols });
-		const result = await roll.evaluate({async: true});
-		return (await GenesysRoller.parseRollResults(result));
-	}));
+	const simulation = await Promise.all(
+		[...Array(DICE_POOL_APPROXIMATION)].map(async () => {
+			const roll = new Roll(formula, { symbols });
+			const result = await roll.evaluate({ async: true });
+			return await GenesysRoller.parseRollResults(result);
+		}),
+	);
 
-	const successfulRolls = simulation.filter(roll => roll.netSuccess > 0);
-	successApproximation.value = (Math.round(successfulRolls.length / simulation.length * 10000) / 100).toFixed(2);
+	const successfulRolls = simulation.filter((roll) => roll.netSuccess > 0);
+	successApproximation.value = (Math.round((successfulRolls.length / simulation.length) * 10000) / 100).toFixed(2);
 }
 </script>
 
@@ -423,14 +431,12 @@ async function approximateProbability() {
 			<option v-for="skill in availableSkills" :key="skill.id" :value="skill.id">{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.systemData.characteristic.capitalize()}`" />)</option>
 		</select>
 
-        <div v-if="DICE_POOL_APPROXIMATION > 0" class="approximation">
-            <label>
-                <i class="fas fa-circle-info" data-tooltip="Genesys.DicePrompt.ApproximationDisclaimer"></i> <Localized label="Genesys.DicePrompt.Approximation" />
-            </label>
+		<div v-if="DICE_POOL_APPROXIMATION > 0" class="approximation">
+			<label> <i class="fas fa-circle-info" data-tooltip="Genesys.DicePrompt.ApproximationDisclaimer"></i> <Localized label="Genesys.DicePrompt.Approximation" /> </label>
 
-            <i v-if="successApproximation === ''" class="fas fa-spinner fa-spin"></i>
-            <span v-else>{{ successApproximation }}%</span>
-        </div>
+			<i v-if="successApproximation === ''" class="fas fa-spinner fa-spin"></i>
+			<span v-else>{{ successApproximation }}%</span>
+		</div>
 
 		<!-- Roll Button -->
 		<button class="roll-button" @click.prevent="rollPool"><Localized label="Genesys.DicePrompt.Roll" /></button>
@@ -490,13 +496,13 @@ async function approximateProbability() {
 		grid-column: 2 / span 2;
 	}
 
-    .approximation {
+	.approximation {
 		grid-column: 1 / span 2;
 		grid-row: 4 / span 1;
 
-        label {
-            margin-right: 1rem;
-        }
+		label {
+			margin-right: 1rem;
+		}
 	}
 
 	.roll-button {

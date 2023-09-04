@@ -140,9 +140,11 @@ export function register() {
 			return;
 		}
 
-        // Only one GM should execute the rest of the code.
-        const isHub = game.users.filter(user => user.isGM && user.active).every(candidate => candidate.id >= game.user.id);
-        if (!isHub) { return; }
+		// Only one GM should execute the rest of the code.
+		const isHub = game.users.filter((user) => user.isGM && user.active).every((candidate) => candidate.id >= game.user.id);
+		if (!isHub) {
+			return;
+		}
 
 		const combat = game.combats.get(payload.data.combatId) as GenesysCombat | undefined;
 		if (!combat) {

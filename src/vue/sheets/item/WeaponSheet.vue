@@ -120,10 +120,10 @@ async function updateQualityRating(index: number, event: Event) {
 					<div>
 						<div v-for="(quality, index) in system.qualities" :key="index" class="data-rated">
 							<div>{{ quality.name }}</div>
-                            <div>
-                                <span v-if="quality.isRated"><input type="text" :value="quality.rating" @blur="updateQualityRating(index, $event)" /></span>
-                            </div>
-                            <a @click="deleteQuality(index)"><i class="fas fa-trash"></i></a>
+							<div>
+								<span v-if="quality.isRated"><input type="text" :value="quality.rating" @blur="updateQualityRating(index, $event)" /></span>
+							</div>
+							<a @click="deleteQuality(index)"><i class="fas fa-trash"></i></a>
 						</div>
 					</div>
 				</div>
@@ -148,11 +148,11 @@ async function updateQualityRating(index: number, event: Event) {
 }
 
 .data-rated {
-    @extend .data;
-    grid-template-columns: /* Name */ 2fr /* Rating */ 1fr /* Delete Button */ auto;
+	@extend .data;
+	grid-template-columns: /* Name */ 2fr /* Rating */ 1fr /* Delete Button */ auto;
 
-    a {
-        margin-left: 1rem;
-    }
+	a {
+		margin-left: 1rem;
+	}
 }
 </style>

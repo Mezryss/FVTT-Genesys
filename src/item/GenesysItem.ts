@@ -32,14 +32,14 @@ export default class GenesysItem<ItemDataModel extends foundry.abstract.DataMode
 	}
 
 	/**
-     * Override the createDialog callback to include an unique class that identifies the created dialog.
-     * @inheritDoc
-     */
-	static override createDialog(data?: { folder?: string | undefined; } | undefined, options?: Partial<FormApplicationOptions> | undefined): Promise<ClientDocument<foundry.documents.BaseItem> | undefined> {
+	 * Override the createDialog callback to include an unique class that identifies the created dialog.
+	 * @inheritDoc
+	 */
+	static override createDialog(data?: { folder?: string | undefined } | undefined, options?: Partial<FormApplicationOptions> | undefined): Promise<ClientDocument<foundry.documents.BaseItem> | undefined> {
 		// The 'dialog' class needs to be added explicitly, otherwise it won't be added by the super call.
 		const touchedOptions = {
 			...options,
-			classes: [...(options?.classes ?? []), 'dialog', 'dialog-item-create']
+			classes: [...(options?.classes ?? []), 'dialog', 'dialog-item-create'],
 		};
 
 		return super.createDialog(data, touchedOptions);

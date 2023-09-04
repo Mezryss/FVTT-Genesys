@@ -28,7 +28,7 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(e: 'dragstart', event: DragEvent): void;
 	(e: 'dragend', event: DragEvent): void;
-    (e: 'equipmentStateChange', desiredState: EquipmentState, items: GenesysItem[]): void;
+	(e: 'equipmentStateChange', desiredState: EquipmentState, items: GenesysItem[]): void;
 }>();
 
 const dragCounter = ref(0);
@@ -101,14 +101,15 @@ async function sendItemToChat() {
 		qualities = itemQualities;
 	}
 
-	const weapon = (props.item.type !== 'weapon') ? undefined : {
-		skill: skillForWeapon()[0],
-		damage: (system.value as WeaponDataModel).baseDamage.toString() + (
-			(system.value as WeaponDataModel).damageCharacteristic !== '-'
-				? (' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${ (system.value as WeaponDataModel).damageCharacteristic.capitalize() }`))
-				: ''
-		)
-	};
+	const weapon =
+		props.item.type !== 'weapon'
+			? undefined
+			: {
+				skill: skillForWeapon()[0],
+				damage:
+					(system.value as WeaponDataModel).baseDamage.toString() +
+					((system.value as WeaponDataModel).damageCharacteristic !== '-' ? ' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${(system.value as WeaponDataModel).damageCharacteristic.capitalize()}`) : ''),
+			};
 
 	const chatTemplate = await renderTemplate('systems/genesys/templates/chat/item.hbs', {
 		img: props.item.img,

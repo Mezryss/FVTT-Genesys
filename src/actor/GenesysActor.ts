@@ -26,14 +26,14 @@ export default class GenesysActor<ActorDataModel extends foundry.abstract.DataMo
 	}
 
 	/**
-     * Override the createDialog callback to include an unique class that identifies the created dialog.
-     * @inheritDoc
-     */
-	static override createDialog(data?: { folder?: string | undefined; } | undefined, options?: Partial<FormApplicationOptions> | undefined): Promise<ClientDocument<foundry.documents.BaseActor> | undefined> {
+	 * Override the createDialog callback to include an unique class that identifies the created dialog.
+	 * @inheritDoc
+	 */
+	static override createDialog(data?: { folder?: string | undefined } | undefined, options?: Partial<FormApplicationOptions> | undefined): Promise<ClientDocument<foundry.documents.BaseActor> | undefined> {
 		// The 'dialog' class needs to be added explicitly, otherwise it won't be added by the super call.
 		const touchedOptions = {
 			...options,
-			classes: [...(options?.classes ?? []), 'dialog', 'dialog-actor-create']
+			classes: [...(options?.classes ?? []), 'dialog', 'dialog-actor-create'],
 		};
 
 		return super.createDialog(data, touchedOptions);

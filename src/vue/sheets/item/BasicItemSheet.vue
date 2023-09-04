@@ -146,8 +146,8 @@ onBeforeUpdate(updateEffects);
 				border-bottom: 1px solid colors.$dark-blue;
 			}
 
-            &:focus {
-                font-family: 'Modesto Condensed', sans-serif;
+			&:focus {
+				font-family: 'Modesto Condensed', sans-serif;
 			}
 		}
 	}

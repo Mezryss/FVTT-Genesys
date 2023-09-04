@@ -33,8 +33,8 @@ export default class GenesysEffectSheet extends ActiveEffectConfig {
 		super.activateListeners(html);
 
 		if (this.isEditable) {
-            // Foundry v10 and v11 bind this functionality differently so instead we override that behavior with our own.
-            html.find('img[data-edit]').off('click');
+			// Foundry v10 and v11 bind this functionality differently so instead we override that behavior with our own.
+			html.find('img[data-edit]').off('click');
 			html.find('img[data-edit]').on('click', this._onEditImage.bind(this));
 		}
 	}

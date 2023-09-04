@@ -57,7 +57,8 @@
 			}
 		}
 
-		&.weapon .description, &.armor .description {
+		&.weapon .description,
+		&.armor .description {
 			border-bottom: 1px dashed colors.$gold;
 		}
 
@@ -70,7 +71,9 @@
 			font-size: 1.25em;
 		}
 
-		.defenseAndSoak, .skillAndRange, .damageAndCritical {
+		.defenseAndSoak,
+		.skillAndRange,
+		.damageAndCritical {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			grid-template-rows: auto auto;

@@ -21,13 +21,13 @@ export default class GenesysEffect extends ActiveEffect {
 
 		const itemId = this.origin.split('.Item.')[1];
 
-		return (this.parent as GenesysActor).items.get(itemId) as GenesysItem|undefined;
+		return (this.parent as GenesysActor).items.get(itemId) as GenesysItem | undefined;
 	}
 
 	override apply(actor: Actor, change: ApplicableChangeData<this>): unknown {
 		const originItem = this.originItem;
 
-		console.error('Applying Effect!')
+		console.error('Applying Effect!');
 		console.log(originItem);
 
 		if (originItem && originItem.systemData instanceof TalentDataModel) {

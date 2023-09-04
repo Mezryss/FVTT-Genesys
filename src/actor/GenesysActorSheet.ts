@@ -28,11 +28,11 @@ export default class GenesysActorSheet<ActorDataModel extends foundry.abstract.D
 	override activateListeners(html: JQuery) {
 		super.activateListeners(html);
 
-        if (this.isEditable) {
-            // Foundry v10 and v11 bind this functionality differently so instead we override that behavior with our own.
-            html.find('img[data-edit]').off('click');
-            html.find('img[data-edit]').on('click', this._onEditImage.bind(this));
-        }
+		if (this.isEditable) {
+			// Foundry v10 and v11 bind this functionality differently so instead we override that behavior with our own.
+			html.find('img[data-edit]').off('click');
+			html.find('img[data-edit]').on('click', this._onEditImage.bind(this));
+		}
 
 		setTimeout(() => {
 			html.find('[data-skill-check]').on('click', async (event) => {

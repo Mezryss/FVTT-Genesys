@@ -18,7 +18,7 @@ withDefaults(
 		 */
 		canEdit?: boolean;
 
-        /**
+		/**
 		 * Can the characteristic be used to directly to roll an unskilled check?
 		 */
 		canRollUnskilled?: boolean;
@@ -42,7 +42,7 @@ withDefaults(
 
 const emit = defineEmits<{
 	(e: 'upgrade'): void;
-    (e: 'rollUnskilled'): void;
+	(e: 'rollUnskilled'): void;
 }>();
 </script>
 
@@ -53,7 +53,7 @@ const emit = defineEmits<{
 		</div>
 
 		<label>
-            <a v-if="canRollUnskilled" @click="emit('rollUnskilled')"><Localized :label="label" /></a>
+			<a v-if="canRollUnskilled" @click="emit('rollUnskilled')"><Localized :label="label" /></a>
 			<Localized v-else :label="label" />
 
 			<a v-if="canUpgrade" @click="emit('upgrade')"><i class="fas fa-arrow-circle-up"></i></a>

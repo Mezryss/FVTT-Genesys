@@ -41,13 +41,13 @@ export default class GenesysItemSheet<ItemDataModel extends BaseItemDataModel = 
 		};
 	}
 
-    override activateListeners(html: JQuery<HTMLElement>): void {
-        if (this.isEditable) {
-            // Foundry v10 and v11 bind this functionality differently so instead we override that behavior with our own.
-            html.find('img[data-edit]').off('click');
-            html.find('img[data-edit]').on('click', this._onEditImage.bind(this));
-        }
-    }
+	override activateListeners(html: JQuery<HTMLElement>): void {
+		if (this.isEditable) {
+			// Foundry v10 and v11 bind this functionality differently so instead we override that behavior with our own.
+			html.find('img[data-edit]').off('click');
+			html.find('img[data-edit]').on('click', this._onEditImage.bind(this));
+		}
+	}
 
 	/**
 	 * Add support for drop data on Item sheets.

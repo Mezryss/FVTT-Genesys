@@ -95,12 +95,14 @@ async function handleEffectsSuppresion(desiredState: EquipmentState, items: Gene
 		const shouldDisable = desiredState !== preferredState;
 
 		await Promise.all(
-			actor.effects.filter((effect) => (effect as GenesysEffect).originItem?.id === item.id && effect.disabled !== shouldDisable).map(
-				async (effect) =>
-					await effect.update({
-						disabled: shouldDisable
-					})
-			)
+			actor.effects
+				.filter((effect) => (effect as GenesysEffect).originItem?.id === item.id && effect.disabled !== shouldDisable)
+				.map(
+					async (effect) =>
+						await effect.update({
+							disabled: shouldDisable,
+						}),
+				),
 		);
 	}
 }
