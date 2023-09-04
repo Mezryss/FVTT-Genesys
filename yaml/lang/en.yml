@@ -43,6 +43,8 @@ Genesys:
     SkillForInjuriesHint: Name of the skill used when recovering from Critical Injuries.
     UseMagicalGirlSymbols: Use Magical Girl Symbols by MilkMyth (Client-Only)
     UseMagicalGirlSymbolsHint: Swap the Genesys symbol set for MilkMyth's Magical Girls symbol set. This will not affect other users.
+    DicePoolApproximation: Dice Pool Approximation
+    DicePoolApproximationHint: The number of simulated rolls to run in order to approximate the chance to succeed. Be mindful when increasing this number since it will have a direct impact on Foundry's performance; a good number to start is 100. If a value of 0 is provided this feature is disabled.
 
   # Tooltips
   Tooltips:
@@ -131,6 +133,8 @@ Genesys:
     Title: Dice Pool
     Roll: Roll!
     Hint: Use the dice box on the right to add, upgrade, and downgrade. Click dice in the pool to remove them!
+    Approximation: 'Chance to Succeed:'
+    ApproximationDisclaimer: The displayed probability is an approximation that uses the Monte Carlo method.
 
   # Experience Journal Labels
   XPJournal:
