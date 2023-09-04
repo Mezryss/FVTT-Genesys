@@ -36,4 +36,9 @@ declare class ItemSheet<TItem extends Item = Item> extends DocumentSheet<TItem> 
 	 * @param html The HTML object returned by template rendering
 	 */
 	override activateListeners(html: JQuery): void;
+
+    /**
+     * Handle changing the item image
+     */
+    protected _onEditImage(event: Event): void;
 }
