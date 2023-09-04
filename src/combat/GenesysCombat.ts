@@ -136,9 +136,13 @@ export default class GenesysCombat extends Combat {
  */
 export function register() {
 	game.socket.on(SOCKET_NAME, async (payload: SocketPayload<ClaimInitiativeSlotData>) => {
-		if (payload.operation !== SocketOperation.ClaimInitiativeSlot || !payload.data) {
+		if (!game.user.isGM || payload.operation !== SocketOperation.ClaimInitiativeSlot || !payload.data) {
 			return;
 		}
+
+        // Only one GM should execute the rest of the code.
+        const isHub = game.users.filter(user => user.isGM && user.active).every(candidate => candidate.id >= game.user.id);
+        if (!isHub) { return; }
 
 		const combat = game.combats.get(payload.data.combatId) as GenesysCombat | undefined;
 		if (!combat) {
