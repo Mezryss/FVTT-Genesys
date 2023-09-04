@@ -1,3 +1,19 @@
+## Alpha 0.1.12
+My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
+
+### Features
+
+-   [PR #77](https://github.com/Mezryss/FVTT-Genesys/pull/77): Show chance to succeed when forming dice pool.
+
+### Bug Fixes/Misc
+
+-	[#76](https://github.com/Mezryss/FVTT-Genesys/issues/76): Can't edit sheet images
+-	[PR #79](https://github.com/Mezryss/FVTT-Genesys/pull/79): Fix talent ranks
+-	[#57](https://github.com/Mezryss/FVTT-Genesys/issues/57): Fix combat tracker
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.1.11
 My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
 
@@ -13,9 +29,6 @@ My thanks, as always, to Assembling Kings for their continued work while I am ta
 -	[PR #69](https://github.com/Mezryss/FVTT-Genesys/pull/69): Make case errors more obvious for effect sheets
 -	[PR #70](https://github.com/Mezryss/FVTT-Genesys/pull/70): Bugfix: Add up all containers bonus encumbrance
 -	[#74](https://github.com/Mezryss/FVTT-Genesys/issues/74): Increasing the Brawn attribute after adding Toughened permanently adds 3 to the wound threshold instead of 1
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.1.10
 

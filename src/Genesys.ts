@@ -46,13 +46,10 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/68">PR #68</a>: Allow PCs to do Unskilled rolls</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/71">PR #71</a>: Can manually edit attached item qualities&#39; rating</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/12">#12</a>: Equipment should provide its passive ActiveEffects only while equipped</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/47">#47</a>: Fix bug preventing deletion of manually-added abilities.</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/69">PR #69</a>: Make case errors more obvious for effect sheets</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/70">PR #70</a>: Bugfix: Add up all containers bonus encumbrance</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/74">#74</a>: Increasing the Brawn attribute after adding Toughened permanently adds 3 to the wound threshold instead of 1</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/77">PR #77</a>: Show chance to succeed when forming dice pool.</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/76">#76</a>: Can't edit sheet images</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/79">PR #79</a>: Fix talent ranks</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/57">#57</a>: Fix combat tracker</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
