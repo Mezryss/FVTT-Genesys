@@ -96,15 +96,21 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 
 			if (existingTalent) {
 				if (existingTalent.systemData.ranked === 'no') {
-					ui.notifications.info(game.i18n.format('Genesys.Notifications.TalentNotRanked', { talentName: talent.name }));
+					ui.notifications.info(game.i18n.format('Genesys.Notifications.TalentNotRanked', { talentName: existingTalent.name }));
 					return false;
 				}
 
-				const newEffectiveTier = Math.min(5, talent.systemData.tier + talent.systemData.rank);
-				const cost = talent.systemData.advanceCost;
+                const newRank = existingTalent.systemData.rank + 1;
+				const newEffectiveTier = existingTalent.systemData.effectiveNextTier;
+				const cost = existingTalent.systemData.advanceCost;
+
+                if (this.actor.systemData.availableXP < cost) {
+                    ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordRankedTalent', { name: talent.name, newRank, cost }));
+					return false;
+                }
 
 				await existingTalent.update({
-					'system.rank': talent.systemData.rank + 1,
+					'system.rank': newRank,
 				});
 
 				await this.actor.update({
@@ -117,7 +123,7 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 								name: existingTalent.name,
 								id: existingTalent.id,
 								tier: newEffectiveTier,
-								rank: existingTalent.systemData.rank,
+								rank: newRank,
 							},
 						},
 					],
@@ -127,6 +133,11 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 			} else {
 				// New talent
 				const cost = talent.systemData.tier * 5;
+
+                if (this.actor.systemData.availableXP < cost) {
+                    ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordTalent', { name: talent.name, cost }));
+					return false;
+                }
 
 				await this.actor.update({
 					'system.experienceJournal.entries': [
