@@ -1,3 +1,13 @@
+## Alpha 0.1.13
+My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
+
+### Bug Fixes/Misc
+
+-	[#81](https://github.com/Mezryss/FVTT-Genesys/issues/81): Can't save item sheets
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.1.12
 My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
 
@@ -10,9 +20,6 @@ My thanks, as always, to Assembling Kings for their continued work while I am ta
 -	[#76](https://github.com/Mezryss/FVTT-Genesys/issues/76): Can't edit sheet images
 -	[PR #79](https://github.com/Mezryss/FVTT-Genesys/pull/79): Fix talent ranks
 -	[#57](https://github.com/Mezryss/FVTT-Genesys/issues/57): Fix combat tracker
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.1.11
 My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.

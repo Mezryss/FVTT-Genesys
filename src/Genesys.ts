@@ -50,6 +50,7 @@ async function doAlphaNotice() {
 		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/76">#76</a>: Can't edit sheet images</li>
 		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/79">PR #79</a>: Fix talent ranks</li>
 		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/57">#57</a>: Fix combat tracker</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/81">#81</a>: Can't save item sheets</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
