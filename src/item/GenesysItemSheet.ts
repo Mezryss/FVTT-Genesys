@@ -42,6 +42,8 @@ export default class GenesysItemSheet<ItemDataModel extends BaseItemDataModel = 
 	}
 
 	override activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html);
+
 		if (this.isEditable) {
 			// Foundry v10 and v11 bind this functionality differently so instead we override that behavior with our own.
 			html.find('img[data-edit]').off('click');
