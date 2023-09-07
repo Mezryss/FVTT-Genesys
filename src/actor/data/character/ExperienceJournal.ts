@@ -89,6 +89,7 @@ type SkillEntryData = {
 
 type NewTalentEntryData = {
 	name: string;
+    id: string;
 	tier: number;
 	rank: number;
 };
@@ -167,7 +168,7 @@ export async function removeJournalEntry(actor: GenesysActor<CharacterDataModel>
 		case EntryType.NewTalent: {
 			const data = <NewTalentEntryData>removedEntry.data;
 
-			const talent = <GenesysItem<TalentDataModel> | undefined>actor.items.find((i) => i.type === 'talent' && i.name.toLowerCase() === data.name.toLowerCase());
+			const talent = <GenesysItem<TalentDataModel> | undefined>actor.items.find((i) => i.type === 'talent' && i.id === data.id);
 			if (!talent) {
 				break;
 			}
