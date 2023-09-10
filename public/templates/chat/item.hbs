@@ -8,7 +8,7 @@
 
 	{{!-- Armor: Defense, Soak --}}
 	{{#if (eq type 'armor')}}
-		<div class="defenseAndSoak">
+		<div class="details-grid">
 			<label class="defense">{{localize 'Genesys.Labels.Defense'}}</label>
 			<label class="soak">{{localize 'Genesys.Labels.Soak'}}</label>
 			<span class="defense">{{#if (gt system.defense 0)}}+{{/if}}{{ system.defense }}</span>
@@ -18,14 +18,14 @@
 
 	{{!-- Weapon: Damage, Critical, Range, Skill --}}
 	{{#if (eq type 'weapon')}}
-		<div class="skillAndRange">
+		<div class="details-grid">
 			<label class="skill">{{localize 'Genesys.Labels.Skill'}}</label>
 			<label class="range">{{localize 'Genesys.Labels.Range'}}</label>
 			<span class="skill">{{ weapon.skill }}</span>
 			<span class="range">{{localize (concat 'Genesys.Range.' (capitalize system.range))}}</span>
 		</div>
 
-		<div class="damageAndCritical">
+		<div class="details-grid">
 			<label class="damage">{{localize 'Genesys.Labels.Damage'}}</label>
 			<label class="critical">{{localize 'Genesys.Labels.Critical'}}</label>
 			<span class="damage">{{ weapon.damage }}</span>

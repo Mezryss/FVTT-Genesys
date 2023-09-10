@@ -105,11 +105,11 @@ async function sendItemToChat() {
 		props.item.type !== 'weapon'
 			? undefined
 			: {
-				skill: skillForWeapon()[0],
-				damage:
-					(system.value as WeaponDataModel).baseDamage.toString() +
-					((system.value as WeaponDataModel).damageCharacteristic !== '-' ? ' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${(system.value as WeaponDataModel).damageCharacteristic.capitalize()}`) : ''),
-			};
+					skill: skillForWeapon()[0],
+					damage:
+						(system.value as WeaponDataModel).baseDamage.toString() +
+						((system.value as WeaponDataModel).damageCharacteristic !== '-' ? ' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${(system.value as WeaponDataModel).damageCharacteristic.capitalize()}`) : ''),
+			  };
 
 	const chatTemplate = await renderTemplate('systems/genesys/templates/chat/item.hbs', {
 		img: props.item.img,

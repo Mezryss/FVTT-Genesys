@@ -1,0 +1,23 @@
+<div class="ability">
+	<div class="imageAndName">
+		<img src="{{img}}" />
+		<span>{{ name }}</span>
+	</div>
+
+	<div class="description">{{{ description }}}</div>
+
+    <div class="details-grid abilityActivation">
+        <label class="activation">{{localize 'Genesys.Labels.Activation'}}</label>
+        <span class="activation">{{localize (concat 'Genesys.Labels.' (capitalize activation.type))}} {{#if activation.detail}}({{ activation.detail }}){{/if}}</span>
+    </div>
+
+	{{!-- Talent: Effective Tier, Rank --}}
+	{{#if effectiveTier}}
+		<div class="details-grid">
+			<label class="effectiveTier">{{localize 'Genesys.Labels.EffectiveTier'}}</label>
+			<label class="rank">{{localize 'Genesys.Labels.Rank'}}</label>
+			<span class="effectiveTier">{{ effectiveTier }}</span>
+			<span class="rank">{{#if ranked}}{{ rank }}{{else}}{{localize 'Genesys.Labels.NotApplicable'}}{{/if}}</span>
+		</div>
+	{{/if}}
+</div>

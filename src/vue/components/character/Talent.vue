@@ -5,19 +5,21 @@ import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import Localized from '@/vue/components/Localized.vue';
 import Enriched from '@/vue/components/Enriched.vue';
 
-withDefaults(
+const props = withDefaults(
 	defineProps<{
 		img: string;
 		name: string;
 		description: string;
 		source: string;
-
-		canDelete?: boolean;
-		canUpgrade?: boolean;
+		activation: {
+			type: 'passive' | 'active';
+			detail: string;
+		};
 		ranked?: boolean;
 		rank?: number;
-		tier?: number;
 		effectiveTier?: number;
+		canDelete?: boolean;
+		canUpgrade?: boolean;
 	}>(),
 	{
 		canDelete: false,
@@ -37,6 +39,33 @@ const rootContext = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 
 const expanded = ref(false);
 const talentRef = ref<HTMLElement | null>(null);
+
+async function sendToChat() {
+	const enrichedDescription = await TextEditor.enrichHTML(props.description, { async: true });
+
+	const templateData = {
+		img: props.img,
+		name: props.name,
+		description: enrichedDescription,
+		activation: {
+			type: props.activation.type,
+			detail: props.activation.detail,
+		},
+		effectiveTier: props.effectiveTier,
+		ranked: props.ranked,
+		rank: props.rank,
+	};
+
+	const chatTemplate = await renderTemplate('systems/genesys/templates/chat/ability.hbs', templateData);
+	await ChatMessage.create({
+		user: game.user.id,
+		speaker: {
+			actor: game.user.character?.id,
+		},
+		content: chatTemplate,
+		type: CONST.CHAT_MESSAGE_TYPES.IC,
+	});
+}
 </script>
 
 <template>
@@ -58,6 +87,9 @@ const talentRef = ref<HTMLElement | null>(null);
 		</span>
 		<span v-if="rootContext.data.editable">
 			<a @click="emit('open')"><i class="fas fa-edit"></i></a>
+		</span>
+		<span v-if="rootContext.data.editable">
+			<a @click="sendToChat()"><i class="fas fa-comment"></i></a>
 		</span>
 		<div :class="`desc-container ${expanded ? 'active' : ''}`">
 			<div v-if="effectiveTier" class="tier-container">

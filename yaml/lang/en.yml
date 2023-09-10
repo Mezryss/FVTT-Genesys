@@ -359,3 +359,5 @@ Genesys:
     Equipped: Equipped
     Carried: Carried
     Dropped: Dropped
+    NotApplicable: N/A
+    EffectiveTier: Effective Tier
