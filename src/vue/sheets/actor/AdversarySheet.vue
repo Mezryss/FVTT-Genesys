@@ -19,6 +19,7 @@ import MenuItem from '@/vue/components/MenuItem.vue';
 import Enriched from '@/vue/components/Enriched.vue';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
 import { Characteristic as CharacteristicType } from '@/data/Characteristics';
+import InjuryDataModel from '@/item/data/InjuryDataModel';
 
 const context = inject<ActorSheetContext<AdversaryDataModel>>(RootContext)!;
 const actor = computed(() => toRaw(context.data.actor));
@@ -28,6 +29,7 @@ const skills = computed(() => actor.value.items.filter((i) => i.type === 'skill'
 const talents = computed(() => actor.value.items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[]);
 const abilities = computed(() => actor.value.items.filter((i) => i.type === 'ability') as GenesysItem<AbilityDataModel>[]);
 const equipment = computed(() => actor.value.items.filter((i) => EQUIPMENT_TYPES.includes(i.type)) as GenesysItem<EquipmentDataModel>[]);
+const injuries = computed(() => actor.value.items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
 
 const effects = ref<any>([]);
 
@@ -128,6 +130,7 @@ onBeforeUpdate(updateEffects);
 			<div class="spacer"></div>
 
 			<a class="item" data-tab="stats"><Localized label="Genesys.Tabs.Data" /></a>
+			<a class="item" data-tab="miscellaneous"><Localized label="Genesys.Tabs.Miscellaneous" /></a>
 			<a class="item" data-tab="effects"><Localized label="Genesys.Tabs.Effects" /></a>
 
 			<div class="spacer"></div>
@@ -345,6 +348,83 @@ onBeforeUpdate(updateEffects);
 				</section>
 			</div>
 
+			<div class="tab" data-tab="miscellaneous">
+				<section class="motivations">
+					<div class="adversary-items">
+						<span class="header"><Localized label="Genesys.Labels.CriticalInjuries" />:</span>
+						<div class="container">
+							<Localized v-if="injuries.length === 0" label="Genesys.Adversary.None" />
+							<div v-for="injury in injuries" :key="injury.id" class="injury">
+								<ContextMenu :disable-menu="!context.data.editable">
+									<template v-slot:menu-items>
+										<MenuItem @click="deleteItem(injury)">
+											<template v-slot:icon><i class="fas fa-trash"></i></template>
+											{{ deleteLabel }}
+										</MenuItem>
+									</template>
+
+									<label
+										><a @click="editItem(injury)">{{ injury.name }}</a></label
+									>
+								</ContextMenu>
+								<Enriched class="description" v-if="injury.systemData.description" :value="injury.systemData.description" />
+							</div>
+						</div>
+					</div>
+
+					<div class="header"><Localized label="Genesys.Labels.Motivations" /></div>
+					<div class="container">
+						<!-- Strength -->
+						<div class="motivation">
+							<div class="header">
+								<span><Localized label="Genesys.Labels.Strength" /></span>
+								<input type="text" name="system.motivations.strength.name" :value="system.motivations.strength.name" />
+							</div>
+
+							<div class="body">
+								<Editor name="system.motivations.strength.description" :content="system.motivations.strength.description" button />
+							</div>
+						</div>
+
+						<!-- Flaw -->
+						<div class="motivation">
+							<div class="header">
+								<span><Localized label="Genesys.Labels.Flaw" /></span>
+								<input type="text" name="system.motivations.flaw.name" :value="system.motivations.flaw.name" />
+							</div>
+
+							<div class="body">
+								<Editor name="system.motivations.flaw.description" :content="system.motivations.flaw.description" button />
+							</div>
+						</div>
+
+						<!-- Desire -->
+						<div class="motivation">
+							<div class="header">
+								<span><Localized label="Genesys.Labels.Desire" /></span>
+								<input type="text" name="system.motivations.desire.name" :value="system.motivations.desire.name" />
+							</div>
+
+							<div class="body">
+								<Editor name="system.motivations.desire.description" :content="system.motivations.desire.description" button />
+							</div>
+						</div>
+
+						<!-- Fear -->
+						<div class="motivation">
+							<div class="header">
+								<span><Localized label="Genesys.Labels.Fear" /></span>
+								<input type="text" name="system.motivations.fear.name" :value="system.motivations.fear.name" />
+							</div>
+
+							<div class="body">
+								<Editor name="system.motivations.fear.description" :content="system.motivations.fear.description" button />
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+
 			<div class="tab" data-tab="effects">
 				<EffectsView :effects="[...effects]" @add-effect="addEffect" />
 			</div>
@@ -534,7 +614,8 @@ onBeforeUpdate(updateEffects);
 		}
 	}
 
-	.talent {
+	.talent,
+	.injury {
 		display: grid;
 		grid-template-rows: repeat(2, auto);
 
@@ -546,6 +627,64 @@ onBeforeUpdate(updateEffects);
 			border-left: 2px solid colors.$light-blue;
 			padding-left: 0.5em;
 			font-size: 0.9em;
+		}
+	}
+
+	.motivations {
+		& > .header {
+			font-family: 'Bebas Neue', sans-serif;
+			font-size: 1.25em;
+			color: colors.$blue;
+		}
+
+		.container {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5em;
+			width: 100%;
+			height: 100%;
+		}
+
+		.motivation {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			border: 1px solid black;
+			background: white;
+
+			@include reset.input;
+			input {
+				font-family: 'Roboto', sans-serif;
+			}
+
+			.header {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: nowrap;
+				align-items: center;
+				font-family: 'Bebas Neue', sans-serif;
+				width: 100%;
+				gap: 0.5em;
+				padding: 0.25em;
+				padding-left: 0.5em;
+				border-bottom: 1px solid black;
+				clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 1px), 80% calc(100% - 1px), 80% 100%, 0% 100%);
+
+				span {
+					font-size: 1.1em;
+				}
+			}
+
+			.body {
+				display: grid;
+				grid-template-rows: 1fr;
+				height: 100%;
+				min-height: 4rem;
+
+				.editor {
+					padding: 0.5em;
+				}
+			}
 		}
 	}
 }

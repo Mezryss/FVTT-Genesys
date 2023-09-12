@@ -191,6 +191,7 @@ Genesys:
     Data: Data
     Details: Details
     Duration: Duration
+    Miscellaneous: Miscellaneous
 
   # Characteristics
   Characteristics:

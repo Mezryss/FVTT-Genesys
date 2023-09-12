@@ -21,8 +21,18 @@ Actor:
         melee: 0
         ranged: 0
       description: ''
+    # The four motivations.
+    motivations:
+      strength: &motivation
+        name: ''
+        description: ''
+      flaw: *motivation
+      desire: *motivation
+      fear: *motivation
   character:
-    templates: [characteristics]
+    templates:
+      - characteristics
+      - motivations
     defense:
       melee: 0
       ranged: 0
@@ -33,14 +43,6 @@ Actor:
     strain: *combat_pool
     # Character illustration image path.
     illustration: 'icons/svg/mystery-man.svg'
-    # Character's four Motivations.
-    motivations:
-      strength: &motivation
-        name: ''
-        description: ''
-      flaw: *motivation
-      desire: *motivation
-      fear: *motivation
     # Character Description fields
     details:
       # I hate using 'gender' instead of 'pronouns' as the field, but this is needed for compatibility with Player Pronouns plugin.
@@ -71,6 +73,7 @@ Actor:
     templates:
       - characteristics
       - adversary
+      - motivations
     # Base number of minions in the group by default. This will likely be edited on a per-token basis.
     groupSize: 4
     wounds:
@@ -82,6 +85,7 @@ Actor:
     templates:
       - characteristics
       - adversary
+      - motivations
     wounds:
       value: 0
       max: 0
@@ -89,6 +93,7 @@ Actor:
     templates:
       - characteristics
       - adversary
+      - motivations
     wounds:
       value: 0
       max: 0
