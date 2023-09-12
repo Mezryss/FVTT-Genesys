@@ -30,7 +30,7 @@
 		}
 	}
 
-	.item-card {
+	%details-card {
 		display: flex;
 		flex-direction: column;
 		flex-wrap: nowrap;
@@ -57,11 +57,6 @@
 			}
 		}
 
-		&.weapon .description,
-		&.armor .description {
-			border-bottom: 1px dashed colors.$gold;
-		}
-
 		label {
 			font-family: 'Bebas Neue', sans-serif;
 			color: colors.$blue;
@@ -71,6 +66,33 @@
 			font-size: 1.25em;
 		}
 
+		.details-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: auto auto;
+			align-items: center;
+			justify-items: center;
+
+			label {
+				grid-row: 1 / span 1;
+				font-size: 1.1em;
+			}
+
+			span {
+				grid-row: 2 / span 1;
+			}
+		}
+	}
+
+	.item-card {
+		@extend %details-card;
+
+		&.weapon .description,
+		&.armor .description {
+			border-bottom: 1px dashed colors.$gold;
+		}
+
+		// Left for now due to backwards compatibility with version <= 0.1.13 of this package.
 		.defenseAndSoak,
 		.skillAndRange,
 		.damageAndCritical {
@@ -88,13 +110,23 @@
 			span {
 				grid-row: 2 / span 1;
 			}
+		}
+	}
 
-			.defense {
-				grid-column: 1 / span 1;
+	.ability {
+		@extend %details-card;
+
+		.description {
+			border-bottom: 1px dashed colors.$gold;
+		}
+
+		.abilityActivation {
+			label {
+				grid-column: 1 / span 2;
 			}
 
-			.soak {
-				grid-column: 2 / span 1;
+			span {
+				grid-column: 1 / span 2;
 			}
 		}
 	}
