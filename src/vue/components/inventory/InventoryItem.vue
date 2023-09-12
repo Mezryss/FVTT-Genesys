@@ -3,7 +3,7 @@ import { computed, inject, ref, toRaw } from 'vue';
 
 import GenesysItem from '@/item/GenesysItem';
 import ArmorDataModel from '@/item/data/ArmorDataModel';
-import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
+import EquipmentDataModel, { EquipmentDamageState, EquipmentState } from '@/item/data/EquipmentDataModel';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
 import Localized from '@/vue/components/Localized.vue';
 import Tooltip from '@/vue/components/Tooltip.vue';
@@ -30,6 +30,14 @@ const emit = defineEmits<{
 	(e: 'dragend', event: DragEvent): void;
 	(e: 'equipmentStateChange', desiredState: EquipmentState, items: GenesysItem[]): void;
 }>();
+
+const damageStateToIcon = new Map([
+	[EquipmentDamageState.Undamaged, 'fa-face-smile-beam'],
+	[EquipmentDamageState.Minor, 'fa-face-meh'],
+	[EquipmentDamageState.Moderate, 'fa-face-frown'],
+	[EquipmentDamageState.Major, 'fa-face-dizzy'],
+]);
+const damageStateProgression = Array.from(damageStateToIcon.keys());
 
 const dragCounter = ref(0);
 const isBeingDragged = ref(false);
@@ -211,6 +219,19 @@ async function changeItemQuantity(item: GenesysItem, value: number) {
 	}
 }
 
+async function changeDamageState(item: GenesysItem, currentState: EquipmentDamageState, direction: number) {
+	const currentDamageStateIndex = damageStateProgression.indexOf(currentState);
+	const newDamageStateIndex = currentDamageStateIndex + direction;
+
+	if (currentDamageStateIndex === -1 || newDamageStateIndex < 0 || newDamageStateIndex >= damageStateToIcon.size) {
+		return;
+	} else {
+		await toRaw(item).update({
+			'system.damage': damageStateProgression[newDamageStateIndex],
+		});
+	}
+}
+
 async function drop(event: DragEvent) {
 	dragCounter.value = 0;
 
@@ -318,12 +339,21 @@ async function drop(event: DragEvent) {
 			</div>
 		</div>
 
-		<a class="quantity" @click="changeItemQuantity(item, item.systemData.quantity + 1)" @contextmenu="changeItemQuantity(item, item.systemData.quantity - 1)" v-if="item.type !== 'container'">
+		<a class="quantity" @click="changeItemQuantity(item, item.systemData.quantity + 1)" @contextmenu="changeItemQuantity(item, item.systemData.quantity - 1)" v-if="item.type !== 'container'" data-tooltip="Genesys.Labels.Quantity">
 			{{ item.systemData.quantity }}
 			<i class="fas fa-backpack"></i>
 		</a>
 
-		<div class="weight">{{ system.encumbrance < 0 ? '+' : null }}{{ Math.abs(system.encumbrance) }} <i class="fas fa-weight-hanging"></i></div>
+		<div class="weight" data-tooltip="Genesys.Labels.Encumbrance">{{ system.encumbrance < 0 ? '+' : null }}{{ Math.abs(system.encumbrance) }} <i class="fas fa-weight-hanging"></i></div>
+
+		<a
+			class="damage"
+			@click="changeDamageState(item, item.systemData.damage, +1)"
+			@contextmenu="changeDamageState(item, item.systemData.damage, -1)"
+			:data-tooltip="'Genesys.Equipment.DamageState.' + item.systemData.damage.capitalize()"
+		>
+			<i :class="{'fas': true, [damageStateToIcon.get(item.systemData.damage)!]: true}"></i>
+		</a>
 
 		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable">
 			<template v-slot:menu-items>
@@ -402,7 +432,7 @@ async function drop(event: DragEvent) {
 
 .inventory-item {
 	display: grid;
-	grid-template-columns: [icon] 2rem [name] auto [spacer] 1fr [quantity] 2.5em [weight] 2.5em [actions] auto;
+	grid-template-columns: [icon] 2rem [name] auto [spacer] 1fr [quantity] 2.5em [weight] 2.5em [damage] 2em [actions] auto;
 	grid-template-rows: auto auto;
 	align-items: center;
 	column-gap: 0.5em;
@@ -453,7 +483,7 @@ async function drop(event: DragEvent) {
 	}
 
 	&.mini {
-		grid-template-columns: [icon] 1.5em [name] auto [spacer] 1fr [quantity] 2.5em [weight] 2.5em [actions] auto;
+		grid-template-columns: [icon] 1.5em [name] auto [spacer] 1fr [quantity] 2.5em [weight] 2.5em [damage] 2em [actions] auto;
 		height: 2em;
 		overflow: hidden;
 		font-size: 0.8em;
@@ -567,16 +597,9 @@ async function drop(event: DragEvent) {
 		}
 	}
 
-	.weight {
-		grid-column: weight / span 1;
-	}
-
-	.quantity {
-		grid-column: quantity / span 1;
-	}
-
 	.weight,
-	.quantity {
+	.quantity,
+	.damage {
 		grid-row: 1 / span 1;
 		display: flex;
 		align-items: center;
@@ -593,6 +616,19 @@ async function drop(event: DragEvent) {
 			top: -1px;
 			font-size: 0.75em;
 		}
+	}
+
+	.weight {
+		grid-column: weight / span 1;
+	}
+
+	.quantity {
+		grid-column: quantity / span 1;
+	}
+
+	.damage {
+		grid-column: damage / span 1;
+		font-size: 1.5em;
 	}
 
 	.actions {
