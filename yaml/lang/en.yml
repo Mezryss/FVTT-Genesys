@@ -260,6 +260,13 @@ Genesys:
       Adversary: Adversary
       Other: Other
 
+  # Equipment Data
+  Equipment:
+    DamageState:
+      Undamaged: Undamaged
+      Minor: Minor Damage
+      Moderate: Moderate Damage
+      Major: Major Damage
 
   # Misc. Unsorted Labels (to be cleaned up later)
   Labels:
