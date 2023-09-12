@@ -46,11 +46,9 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/77">PR #77</a>: Show chance to succeed when forming dice pool.</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/76">#76</a>: Can't edit sheet images</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/79">PR #79</a>: Fix talent ranks</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/57">#57</a>: Fix combat tracker</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/81">#81</a>: Can't save item sheets</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/86">PR #86</a>: Adds injuries and motivations to adversaries</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/85">PR #85</a>: Implements sending abilities and talents to chat</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/84">PR #84</a>: Bugfix: Removes renamed talents correctly</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">

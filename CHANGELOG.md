@@ -1,3 +1,15 @@
+## Alpha 0.1.14
+My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
+
+### Bug Fixes/Misc
+
+-	[PR #86](https://github.com/Mezryss/FVTT-Genesys/issues/86): Adds injuries and motivations to adversaries
+-	[PR #85](https://github.com/Mezryss/FVTT-Genesys/issues/85): Implements sending abilities and talents to chat
+-	[PR #84](https://github.com/Mezryss/FVTT-Genesys/issues/84): Bugfix: Removes renamed talents correctly
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.1.13
 My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
 
@@ -5,11 +17,7 @@ My thanks, as always, to Assembling Kings for their continued work while I am ta
 
 -	[#81](https://github.com/Mezryss/FVTT-Genesys/issues/81): Can't save item sheets
 
-<details>
-<summary>Previous Releases</summary>
-
 ## Alpha 0.1.12
-My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
 
 ### Features
 
@@ -22,7 +30,6 @@ My thanks, as always, to Assembling Kings for their continued work while I am ta
 -	[#57](https://github.com/Mezryss/FVTT-Genesys/issues/57): Fix combat tracker
 
 ## Alpha 0.1.11
-My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
 
 ### Features
 
