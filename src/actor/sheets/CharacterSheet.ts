@@ -129,7 +129,6 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 					],
 				});
 
-				return false;
 			} else {
 				// New talent
 				const cost = talent.systemData.tier * 5;
@@ -139,6 +138,8 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 					return false;
 				}
 
+				const [newTalent] = (await this._onDropItemCreate(talent.toObject())) as GenesysItem<TalentDataModel>[];
+
 				await this.actor.update({
 					'system.experienceJournal.entries': [
 						...this.actor.systemData.experienceJournal.entries,
@@ -146,14 +147,17 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 							amount: -cost,
 							type: EntryType.NewTalent,
 							data: {
-								name: talent.name,
-								tier: talent.systemData.tier,
+								name: newTalent.name,
+								id: newTalent.id,
+								tier: newTalent.systemData.tier,
 								rank: 1,
 							},
 						},
 					],
 				});
 			}
+
+			return false;
 		}
 
 		// Prevent adding the same skill multiple times.
