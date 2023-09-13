@@ -36,6 +36,8 @@ const skills = computed(() => toRaw(context.data.actor).items.filter((i) => i.ty
 
 const skillCategories = computed(() => Array.from(new Set(skills.value.map((s) => s.systemData.category).sort((left, right) => SKILL_CATEGORY_SORT_ORDER[left] - SKILL_CATEGORY_SORT_ORDER[right]))));
 
+const canMarkSuper = computed(() => system.value.availableStartingXP > 0);
+
 const markCareerLabel = game.i18n.localize('Genesys.Labels.MarkCareerSkill');
 const unmarkCareerLabel = game.i18n.localize('Genesys.Labels.UnmarkCareerSkill');
 const freeRankUpLabel = game.i18n.localize('Genesys.Labels.FreeRankUp');
@@ -120,6 +122,19 @@ async function freeSkillRank(skill: GenesysItem<SkillDataModel>, adjustment: num
 	});
 }
 
+async function toggleSuper(characteristic: CharacteristicType) {
+	const superCharacteristics = new Set(system.value.superCharacteristics);
+	if (superCharacteristics.has(characteristic)) {
+		superCharacteristics.delete(characteristic);
+	} else {
+		superCharacteristics.add(characteristic);
+	}
+
+	await toRaw(context.data.actor).update({
+		'system.superCharacteristics': Array.from(superCharacteristics),
+	});
+}
+
 async function editSkill(skill: GenesysItem<SkillDataModel>) {
 	await toRaw(skill).sheet?.render(true);
 }
@@ -138,6 +153,9 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 				@upgrade="purchaseCharacteristic('brawn')"
 				can-roll-unskilled
 				@rollUnskilled="rollUnskilled(CharacteristicType.Brawn)"
+				:is-super="system.superCharacteristics.has(CharacteristicType.Brawn)"
+				:can-mark-super="canMarkSuper"
+				@toggle-super="toggleSuper(CharacteristicType.Brawn)"
 			/>
 
 			<Characteristic
@@ -147,6 +165,9 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 				@upgrade="purchaseCharacteristic('agility')"
 				can-roll-unskilled
 				@rollUnskilled="rollUnskilled(CharacteristicType.Agility)"
+				:is-super="system.superCharacteristics.has(CharacteristicType.Agility)"
+				:can-mark-super="canMarkSuper"
+				@toggle-super="toggleSuper(CharacteristicType.Agility)"
 			/>
 
 			<Characteristic
@@ -156,6 +177,9 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 				@upgrade="purchaseCharacteristic('intellect')"
 				can-roll-unskilled
 				@rollUnskilled="rollUnskilled(CharacteristicType.Intellect)"
+				:is-super="system.superCharacteristics.has(CharacteristicType.Intellect)"
+				:can-mark-super="canMarkSuper"
+				@toggle-super="toggleSuper(CharacteristicType.Intellect)"
 			/>
 
 			<Characteristic
@@ -165,6 +189,9 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 				@upgrade="purchaseCharacteristic('cunning')"
 				can-roll-unskilled
 				@rollUnskilled="rollUnskilled(CharacteristicType.Cunning)"
+				:is-super="system.superCharacteristics.has(CharacteristicType.Cunning)"
+				:can-mark-super="canMarkSuper"
+				@toggle-super="toggleSuper(CharacteristicType.Cunning)"
 			/>
 
 			<Characteristic
@@ -174,6 +201,9 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 				@upgrade="purchaseCharacteristic('willpower')"
 				can-roll-unskilled
 				@rollUnskilled="rollUnskilled(CharacteristicType.Willpower)"
+				:is-super="system.superCharacteristics.has(CharacteristicType.Willpower)"
+				:can-mark-super="canMarkSuper"
+				@toggle-super="toggleSuper(CharacteristicType.Willpower)"
 			/>
 
 			<Characteristic
@@ -183,6 +213,9 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 				@upgrade="purchaseCharacteristic('presence')"
 				can-roll-unskilled
 				@rollUnskilled="rollUnskilled(CharacteristicType.Presence)"
+				:is-super="system.superCharacteristics.has(CharacteristicType.Presence)"
+				:can-mark-super="canMarkSuper"
+				@toggle-super="toggleSuper(CharacteristicType.Presence)"
 			/>
 		</div>
 
@@ -242,8 +275,8 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 
 									<a
 										v-if="
-											(skill.systemData.rank < 5 && skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1)) ||
-											(!skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1) + 5)
+											skill.systemData.rank < 5 &&
+											((skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1)) || (!skill.systemData.career && system.availableXP >= 5 * (skill.systemData.rank + 1) + 5))
 										"
 										@click="purchaseSkillRank(skill)"
 									>
@@ -309,7 +342,7 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 	}
 
 	.characteristic-field {
-		z-index: 1;
+		z-index: 2;
 	}
 }
 

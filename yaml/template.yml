@@ -21,6 +21,7 @@ Actor:
         melee: 0
         ranged: 0
       description: ''
+      superCharacteristics: []
     # The four motivations.
     motivations:
       strength: &motivation
@@ -69,6 +70,8 @@ Actor:
       threshold: 0
     # Amount of generic Currency the character has.
     currency: 500
+    # Characteristics that follow the optional Super-Characteristic rule
+    superCharacteristics: []
   minion:
     templates:
       - characteristics

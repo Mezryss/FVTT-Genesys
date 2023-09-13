@@ -1,5 +1,9 @@
 <script lang="ts" setup>
+import ContextMenu from '@/vue/components/ContextMenu.vue';
 import Localized from '@/vue/components/Localized.vue';
+import MenuItem from '@/vue/components/MenuItem.vue';
+import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
+import { KEY_SUPER_CHARACTERISTICS } from '@/settings/campaign';
 
 withDefaults(
 	defineProps<{
@@ -24,6 +28,16 @@ withDefaults(
 		canRollUnskilled?: boolean;
 
 		/**
+		 * Can the characteristic be marked as a super-characteristic?
+		 */
+		canMarkSuper?: boolean;
+
+		/**
+		 * Is this a super-characteristic?
+		 */
+		isSuper?: boolean;
+
+		/**
 		 * If the field can be directly edited, what is the field name for the input?
 		 */
 		name?: string;
@@ -37,13 +51,20 @@ withDefaults(
 		canUpgrade: false,
 		canEdit: false,
 		canRollUnskilled: false,
+		canMarkSuper: false,
+		isSuper: false,
 	},
 );
 
 const emit = defineEmits<{
 	(e: 'upgrade'): void;
 	(e: 'rollUnskilled'): void;
+	(e: 'toggleSuper'): void;
 }>();
+
+const allowSuperCharacteristics = game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS) as boolean;
+const markSuperCharacteristicLabel = game.i18n.localize('Genesys.Labels.MarkSuperCharacteristic');
+const unmarkSuperCharacteristicLabel = game.i18n.localize('Genesys.Labels.UnmarkSuperCharacteristic');
 </script>
 
 <template>
@@ -52,15 +73,30 @@ const emit = defineEmits<{
 			<div class="box-inner"></div>
 		</div>
 
-		<label>
-			<a v-if="canRollUnskilled" @click="emit('rollUnskilled')"><Localized :label="label" /></a>
-			<Localized v-else :label="label" />
+		<ContextMenu :disable-menu="!(allowSuperCharacteristics && canMarkSuper)" class="super-char">
+			<template v-slot:menu-items>
+				<MenuItem @click="emit('toggleSuper')">
+					<template v-slot:icon><i :class="`${isSuper ? 'far' : 'fas'} fa-star`"></i></template>
+					{{ isSuper ? unmarkSuperCharacteristicLabel : markSuperCharacteristicLabel }}
+				</MenuItem>
+			</template>
 
-			<a v-if="canUpgrade" @click="emit('upgrade')"><i class="fas fa-arrow-circle-up"></i></a>
-		</label>
+			<label>
+				<a v-if="canUpgrade || canRollUnskilled" @click="canUpgrade ? emit('upgrade') : emit('rollUnskilled')">
+					<Localized :label="label" />
+					<i v-if="canUpgrade" class="fas fa-arrow-circle-up"></i>
+				</a>
 
-		<input v-if="canEdit" type="number" :name="name" class="value" :value="value" min="0" />
-		<div v-else class="value">{{ value }}</div>
+				<Localized v-else :label="label" />
+			</label>
+		</ContextMenu>
+
+		<div class="value">
+			<i v-if="allowSuperCharacteristics && isSuper" class="fas fa-star super-star"></i>
+
+			<input v-if="canEdit" type="number" :name="name" :value="value" min="0" />
+			<div v-else>{{ value }}</div>
+		</div>
 	</div>
 </template>
 
@@ -96,7 +132,12 @@ const emit = defineEmits<{
 		padding-top: 0.15em;
 		z-index: 1;
 
-		&:focus {
+		@include reset.input;
+		input {
+			z-index: 3;
+		}
+
+		&:focus-within {
 			border: 2px solid colors.$gold;
 		}
 	}
@@ -142,9 +183,25 @@ const emit = defineEmits<{
 		}
 	}
 
+	.super-star {
+		position: absolute;
+		padding: 0;
+		font-size: 1.5em;
+		top: 0;
+		left: 0;
+		color: colors.$gold;
+		z-index: -1;
+	}
+
+	.super-char {
+		display: contents;
+		white-space: nowrap;
+	}
+
 	label {
 		width: 100%;
 		grid-row: 3 / span 1;
+		grid-column: 1 / span 1;
 		color: white;
 		font-family: 'Bebas Neue', sans-serif;
 		text-transform: uppercase;
@@ -153,11 +210,13 @@ const emit = defineEmits<{
 		margin-top: 2px;
 		margin-bottom: 2px;
 
-		display: flex;
-		flex-wrap: nowrap;
-		align-items: center;
-		justify-content: center;
-		gap: 0.25em;
+		a {
+			display: flex;
+			flex-wrap: nowrap;
+			align-items: center;
+			justify-content: center;
+			gap: 0.25em;
+		}
 	}
 }
 </style>

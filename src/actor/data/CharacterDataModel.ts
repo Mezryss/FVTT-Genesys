@@ -14,7 +14,7 @@ import ArmorDataModel from '@/item/data/ArmorDataModel';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_SKILLS_COMPENDIUM, DEFAULT_SKILLS_COMPENDIUM } from '@/settings/campaign';
-import { CharacteristicsContainer } from '@/data/Characteristics';
+import { Characteristic, CharacteristicsContainer } from '@/data/Characteristics';
 import { CombatPool, Defense } from '@/data/Actors';
 
 export const EQUIPMENT_TYPES = ['armor', 'consumable', 'container', 'gear', 'weapon'];
@@ -63,6 +63,7 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 	abstract encumbrance: Encumbrance;
 	abstract currency: number;
 	abstract notes: string;
+	abstract superCharacteristics: Set<Characteristic>;
 
 	/**
 	 * Total value for Soak (base + Brawn + Armor).
@@ -307,6 +308,7 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 				threshold: new fields.NumberField({ integer: true, initial: 0 }),
 			}),
 			currency: new fields.NumberField({ initial: 500 }),
+			superCharacteristics: new fields.SetField(new fields.StringField()),
 		};
 	}
 }
