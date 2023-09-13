@@ -45,6 +45,8 @@ Genesys:
     UseMagicalGirlSymbolsHint: Swap the Genesys symbol set for MilkMyth's Magical Girls symbol set. This will not affect other users.
     DicePoolApproximation: Dice Pool Approximation
     DicePoolApproximationHint: The number of simulated rolls to run in order to approximate the chance to succeed. Be mindful when increasing this number since it will have a direct impact on Foundry's performance; a good number to start is 100. If a value of 0 is provided this feature is disabled.
+    SuperCharacteristics: Super-Characteristics
+    SuperCharacteristicsHint: Allows marking characteristics as being 'super' during character creation, per the Super-Characteristics optional rule (Core Rulebook, p.251).
 
   # Tooltips
   Tooltips:
@@ -305,6 +307,8 @@ Genesys:
     NoArchetype: No archetype selected - drag one over!
     MarkCareerSkill: Mark As Career Skill
     UnmarkCareerSkill: Unmark As Career Skill
+    MarkSuperCharacteristic: Mark As Super-Characteristic
+    UnmarkSuperCharacteristic: Unmark As Super-Characteristic
     Motivations: Motivations
     Strength: Strength
     Flaw: Flaw

@@ -6,7 +6,7 @@ import GenesysRoller from '@/dice/GenesysRoller';
 import GenesysItem from '@/item/GenesysItem';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS } from '@/settings/campaign';
+import { KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS, KEY_SUPER_CHARACTERISTICS } from '@/settings/campaign';
 import { KEY_DICE_POOL_APPROXIMATION } from '@/settings/user';
 import { RootContext } from '@/vue/SheetContext';
 import Localized from '@/vue/components/Localized.vue';
@@ -23,6 +23,7 @@ type SymbolString = 'a' | 's' | 't' | 'h' | 'f' | 'd';
 type DicePool = {
 	dice: Record<DieString, number>;
 	symbols: Record<SymbolString, number>;
+	usesSuperCharacteristic: boolean;
 };
 
 const SORT_ORDER: Record<DieString | SymbolString, number> = {
@@ -76,7 +77,10 @@ const DICE_POOL_APPROXIMATION = Math.floor(game.settings.get(SETTINGS_NAMESPACE,
 let currentDicePool: DicePool = {
 	dice: {} as Record<DieString, number>,
 	symbols: {} as Record<SymbolString, number>,
+	usesSuperCharacteristic: false,
 };
+
+const allowSuperCharacteristics = game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS) as boolean;
 
 onMounted(recalculateDicePool);
 
@@ -262,12 +266,15 @@ function compileDicePool() {
 	const dice = positiveDice.value.concat(negativeDice.value).reduce(reduceDice, {} as Record<DieString | SymbolString, number>);
 	const symbols = positiveSymbols.value.concat(negativeSymbols.value).reduce(reduceDice, {} as Record<DieString | SymbolString, number>);
 
+	const useSuperCharacteristic = allowSuperCharacteristics && 'superCharacteristics' in context.actor.systemData && (context.actor.systemData.superCharacteristics as Set<Characteristic | '-'>).has(selectedCharacteristic.value);
+
 	const formula = Object.keys(dice)
-		.map((d) => `${dice[d as DieString]}${ICON_TO_FORMULA[d as DieString]}`)
+		.map((d) => `${dice[d as DieString]}${ICON_TO_FORMULA[d as DieString]}${d == 'P' && useSuperCharacteristic ? 'X' : ''}`)
 		.join('+');
 
 	return {
 		formula,
+		usesSuperCharacteristic: (useSuperCharacteristic && dice['P']) as boolean,
 		dice,
 		symbols,
 	};
@@ -320,6 +327,10 @@ function hasSameChanceToSucceed(firstDicePool: DicePool, secondDicePool: DicePoo
 		}
 	}
 
+	if (firstDicePool.usesSuperCharacteristic !== secondDicePool.usesSuperCharacteristic) {
+		return false;
+	}
+
 	// Advantages and threats do not impact the chance to succeed so we ignore them.
 	const firstPoolNetSuccesses = (firstDicePool.symbols['s'] ?? 0) + (firstDicePool.symbols['t'] ?? 0) - (firstDicePool.symbols['f'] ?? 0) - (firstDicePool.symbols['d'] ?? 0);
 	const secondPoolNetSuccesses = (secondDicePool.symbols['s'] ?? 0) + (secondDicePool.symbols['t'] ?? 0) - (secondDicePool.symbols['f'] ?? 0) - (secondDicePool.symbols['d'] ?? 0);
@@ -332,12 +343,13 @@ async function approximateProbability() {
 		return;
 	}
 
-	const { formula, dice, symbols } = compileDicePool();
+	const { formula, usesSuperCharacteristic, dice, symbols } = compileDicePool();
 
 	const previousDicePool = currentDicePool;
 	currentDicePool = {
 		dice: dice as Record<DieString, number>,
 		symbols: symbols as Record<SymbolString, number>,
+		usesSuperCharacteristic,
 	};
 
 	// No need to run this process again if nothing of importance has changed.

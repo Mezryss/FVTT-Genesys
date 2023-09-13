@@ -42,6 +42,11 @@ export const DEFAULT_SKILLS_COMPENDIUM = 'genesys.crb-skills';
 export const KEY_SHOW_DAMAGE_ON_FAILURE = 'showDamageOnFailure';
 
 /**
+ * Whether to use the optional rule for super-characteristics.
+ */
+export const KEY_SUPER_CHARACTERISTICS = 'useSuperCharacteristics';
+
+/**
  * Register campaign settings.
  * @param namespace Namespace to register settings under.
  */
@@ -94,6 +99,15 @@ export function register(namespace: string) {
 	game.settings.register(namespace, KEY_SHOW_DAMAGE_ON_FAILURE, {
 		name: game.i18n.localize('Genesys.Settings.ShowDamageOnFailure'),
 		hint: game.i18n.localize('Genesys.Settings.ShowDamageOnFailureHint'),
+		scope: 'world',
+		config: true,
+		default: false,
+		type: Boolean,
+	});
+
+	game.settings.register(namespace, KEY_SUPER_CHARACTERISTICS, {
+		name: game.i18n.localize('Genesys.Settings.SuperCharacteristics'),
+		hint: game.i18n.localize('Genesys.Settings.SuperCharacteristicsHint'),
 		scope: 'world',
 		config: true,
 		default: false,
