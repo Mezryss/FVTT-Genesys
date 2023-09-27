@@ -115,6 +115,19 @@ function damageForWeapon(weapon: GenesysItem): number {
 	return weaponData.baseDamage + system.value.characteristics[weaponData.damageCharacteristic];
 }
 
+async function toggleSuper(characteristic: CharacteristicType) {
+	const superCharacteristics = new Set(system.value.superCharacteristics);
+	if (superCharacteristics.has(characteristic)) {
+		superCharacteristics.delete(characteristic);
+	} else {
+		superCharacteristics.add(characteristic);
+	}
+
+	await toRaw(context.data.actor).update({
+		'system.superCharacteristics': Array.from(superCharacteristics),
+	});
+}
+
 onBeforeMount(updateEffects);
 onBeforeUpdate(updateEffects);
 </script>
@@ -152,6 +165,9 @@ onBeforeUpdate(updateEffects);
 								can-edit
 								can-roll-unskilled
 								@rollUnskilled="rollUnskilled(CharacteristicType.Brawn)"
+								:is-super="system.superCharacteristics.has(CharacteristicType.Brawn)"
+								can-mark-super
+								@toggle-super="toggleSuper(CharacteristicType.Brawn)"
 							/>
 							<Characteristic
 								label="Genesys.Characteristics.Agility"
@@ -160,6 +176,9 @@ onBeforeUpdate(updateEffects);
 								can-edit
 								can-roll-unskilled
 								@rollUnskilled="rollUnskilled(CharacteristicType.Agility)"
+								:is-super="system.superCharacteristics.has(CharacteristicType.Agility)"
+								can-mark-super
+								@toggle-super="toggleSuper(CharacteristicType.Agility)"
 							/>
 							<Characteristic
 								label="Genesys.Characteristics.Intellect"
@@ -168,6 +187,9 @@ onBeforeUpdate(updateEffects);
 								can-edit
 								can-roll-unskilled
 								@rollUnskilled="rollUnskilled(CharacteristicType.Intellect)"
+								:is-super="system.superCharacteristics.has(CharacteristicType.Intellect)"
+								can-mark-super
+								@toggle-super="toggleSuper(CharacteristicType.Intellect)"
 							/>
 							<Characteristic
 								label="Genesys.Characteristics.Cunning"
@@ -176,6 +198,9 @@ onBeforeUpdate(updateEffects);
 								can-edit
 								can-roll-unskilled
 								@rollUnskilled="rollUnskilled(CharacteristicType.Cunning)"
+								:is-super="system.superCharacteristics.has(CharacteristicType.Cunning)"
+								can-mark-super
+								@toggle-super="toggleSuper(CharacteristicType.Cunning)"
 							/>
 							<Characteristic
 								label="Genesys.Characteristics.Willpower"
@@ -184,6 +209,9 @@ onBeforeUpdate(updateEffects);
 								can-edit
 								can-roll-unskilled
 								@rollUnskilled="rollUnskilled(CharacteristicType.Willpower)"
+								:is-super="system.superCharacteristics.has(CharacteristicType.Willpower)"
+								can-mark-super
+								@toggle-super="toggleSuper(CharacteristicType.Willpower)"
 							/>
 							<Characteristic
 								label="Genesys.Characteristics.Presence"
@@ -192,6 +220,9 @@ onBeforeUpdate(updateEffects);
 								can-edit
 								can-roll-unskilled
 								@rollUnskilled="rollUnskilled(CharacteristicType.Presence)"
+								:is-super="system.superCharacteristics.has(CharacteristicType.Presence)"
+								can-mark-super
+								@toggle-super="toggleSuper(CharacteristicType.Presence)"
 							/>
 						</div>
 					</div>

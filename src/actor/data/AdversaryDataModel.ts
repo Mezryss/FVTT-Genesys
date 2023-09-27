@@ -5,7 +5,7 @@
  * @author Mezryss
  * @file Base data shared by all Adversaries.
  */
-import { CharacteristicsContainer } from '@/data/Characteristics';
+import { Characteristic, CharacteristicsContainer } from '@/data/Characteristics';
 import { Defense } from '@/data/Actors';
 
 type Motivation = {
@@ -26,6 +26,7 @@ export default abstract class AdversaryDataModel extends foundry.abstract.DataMo
 	abstract defense: Defense;
 	abstract description: string;
 	abstract motivations: Motivations;
+	abstract superCharacteristics: Set<Characteristic>;
 
 	static override defineSchema() {
 		const fields = foundry.data.fields;
@@ -63,6 +64,7 @@ export default abstract class AdversaryDataModel extends foundry.abstract.DataMo
 					description: new fields.HTMLField(),
 				}),
 			}),
+			superCharacteristics: new fields.SetField(new fields.StringField()),
 		};
 	}
 }
