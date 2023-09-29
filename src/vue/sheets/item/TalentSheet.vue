@@ -72,6 +72,6 @@ const system = computed(() => context.data.item.systemData);
 	border: 1px dashed colors.$gold;
 	font-family: 'Roboto Slab', sans-serif;
 	font-size: 2em;
-    margin-right: 1em;
+	margin-right: 1em;
 }
 </style>

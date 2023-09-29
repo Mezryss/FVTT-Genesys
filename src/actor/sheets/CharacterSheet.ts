@@ -128,7 +128,6 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 						},
 					],
 				});
-
 			} else {
 				// New talent
 				const cost = talent.systemData.tier * 5;
