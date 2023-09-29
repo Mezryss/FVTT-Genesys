@@ -14,6 +14,8 @@ import GenesysItem from '@/item/GenesysItem';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import MinionDataModel from '@/actor/data/MinionDataModel';
 import { Characteristic } from '@/data/Characteristics';
+import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
+import { KEY_SUPER_CHARACTERISTICS } from '@/settings/campaign';
 
 export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysActor> {
 	initiativeSkillName?: string;
@@ -37,7 +39,8 @@ export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysAc
 	override getInitiativeRoll(skillName: string = 'Unskilled'): Roll {
 		const skill = this.actor.items.find((i) => i.type === 'skill' && i.name.toLowerCase() === skillName.toLowerCase()) as GenesysItem<SkillDataModel> | undefined;
 		const characteristic = skill?.systemData?.characteristic ?? Characteristic.Brawn;
-		const characteristicValue = (this.actor.systemData as CharacterDataModel | AdversaryDataModel).characteristics[characteristic];
+		const system = this.actor.systemData as CharacterDataModel | AdversaryDataModel;
+		const characteristicValue = system.characteristics[characteristic];
 
 		let skillValue = skill?.systemData?.rank ?? 0;
 		if (skill && this.actor.type === 'minion') {
@@ -47,6 +50,9 @@ export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysAc
 		const yellow = Math.min(characteristicValue, skillValue);
 		const green = Math.max(characteristicValue, skillValue) - yellow;
 
-		return new Roll(`${yellow}dP+${green}dA`);
+		const allowSuperCharacteristics = game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS) as boolean;
+		const useSuperCharacteristic = allowSuperCharacteristics && system.superCharacteristics.has(characteristic);
+
+		return new Roll(`${yellow}dP${useSuperCharacteristic ? 'X' : ''}+${green}dA`);
 	}
 }
