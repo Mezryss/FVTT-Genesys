@@ -89,7 +89,7 @@ type SkillEntryData = {
 
 type NewTalentEntryData = {
 	name: string;
-    id: string;
+	id: string;
 	tier: number;
 	rank: number;
 };
