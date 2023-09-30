@@ -9,12 +9,8 @@
 		padding-right: 0.5em;
 	}
 
-	.disposition-friendly,
-	.disposition-hostile,
-	.disposition-neutral {
-		&:not(.active) {
-			border-bottom: 1px dashed transparentize(colors.$gold, 0.6);
-		}
+	> :not(:last-child):not(.active) {
+		border-bottom: 1px dashed transparentize(colors.$gold, 0.6);
 	}
 
 	.initiative-skill {
