@@ -53,6 +53,7 @@ Genesys:
     NoDescription: No Description Available
     IsInitiative: Whether the skill is commonly used for Initiative or not. Setting this to true will make it appear as an option in the combat tracker for mass rolls.
     CycleInitiativeSkill: Cycle which initiative skill the combatant is using.
+    AddExtraInitiativeSlot: Adds an extra initiative slot.
 
   # Dice Rolls
   Rolls:
@@ -163,6 +164,9 @@ Genesys:
     CannotDeleteExistingTalent: Cannot delete XP Journal Entry for increasing talent '{name}' to rank {rank} - you must delete the higher rank increases first!
     CannotPurchaseTalentTier: Cannot purchase talents at tier {tier} - you must have at least {minimum} talents at rank {lowerTier} first.
     NotEnoughStoryPoints: You can't spend Story Points you don't have!
+    SelectOneTokenForAction: You need to selected a single token to perform this action.
+    TokenIsNotCombatant: The selected token is not participating on the current combat.
+    CannotClaimOppositeSlot: You can't claim this initiative slot with {name} - it's on the wrong side!
 
   # Story Points
   StoryPoints:

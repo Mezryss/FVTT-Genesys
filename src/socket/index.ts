@@ -31,14 +31,26 @@ export enum SocketOperation {
 	 * Called when a player wants to claim an initiative slot.
 	 */
 	ClaimInitiativeSlot,
+
+	/**
+	 * Update the turns for the Combat Tracker.
+	 */
+	UpdateCombatTracker,
+
+	/**
+	 * Called when a player rolls initiative for an extra slot.
+	 */
+	UpdateInitiativeForExtraSlot,
 }
 
-export type ClaimInitiativeSlotData = {
+export type CombatSocketBaseData = {
 	/**
 	 * Combat ID to claim a slot in.
 	 */
 	combatId: string;
+};
 
+export type ClaimInitiativeSlotData = CombatSocketBaseData & {
 	/**
 	 * Combatant ID claiming the slot.
 	 */
@@ -55,6 +67,18 @@ export type ClaimInitiativeSlotData = {
 	slot: number;
 };
 
+export type UpdateInitiativeForExtraSlotData = CombatSocketBaseData & {
+	/**
+	 * An array of updates to apply to the extra initiative slots.
+	 */
+	updates: { index: number; initiative: number }[];
+
+	/**
+	 * If the combat turn should be updated after adding the new initiative values.
+	 */
+	updateTurn: boolean;
+};
+
 /**
  * Socket Payload typing
  */
@@ -62,11 +86,6 @@ export type SocketPayload<T extends { [key: string]: unknown }> = {
 	operation: SocketOperation;
 	data?: T;
 };
-
-/**
- * Claim an Initiative slot.
- */
-export function emit(operation: SocketOperation.ClaimInitiativeSlot, data: ClaimInitiativeSlotData): void;
 
 /**
  * Spend a Story Point.
@@ -77,6 +96,21 @@ export function emit(operation: SocketOperation.PlayerSpendStoryPoint): void;
  * Force the Story Point Tracker application to refresh its data.
  */
 export function emit(operation: SocketOperation.UpdateStoryPointTracker): void;
+
+/**
+ * Claim an Initiative slot.
+ */
+export function emit(operation: SocketOperation.ClaimInitiativeSlot, data: ClaimInitiativeSlotData): void;
+
+/**
+ * Refresh the Combat Tracker's data.
+ */
+export function emit(operation: SocketOperation.UpdateCombatTracker, data: CombatSocketBaseData): void;
+
+/**
+ * Update the initiative value of some extra slots.
+ */
+export function emit(operation: SocketOperation.UpdateInitiativeForExtraSlot, data: UpdateInitiativeForExtraSlotData): void;
 
 /**
  * Utility wrapper for the system's socket emits, providing type-safe argument checking for each operation.
