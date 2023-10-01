@@ -273,7 +273,7 @@ function compileDicePool() {
 		.join('+');
 
 	return {
-		formula,
+		formula: formula === '' ? '0' : formula,
 		usesSuperCharacteristic: (useSuperCharacteristic && dice['P']) as boolean,
 		dice,
 		symbols,
@@ -352,6 +352,13 @@ async function approximateProbability() {
 		usesSuperCharacteristic,
 	};
 
+	// Slight optimization for a pool without dice.
+	if (!Object.keys(dice).length) {
+		const deterministicResult = (symbols.s ?? 0) > (symbols.f ?? 0) ? 100 : 0;
+		successApproximation.value = deterministicResult.toFixed(2);
+		return;
+	}
+
 	// No need to run this process again if nothing of importance has changed.
 	if (hasSameChanceToSucceed(previousDicePool, currentDicePool)) {
 		return;
@@ -361,7 +368,7 @@ async function approximateProbability() {
 		[...Array(DICE_POOL_APPROXIMATION)].map(async () => {
 			const roll = new Roll(formula, { symbols });
 			const result = await roll.evaluate({ async: true });
-			return await GenesysRoller.parseRollResults(result);
+			return GenesysRoller.parseRollResults(result);
 		}),
 	);
 
