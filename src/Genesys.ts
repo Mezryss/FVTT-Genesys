@@ -46,9 +46,12 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/86">PR #86</a>: Adds injuries and motivations to adversaries</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/85">PR #85</a>: Implements sending abilities and talents to chat</li>
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/84">PR #84</a>: Bugfix: Removes renamed talents correctly</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/87">PR #87</a>: Feature - Adds equipment's damage state to the inventory tab</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/88">PR #88</a>: Feature - Adds support for super-characteristics</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/95">PR #95</a>: Feature - Use super-characteristics during initiative</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/96">PR #96</a>: Feature - Allows GMs to add extra initiative slots</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/issues/90">#90</a>: Bugfix - Makes the tier bubble display properly</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/97">PR #97</a>: Bugfix - Allows rolling dice pools without dice</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
