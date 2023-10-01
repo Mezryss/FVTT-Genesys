@@ -166,7 +166,7 @@ export default class GenesysCombat extends Combat {
 			}
 
 			await roll.evaluate({ async: true });
-			const results = await GenesysRoller.parseRollResults(roll);
+			const results = GenesysRoller.parseRollResults(roll);
 			const newInitiative = results.netSuccess + results.netAdvantage / 100;
 
 			if (extraSlotsPerCombatant[combatant.id]) {

@@ -40,7 +40,7 @@ export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysAc
 	override async rollInitiative(formula: string) {
 		const roll = this.getInitiativeRoll(formula);
 		await roll.evaluate({ async: true });
-		const results = await GenesysRoller.parseRollResults(roll);
+		const results = GenesysRoller.parseRollResults(roll);
 
 		return this.update({ initiative: results.netSuccess + results.netAdvantage / 100 });
 	}
