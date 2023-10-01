@@ -1,5 +1,20 @@
+## Alpha 0.1.15
+
+### Features
+-	[PR #87](https://github.com/Mezryss/FVTT-Genesys/pull/87): Adds equipment's damage state to the inventory tab
+-	[PR #88](https://github.com/Mezryss/FVTT-Genesys/pull/88): Adds support for super-characteristics
+-	[PR #95](https://github.com/Mezryss/FVTT-Genesys/pull/95): Use super-characteristics during initiative
+-	[PR #96](https://github.com/Mezryss/FVTT-Genesys/pull/96): Allows GMs to add extra initiative slots
+
+### Bug Fixes/Misc
+
+-	[#90](https://github.com/Mezryss/FVTT-Genesys/issues/90): Makes the tier bubble display properly
+-	[PR #97](https://github.com/Mezryss/FVTT-Genesys/pull/97): Allows rolling dice pools without dice
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.1.14
-My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
 
 ### Bug Fixes/Misc
 
@@ -7,11 +22,7 @@ My thanks, as always, to Assembling Kings for their continued work while I am ta
 -	[PR #85](https://github.com/Mezryss/FVTT-Genesys/issues/85): Implements sending abilities and talents to chat
 -	[PR #84](https://github.com/Mezryss/FVTT-Genesys/issues/84): Bugfix: Removes renamed talents correctly
 
-<details>
-<summary>Previous Releases</summary>
-
 ## Alpha 0.1.13
-My thanks, as always, to Assembling Kings for their continued work while I am taking a break from the project.
 
 ### Bug Fixes/Misc
 
