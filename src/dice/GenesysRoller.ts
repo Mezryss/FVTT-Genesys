@@ -80,7 +80,7 @@ export default class GenesysRoller {
 	static async skillRoll({ actor, characteristic, skillId, formula, symbols }: { actor?: GenesysActor; characteristic?: Characteristic; skillId: string; formula: string; symbols: Record<string, number> }) {
 		const roll = new Roll(formula, { symbols });
 		await roll.evaluate({ async: true });
-		const results = await this.parseRollResults(roll);
+		const results = this.parseRollResults(roll);
 
 		let description: string | undefined = undefined;
 
@@ -137,7 +137,7 @@ export default class GenesysRoller {
 	}) {
 		const roll = new Roll(formula, { symbols });
 		await roll.evaluate({ async: true });
-		const results = await this.parseRollResults(roll);
+		const results = this.parseRollResults(roll);
 
 		let description: string | undefined = undefined;
 
@@ -205,7 +205,7 @@ export default class GenesysRoller {
 		await ChatMessage.create(chatData);
 	}
 
-	static async parseRollResults(roll: Roll): Promise<GenesysRollResults> {
+	static parseRollResults(roll: Roll): GenesysRollResults {
 		const faces = roll.dice.reduce((faces: Record<string, string[]>, die) => {
 			const genDie = <GenesysDie>die;
 			if (faces[genDie.denomination] === undefined) {
