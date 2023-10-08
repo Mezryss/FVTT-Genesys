@@ -3,6 +3,7 @@ ACTOR:
   TypeMinion: Minion
   TypeRival: Rival
   TypeNemesis: Nemesis
+  TypeVehicle: Vehicle
 
 ITEM:
   # Character Creation Items
