@@ -1,13 +1,34 @@
 <script lang="ts" setup>
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
-import { inject, computed, toRaw } from 'vue';
+import { inject, computed, toRaw, ref, onBeforeMount, onBeforeUpdate } from 'vue';
 import Localized from '@/vue/components/Localized.vue';
 import CombatStat from '@/vue/components/character/CombatStat.vue';
 import Characteristic from '@/vue/components/character/Characteristic.vue';
+import EffectsView from '@/vue/views/EffectsView.vue';
 
 const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 const system = computed(() => toRaw(context.data.actor).systemData);
+
+const effects = ref<any>([]);
+
+async function addEffect(category: string) {
+	await toRaw(context.sheet.actor).createEmbeddedDocuments('ActiveEffect', [
+		{
+			label: context.data.actor.name,
+			icon: 'icons/svg/aura.svg',
+			disabled: category === 'suppressed',
+			duration: category === 'temporary' ? { rounds: 1 } : undefined,
+		},
+	]);
+}
+
+function updateEffects() {
+	effects.value = [...toRaw(context.data.actor).effects];
+}
+
+onBeforeMount(updateEffects);
+onBeforeUpdate(updateEffects);
 </script>
 
 <template>
@@ -74,7 +95,11 @@ const system = computed(() => toRaw(context.data.actor).systemData);
 			<div class="tab" data-tab="inventory"></div>
 			<div class="tab" data-tab="crew"></div>
 			<!-- <div class="tab" data-tab="attachments"></div> -->
-			<div class="tab" data-tab="effects"></div>
+
+			<div class="tab" data-tab="effects">
+				<EffectsView :effects="[...effects]" @add-effect="addEffect" />
+			</div>
+
 			<div class="tab" data-tab="details"></div>
 		</section>
 	</div>
