@@ -10,6 +10,7 @@ import CharacterSheet from '@/actor/sheets/CharacterSheet';
 import MinionSheet from '@/actor/sheets/MinionSheet';
 import RivalSheet from '@/actor/sheets/RivalSheet';
 import NemesisSheet from '@/actor/sheets/NemesisSheet';
+import VehicleSheet from '@/actor/sheets/VehicleSheet';
 
 export function register() {
 	Actors.unregisterSheet('core', ActorSheet);
@@ -31,6 +32,11 @@ export function register() {
 
 	Actors.registerSheet('genesys', NemesisSheet, {
 		types: ['nemesis'],
+		makeDefault: true,
+	});
+
+	Actors.registerSheet('genesys', VehicleSheet, {
+		types: ['vehicle'],
 		makeDefault: true,
 	});
 }

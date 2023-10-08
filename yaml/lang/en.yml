@@ -198,6 +198,8 @@ Genesys:
     Details: Details
     Duration: Duration
     Miscellaneous: Miscellaneous
+    Crew: Crew
+    Attachments: Attachments
 
   # Characteristics
   Characteristics:
@@ -377,3 +379,8 @@ Genesys:
     Dropped: Dropped
     NotApplicable: N/A
     EffectiveTier: Effective Tier
+    Silhouette: Silhouette
+    Speed: Speed
+    Handling: Handling
+    HullTrauma: Hull Trauma
+    SystemStrain: System Strain

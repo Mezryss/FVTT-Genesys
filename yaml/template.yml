@@ -4,6 +4,7 @@ Actor:
     - minion
     - rival
     - nemesis
+    - vehicle
   templates:
     # Has basic characteristics.
     characteristics:
@@ -101,6 +102,18 @@ Actor:
       value: 0
       max: 0
     strain:
+      value: 0
+      max: 0
+  vehicle:
+    silhouette: 0
+    speed: 0
+    handling: 0
+    defense: 0
+    armor: 0
+    hullTrauma:
+      value: 0
+      max: 0
+    systemStrain:
       value: 0
       max: 0
 
