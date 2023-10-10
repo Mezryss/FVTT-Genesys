@@ -123,6 +123,7 @@ Actor:
     source: ''
     price: 0
     rarity: 0
+    currency: 0
     passenger:
       value: 0
       threshold: 0

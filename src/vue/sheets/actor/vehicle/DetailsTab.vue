@@ -108,7 +108,6 @@ const system = computed(() => toRaw(context.data.actor).systemData);
 			display: flex;
 			flex-direction: column;
 			min-height: 15rem;
-			// min-height: 175px;
 			max-height: 20rem;
 
 			.editor {

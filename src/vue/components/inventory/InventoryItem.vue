@@ -18,10 +18,14 @@ const props = withDefaults(
 		item: GenesysItem<EquipmentDataModel>;
 		dragging?: boolean;
 		mini?: boolean;
+		allowEquipping?: boolean;
+		allowDropping?: boolean;
 	}>(),
 	{
 		dragging: false,
 		mini: false,
+		allowEquipping: true,
+		allowDropping: true,
 	},
 );
 
@@ -311,7 +315,9 @@ async function drop(event: DragEvent) {
 
 					<!-- Qualities -->
 					<div v-if="weaponData.qualities.length > 0" class="item-qualities">
-						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description"> {{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }} </Tooltip>
+						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description === '' ? 'Genesys.Tooltips.NoDescription' : quality.description" :localized="true">
+							{{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }}
+						</Tooltip>
 					</div>
 				</template>
 
@@ -327,7 +333,9 @@ async function drop(event: DragEvent) {
 
 					<!-- Qualities -->
 					<div v-if="armorData.qualities.length > 0" class="item-qualities">
-						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description"> {{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }} </Tooltip>
+						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description === '' ? 'Genesys.Tooltips.NoDescription' : quality.description" :localized="true">
+							{{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }}
+						</Tooltip>
 					</div>
 				</template>
 
@@ -355,34 +363,34 @@ async function drop(event: DragEvent) {
 			<i :class="{'fas': true, [damageStateToIcon.get(item.systemData.damage)!]: true}"></i>
 		</a>
 
-		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable">
+		<ContextMenu v-if="!mini" class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable">
 			<template v-slot:menu-items>
-				<MenuItem v-if="item.type === 'weapon' && item.systemData.state !== EquipmentState.Equipped" @click="setItemState(EquipmentState.Equipped)">
+				<MenuItem v-if="allowEquipping && item.type === 'weapon' && item.systemData.state !== EquipmentState.Equipped" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-sword"></i></template>
 					Equip
 				</MenuItem>
 
-				<MenuItem v-if="item.type === 'armor' && item.systemData.state !== EquipmentState.Equipped" @click="setItemState(EquipmentState.Equipped)">
+				<MenuItem v-if="allowEquipping && item.type === 'armor' && item.systemData.state !== EquipmentState.Equipped" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-shield"></i></template>
 					Equip
 				</MenuItem>
 
-				<MenuItem v-if="['weapon', 'armor'].includes(item.type) && item.systemData.state === EquipmentState.Equipped" @click="setItemState(EquipmentState.Carried)">
+				<MenuItem v-if="allowEquipping && ['weapon', 'armor'].includes(item.type) && item.systemData.state === EquipmentState.Equipped" @click="setItemState(EquipmentState.Carried)">
 					<template v-slot:icon><i class="fas fa-backpack"></i></template>
 					Unequip
 				</MenuItem>
 
-				<MenuItem v-if="[EquipmentState.Carried, EquipmentState.Equipped].includes(item.systemData.state)" @click="setItemState(EquipmentState.Dropped)">
+				<MenuItem v-if="allowDropping && [EquipmentState.Carried, EquipmentState.Equipped].includes(item.systemData.state)" @click="setItemState(EquipmentState.Dropped)">
 					<template v-slot:icon><i class="fas fa-shelves"></i></template>
 					Drop
 				</MenuItem>
 
-				<MenuItem v-if="item.systemData.state === EquipmentState.Dropped" @click="setItemState(EquipmentState.Carried)">
+				<MenuItem v-if="allowDropping && item.systemData.state === EquipmentState.Dropped" @click="setItemState(EquipmentState.Carried)">
 					<template v-slot:icon><i class="fas fa-backpack"></i></template>
 					Pick Up
 				</MenuItem>
 
-				<hr />
+				<hr v-if="(allowEquipping && ['weapon', 'armor'].includes(item.type)) || allowDropping" />
 
 				<MenuItem @click="sendItemToChat">
 					<template v-slot:icon><i class="fas fa-comment"></i></template>
@@ -413,6 +421,8 @@ async function drop(event: DragEvent) {
 					:key="item.id"
 					mini
 					draggable="true"
+					:allow-equipping="allowEquipping"
+					:allow-dropping="allowDropping"
 					@dragstart="
 						$event.stopPropagation();
 						emit('dragstart', $event);
@@ -522,8 +532,12 @@ async function drop(event: DragEvent) {
 		grid-row: 2 / span all;
 		transform-origin: top center;
 		max-height: 100px;
-		overflow-y: scroll;
+		overflow-y: auto;
 		padding-right: 0.5em;
+
+		&:empty {
+			display: none;
+		}
 	}
 
 	.name {
