@@ -1,20 +1,33 @@
 import GenesysActor from '@/actor/GenesysActor';
 import IHasPreCreate from '@/data/IHasPreCreate';
 
+type ValueWithMax = {
+	value: number;
+	max: number;
+};
+
+type ValueWithThreshold = {
+	value: number;
+	threshold: number;
+};
+
 export default abstract class VehicleDataModel extends foundry.abstract.DataModel implements IHasPreCreate<GenesysActor<VehicleDataModel>> {
 	abstract silhouette: number;
 	abstract speed: number;
 	abstract handling: number;
 	abstract defense: number;
 	abstract armor: number;
-	abstract hullTrauma: {
-		value: number;
-		max: number;
-	};
-	abstract systemStrain: {
-		value: number;
-		max: number;
-	};
+	abstract hullTrauma: ValueWithMax;
+	abstract systemStrain: ValueWithMax;
+	abstract illustration: string;
+	abstract description: string;
+	abstract complement: string;
+	abstract consumables: string;
+	abstract source: string;
+	abstract price: number;
+	abstract rarity: number;
+	abstract passenger: ValueWithThreshold;
+	abstract encumbrance: ValueWithThreshold;
 
 	async preCreate(actor: GenesysActor<VehicleDataModel>, _data: PreDocumentId<any>, _options: DocumentModificationContext<GenesysActor<VehicleDataModel>>, _user: User) {
 		const prototypeToken = {
@@ -42,6 +55,21 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 			systemStrain: new fields.SchemaField({
 				value: new fields.NumberField({ integer: true, initial: 0 }),
 				max: new fields.NumberField({ integer: true, initial: 0 }),
+			}),
+			illustration: new fields.StringField(),
+			description: new fields.HTMLField(),
+			complement: new fields.StringField(),
+			consumables: new fields.StringField(),
+			source: new fields.StringField(),
+			price: new fields.NumberField({ initial: 0 }),
+			rarity: new fields.NumberField({ integer: true, initial: 0 }),
+			passenger: new fields.SchemaField({
+				value: new fields.NumberField({ integer: true, initial: 0 }),
+				threshold: new fields.NumberField({ integer: true, initial: 0 }),
+			}),
+			encumbrance: new fields.SchemaField({
+				value: new fields.NumberField({ integer: true, initial: 0 }),
+				threshold: new fields.NumberField({ integer: true, initial: 0 }),
 			}),
 		};
 	}

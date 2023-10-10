@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
-import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import { inject, computed, toRaw, ref, onBeforeMount, onBeforeUpdate } from 'vue';
+import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import Localized from '@/vue/components/Localized.vue';
 import CombatStat from '@/vue/components/character/CombatStat.vue';
 import Characteristic from '@/vue/components/character/Characteristic.vue';
+
+import DetailsTab from '@/vue/sheets/actor/vehicle/DetailsTab.vue';
 import EffectsView from '@/vue/views/EffectsView.vue';
 
 const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
@@ -100,7 +102,7 @@ onBeforeUpdate(updateEffects);
 				<EffectsView :effects="[...effects]" @add-effect="addEffect" />
 			</div>
 
-			<div class="tab" data-tab="details"></div>
+			<div class="tab" data-tab="details"><DetailsTab /></div>
 		</section>
 	</div>
 </template>
