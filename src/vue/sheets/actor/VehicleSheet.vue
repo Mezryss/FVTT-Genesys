@@ -6,6 +6,7 @@ import Localized from '@/vue/components/Localized.vue';
 import CombatStat from '@/vue/components/character/CombatStat.vue';
 import Characteristic from '@/vue/components/character/Characteristic.vue';
 
+import CrewTab from '@/vue/sheets/actor/vehicle/CrewTab.vue';
 import InventoryTab from '@/vue/sheets/actor/vehicle/InventoryTab.vue';
 import DetailsTab from '@/vue/sheets/actor/vehicle/DetailsTab.vue';
 import EffectsView from '@/vue/views/EffectsView.vue';
@@ -96,7 +97,7 @@ onBeforeUpdate(updateEffects);
 			<div class="tab" data-tab="skills"></div>
 			<div class="tab" data-tab="combat"></div>
 			<div class="tab" data-tab="inventory"><InventoryTab /></div>
-			<div class="tab" data-tab="crew"></div>
+			<div class="tab" data-tab="crew"><CrewTab /></div>
 			<!-- <div class="tab" data-tab="attachments"></div> -->
 
 			<div class="tab" data-tab="effects">

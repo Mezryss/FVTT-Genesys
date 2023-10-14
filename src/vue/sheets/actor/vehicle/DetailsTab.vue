@@ -47,7 +47,7 @@ const system = computed(() => toRaw(context.data.actor).systemData);
 
 				<div class="double-details">
 					<label><Localized label="Genesys.Labels.PassengerCapacity" /></label>
-					<input type="number" name="system.passenger.threshold" :value="system.passenger.threshold" />
+					<input type="number" name="system.passengers.threshold" :value="system.passengers.threshold" />
 
 					<label><Localized label="Genesys.Labels.EncumbranceCapacity" /></label>
 					<input type="number" name="system.encumbrance.threshold" :value="system.encumbrance.threshold" />

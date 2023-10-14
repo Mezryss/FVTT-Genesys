@@ -124,12 +124,14 @@ Actor:
     price: 0
     rarity: 0
     currency: 0
-    passenger:
+    passengers:
       value: 0
       threshold: 0
+      list: []
     encumbrance:
       value: 0
       threshold: 0
+    roles: []
 
 
 Item:

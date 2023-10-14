@@ -249,17 +249,21 @@ async function drop(event: DragEvent) {
 		return;
 	}
 
-	const item = toRaw(rootContext.data.actor).items.get(dragSource.id);
+	const item = toRaw(rootContext.data.actor).items.get(dragSource.id) as GenesysItem<EquipmentDataModel>;
 	if (!item || item.type === 'container') {
 		return;
 	}
 
-	emit('equipmentStateChange', props.item.systemData.state, [item as GenesysItem]);
-
-	await item.update({
+	const updateObject: Record<string, string> = {
 		'system.container': props.item.id,
-		'system.state': props.item.systemData.state,
-	});
+	};
+
+	if (props.item.systemData.state !== item.systemData.state) {
+		emit('equipmentStateChange', props.item.systemData.state, [item as GenesysItem]);
+		updateObject['system.state'] = props.item.systemData.state;
+	}
+
+	await item.update(updateObject);
 }
 </script>
 
@@ -315,7 +319,7 @@ async function drop(event: DragEvent) {
 
 					<!-- Qualities -->
 					<div v-if="weaponData.qualities.length > 0" class="item-qualities">
-						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description === '' ? 'Genesys.Tooltips.NoDescription' : quality.description" :localized="true">
+						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description === '' ? 'Genesys.Tooltips.NoDescription' : quality.description" :localized="quality.description === ''">
 							{{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }}
 						</Tooltip>
 					</div>
@@ -333,7 +337,7 @@ async function drop(event: DragEvent) {
 
 					<!-- Qualities -->
 					<div v-if="armorData.qualities.length > 0" class="item-qualities">
-						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description === '' ? 'Genesys.Tooltips.NoDescription' : quality.description" :localized="true">
+						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description === '' ? 'Genesys.Tooltips.NoDescription' : quality.description" :localized="quality.description === ''">
 							{{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }}
 						</Tooltip>
 					</div>

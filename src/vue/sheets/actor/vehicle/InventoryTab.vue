@@ -29,13 +29,12 @@ function sortItems(left: GenesysItem, right: GenesysItem) {
 
 async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, sortIndex: number) {
 	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
-
 	if (!dragSource.id) {
 		return;
 	}
 
 	const actor = toRaw(context.data.actor);
-	const item = actor.items.get(dragSource.id);
+	const item = actor.items.get(dragSource.id) as GenesysItem<EquipmentDataModel>;
 
 	// TODO: This will become relevant when we implement new item types that can be equipped by vehicles.
 	if (!item || (sortCategory === EquipmentState.Equipped && ![''].includes(item.type))) {
@@ -56,31 +55,31 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 			return;
 	}
 
-	let newSort = item.sort;
-	if (sortIndex === -1) {
-		// Sort the item at the beginning of the list.
-		if (sortedInventory.value.length > 0) {
-			newSort = sortedInventory.value[0].sort - 1;
-		}
-	} else {
-		newSort = sortedInventory.value[sortIndex].sort + 1;
-
-		if (sortedInventory.value.length > sortIndex + 1) {
-			newSort = Math.floor((newSort + sortedInventory.value[sortIndex + 1].sort) / 2);
-		}
-	}
-
-	const stateChanged = item.system.state !== sortCategory;
-
-	await item.update({
-		'system.container': '',
-		'system.state': sortCategory,
-		sort: newSort,
+	const sortUpdates = SortingHelpers.performIntegerSort(item, {
+		target: sortedInventory.value[sortIndex < 0 ? 0 : sortIndex],
+		siblings: sortedInventory.value.filter((sortedItem) => sortedItem.id !== item.id),
+		sortBefore: sortIndex < 0,
 	});
 
-	if (stateChanged) {
+	await actor.updateEmbeddedDocuments(
+		'Item',
+		sortUpdates.map((change) => {
+			return foundry.utils.mergeObject(change.update, {
+				_id: change.target.id,
+			});
+		}),
+	);
+
+	const updateObject: Record<string, string> = {
+		'system.container': '',
+	};
+
+	if (item.system.state !== sortCategory) {
+		updateObject['system.state'] = sortCategory;
 		handleEffectsSuppresion(sortCategory, [item as GenesysItem]);
 	}
+
+	await item.update(updateObject);
 }
 
 async function handleEffectsSuppresion(_desiredState: EquipmentState, items: GenesysItem[]) {
@@ -88,7 +87,7 @@ async function handleEffectsSuppresion(_desiredState: EquipmentState, items: Gen
 
 	const allUpdates = [];
 
-	// TODO: Currently we are disabling every after effect but we should only disable active effects from items unrelated to vehicles.
+	// TODO: Currently we are disabling every active effect but we should only disable active effects from items unrelated to vehicles.
 	//       Additionally, effects related only to encumbrance should remain enabled.
 	for (const item of items) {
 		allUpdates.push(

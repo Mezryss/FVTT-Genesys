@@ -391,3 +391,6 @@ Genesys:
     PassengerCapacity: Passenger Capacity
     EncumbranceCapacity: Encumbrance Capacity
     Information: Information
+    Passengers: Passengers
+    Roles: Roles
+    OverCapacity: Over Capacity!
