@@ -13,6 +13,20 @@ type ValueWithThreshold = {
 	threshold: number;
 };
 
+/**
+ * This type represents a role that can be hold on the vehicle.
+ */
+type RoleData = {
+	// An unique id to identify the role.
+	id: string;
+	// The name of the role.
+	name: string;
+	// The list of skills that hold significance for this role.
+	skills: string[];
+	// The actors that are able to perform this role.
+	members: string[];
+};
+
 export default abstract class VehicleDataModel extends foundry.abstract.DataModel implements IHasPreCreate<GenesysActor<VehicleDataModel>> {
 	abstract silhouette: number;
 	abstract speed: number;
@@ -29,15 +43,27 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	abstract price: number;
 	abstract rarity: number;
 	abstract currency: number;
-	abstract passenger: ValueWithThreshold;
+	abstract passengers: ValueWithThreshold & { list: Array<{ id: string; sort: number }> };
 	abstract encumbrance: ValueWithThreshold;
+	abstract roles: RoleData[];
 
+	/**
+	 * A list of Document types that a Vehicle actor care about for different reasons.
+	 */
 	static readonly RELEVANT_TYPES = {
-		DROP_ITEM: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+		// Item types that can be handled when dropped into the vehicle sheet.
+		DROP_ITEM: ['weapon', 'armor', 'consumable', 'gear', 'container', 'skill'],
+		// Actor types that can be handled when dropped into the vehicle sheet.
+		DROP_ACTOR: ['character', 'minion', 'rival', 'nemesis'],
+		// Item types that are used to calculate encumbrance values.
 		ENCUMBRANCE: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+		// Item types that are listed on the Inventory tab.
 		INVENTORY: ['weapon', 'armor', 'consumable', 'gear', 'container'],
 	};
 
+	/**
+	 * Gets the current encumbrance value and threshold after taking into account item's quantities and containers.
+	 */
 	get currentEncumbrance() {
 		const actor = this.parent as unknown as GenesysActor<VehicleDataModel>;
 		const cargoEncumbrance = actor.items.reduce(
@@ -64,7 +90,23 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	}
 
 	get isEncumbered() {
-		return this.currentEncumbrance.value > this.currentEncumbrance.threshold;
+		const currentEncumbrance = this.currentEncumbrance;
+		return currentEncumbrance.value > currentEncumbrance.threshold;
+	}
+
+	/**
+	 * Gets the current number of passengers after including those listed on the sheet.
+	 */
+	get currentPassengers() {
+		return {
+			value: Math.max(this.passengers.value + this.passengers.list.length, 0),
+			threshold: Math.max(this.passengers.threshold, 0),
+		};
+	}
+
+	get isOverCapacity() {
+		const currentPassengers = this.currentPassengers;
+		return currentPassengers.value > currentPassengers.threshold;
 	}
 
 	async preCreate(actor: GenesysActor<VehicleDataModel>, _data: PreDocumentId<any>, _options: DocumentModificationContext<GenesysActor<VehicleDataModel>>, _user: User) {
@@ -102,14 +144,28 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 			price: new fields.NumberField({ initial: 0 }),
 			rarity: new fields.NumberField({ integer: true, initial: 0 }),
 			currency: new fields.NumberField({ initial: 0 }),
-			passenger: new fields.SchemaField({
+			passengers: new fields.SchemaField({
 				value: new fields.NumberField({ integer: true, initial: 0 }),
 				threshold: new fields.NumberField({ integer: true, initial: 0 }),
+				list: new fields.ArrayField(
+					new fields.SchemaField({
+						id: new fields.StringField(),
+						sort: new fields.NumberField({ integer: true, initial: 0 }),
+					}),
+				),
 			}),
 			encumbrance: new fields.SchemaField({
 				value: new fields.NumberField({ integer: true, initial: 0 }),
 				threshold: new fields.NumberField({ integer: true, initial: 0 }),
 			}),
+			roles: new fields.ArrayField(
+				new fields.SchemaField({
+					id: new fields.StringField(),
+					name: new fields.StringField(),
+					skills: new fields.ArrayField(new fields.StringField()),
+					members: new fields.ArrayField(new fields.StringField()),
+				}),
+			),
 		};
 	}
 }
