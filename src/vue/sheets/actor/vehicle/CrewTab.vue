@@ -224,7 +224,7 @@ function dragEnd() {
 
 			<TransitionGroup name="crew-trans">
 				<template v-for="(passenger, passengerIndex) in sortedPassengers" :key="passenger.id">
-					<ActorTile :id="passenger.id" :mini="true" :dragging="draggingActor" draggable="true" @remove-member="removePassenger(passengerIndex)" @dragstart="dragStart($event, { origin: 'passenger' })" @dragend="dragEnd" />
+					<ActorTile :actor-id="passenger.id" :mini="true" :dragging="draggingActor" draggable="true" @remove-member="removePassenger(passengerIndex)" @dragstart="dragStart($event, { origin: 'passenger' })" @dragend="dragEnd" />
 
 					<InventorySortSlot :active="draggingActor" @drop="dropToPassengers($event, passengerIndex)" />
 				</template>
