@@ -90,7 +90,7 @@ function drop(event: DragEvent) {
 			<div class="role-members">
 				<TransitionGroup name="mems">
 					<div v-for="(member, memberIndex) in members" :key="member" class="role-member">
-						<ActorTile :id="member" draggable="true" @dragstart="emit('actorDragStart', $event)" @dragend="emit('actorDragEnd')" :dragging="dragging" @remove-member="emit('removeMember', memberIndex)" />
+						<ActorTile :actor-id="member" draggable="true" @dragstart="emit('actorDragStart', $event)" @dragend="emit('actorDragEnd')" :dragging="dragging" @remove-member="emit('removeMember', memberIndex)" />
 					</div>
 				</TransitionGroup>
 			</div>
@@ -197,7 +197,6 @@ function drop(event: DragEvent) {
 				height: 0;
 				opacity: 0;
 				transform: translateY(50px);
-				// transform: rotate(360deg);
 			}
 
 			.role-member {

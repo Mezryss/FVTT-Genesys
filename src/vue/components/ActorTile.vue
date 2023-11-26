@@ -4,12 +4,13 @@ import { inject, ref } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import GenesysActor from '@/actor/GenesysActor';
 
+import Localized from '@/vue/components/Localized.vue';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
 
 const props = withDefaults(
 	defineProps<{
-		id: string;
+		actorId: string;
 		dragging?: boolean;
 		mini?: boolean;
 	}>(),
@@ -32,13 +33,13 @@ const isBeingDragged = ref(false);
 const editLabel = game.i18n.localize('Genesys.Labels.Edit');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 
-const targetActor = game.actors.get(props.id) as GenesysActor;
+const targetActor = game.actors.get(props.actorId) as GenesysActor;
 const career = targetActor.type === 'character' ? targetActor.items.find((item) => item.type === 'career')?.name : undefined;
 
 function dragStart(event: DragEvent) {
 	isBeingDragged.value = true;
 
-	event.dataTransfer?.setData('text/plain', JSON.stringify({ id: props.id }));
+	event.dataTransfer?.setData('text/plain', JSON.stringify({ id: props.actorId }));
 
 	emit('dragstart', event);
 }
@@ -72,7 +73,7 @@ async function openActorSheet() {
 				<a @click="openActorSheet">{{ targetActor.name }}</a>
 			</span>
 
-			<div v-if="career">Career: {{ career }}</div>
+			<div v-if="career"><Localized label="Genesys.Labels.Career" />: {{ career }}</div>
 		</div>
 
 		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!context.data.editable">
