@@ -7,7 +7,7 @@
  */
 
 import EquipmentDataModel from '@/item/data/EquipmentDataModel';
-import { ContainedItemQuality } from '@/item/data/WeaponDataModel';
+import { ContainedItemQuality } from '@/item/data/BaseWeaponDataModel';
 
 export default abstract class ArmorDataModel extends EquipmentDataModel {
 	/**

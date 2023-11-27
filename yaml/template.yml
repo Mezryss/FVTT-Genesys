@@ -144,6 +144,7 @@ Item:
     - gear
     - quality
     - weapon
+    - vehicleWeapon
 
     # Character Building
     - ability
@@ -173,6 +174,17 @@ Item:
       quantity: 1
       # (Owned) Current item state. (Carried, Dropped, or Equipped)
       state: 'carried'
+    baseWeapon:
+      # Weapon's base damage value.
+      baseDamage: 0
+      # Weapon's critical rating.
+      critical: 0
+      # Weapon's range - one of Engaged, Close, Medium, Long, or Extreme.
+      range: 'engaged'
+      # Skill names that can be used when wielding the weapon.
+      skills: []
+      # Item qualities applicable to the weapon.
+      qualities: []
   ability:
     templates: [basic]
     # Whether this talent is active or passive and, if active, details on the activation requirement.
@@ -259,15 +271,17 @@ Item:
     templates:
       - basic
       - equipment
-    # Weapon's base damage value.
-    baseDamage: 0
+      - baseWeapon
     # Characteristic added to damage value.
     damageCharacteristic: '-'
-    # Weapon's critical rating.
-    critical: 0
-    # Weapon's range - one of Engaged, Close, Medium, Long, or Extreme.
-    range: 'engaged'
-    # Skill names that can be used when wielding the weapon.
-    skills: []
-    # Item qualities applicable to the weapon.
-    qualities: []
+  vehicleWeapon:
+    templates:
+      - basic
+      - equipment
+      - baseWeapon
+    # Directions a weapon can be fired, based on its mounting.
+    firingArc:
+      fore: false
+      aft: false
+      port: false
+      starboard: false

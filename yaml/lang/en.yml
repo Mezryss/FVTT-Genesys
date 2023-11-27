@@ -21,6 +21,7 @@ ITEM:
   TypeGear: Gear
   TypeQuality: Item Quality
   TypeWeapon: Weapon
+  TypeVehicleweapon: Vehicle Weapon
 
 # Genesys
 Genesys:
@@ -258,6 +259,7 @@ Genesys:
     Medium: Medium
     Long: Long
     Extreme: Extreme
+    Strategic: Strategic
 
   # Dialog Groups
   DialogGroups:
@@ -395,3 +397,4 @@ Genesys:
     Roles: Roles
     OverCapacity: Over Capacity!
     RoleSkills: Role Skills
+    FiringArc: Firing Arc
