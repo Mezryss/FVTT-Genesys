@@ -13,6 +13,7 @@ import DicePrompt from '@/app/DicePrompt';
 import Localized from '@/vue/components/Localized.vue';
 import SkillRanks from '@/vue/components/character/SkillRanks.vue';
 
+// The linter believes this is being unused (when in fact it isn't) so we prefix it so it's ignored.
 type _NonVehicleDataModel = CharacterDataModel | AdversaryDataModel;
 
 const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
@@ -21,15 +22,21 @@ const dataGroupedByMember = computed(() =>
 	toRaw(context.data.actor).systemData.roles.reduce((accum, role) => {
 		for (const member of role.members) {
 			if (!accum.has(member)) {
-				accum.set(member, { actor: game.actors.get(member) as GenesysActor, roles: [], skills: new Map() });
+				const actor = game.actors.get(member);
+				if (!actor) {
+					continue;
+				}
+
+				accum.set(member, { actor: actor as GenesysActor, roles: [], skills: new Map() });
 			}
 			const details = accum.get(member)!;
 
 			details.roles.push(role.name);
 
-			for (const skillName of role.skills) {
+			for (const skill of role.skills) {
+				const skillName = skill.toLowerCase();
 				if (!details.skills.has(skillName)) {
-					const skillItem = details.actor.items.find((item) => item.type === 'skill' && item.name === skillName);
+					const skillItem = details.actor.items.find((item) => item.type === 'skill' && item.name.toLowerCase() === skillName);
 
 					if (skillItem) {
 						details.skills.set(skillName, skillItem as GenesysItem<SkillDataModel>);
@@ -54,7 +61,7 @@ async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDa
 		<div class="skills-container">
 			<section v-for="[memberId, details] in dataGroupedByMember" :key="memberId">
 				<div class="member-details">
-					<img :src="details.actor.img" :alt="details.actor.name" draggable="false" class="member-image" />
+					<img class="member-image" :src="details.actor.img" :alt="details.actor.name" draggable="false" />
 					<div class="member-name">{{ details.actor.name }}</div>
 					<div class="member-roles"><Localized label="Genesys.Labels.Roles" />: {{ details.roles.join(', ') }}</div>
 

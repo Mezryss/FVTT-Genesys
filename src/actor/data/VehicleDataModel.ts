@@ -52,14 +52,27 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	 */
 	static readonly RELEVANT_TYPES = {
 		// Item types that can be handled when dropped into the vehicle sheet.
-		DROP_ITEM: ['weapon', 'armor', 'consumable', 'gear', 'container', 'skill'],
+		DROP_ITEM: ['vehicleWeapon', 'weapon', 'armor', 'consumable', 'gear', 'container', 'skill', 'injury'],
 		// Actor types that can be handled when dropped into the vehicle sheet.
 		DROP_ACTOR: ['character', 'minion', 'rival', 'nemesis'],
 		// Item types that are used to calculate encumbrance values.
-		ENCUMBRANCE: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+		ENCUMBRANCE: ['vehicleWeapon', 'weapon', 'armor', 'consumable', 'gear', 'container'],
 		// Item types that are listed on the Inventory tab.
-		INVENTORY: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+		INVENTORY: ['vehicleWeapon', 'weapon', 'armor', 'consumable', 'gear', 'container'],
+		// Item types that can be equipped.
+		EQUIPABLE: ['vehicleWeapon'],
 	};
+
+	static readonly _GAME_VEHICLES = new Set<GenesysActor<VehicleDataModel>>();
+
+	constructor(...args: any[]) {
+		super(...args);
+
+		const actor = this.parent as unknown as GenesysActor<VehicleDataModel>;
+		if (actor.id) {
+			VehicleDataModel._GAME_VEHICLES.add(actor);
+		}
+	}
 
 	/**
 	 * Gets the current encumbrance value and threshold after taking into account item's quantities and containers.
@@ -119,6 +132,10 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 		await actor.updateSource({ prototypeToken });
 	}
 
+	onDelete(actor: GenesysActor<VehicleDataModel>, _options: DocumentModificationContext<GenesysActor<VehicleDataModel>>, _userId: string) {
+		VehicleDataModel._GAME_VEHICLES.delete(actor);
+	}
+
 	static override defineSchema() {
 		const fields = foundry.data.fields;
 
@@ -168,4 +185,16 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 			),
 		};
 	}
+}
+
+export function register() {
+	// Whenever an actor that is on a vehicle is updated we make sure to re-render the vehicle sheet.
+	Hooks.on('updateActor', (actor) => {
+		const genesysActor = actor as GenesysActor;
+		for (const vehicle of VehicleDataModel._GAME_VEHICLES) {
+			if (vehicle.sheet.rendered && (vehicle.systemData.roles.some((role) => role.members.includes(genesysActor.id)) || vehicle.systemData.passengers.list.some((passenger) => passenger.id === genesysActor.id))) {
+				vehicle.sheet.render(true);
+			}
+		}
+	});
 }

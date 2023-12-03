@@ -36,8 +36,7 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 	const actor = toRaw(context.data.actor);
 	const item = actor.items.get(dragSource.id) as GenesysItem<EquipmentDataModel>;
 
-	// TODO: This will become relevant when we implement new item types that can be equipped by vehicles.
-	if (!item || (sortCategory === EquipmentState.Equipped && ![''].includes(item.type))) {
+	if (!item || (sortCategory === EquipmentState.Equipped && !VehicleDataModel.RELEVANT_TYPES.EQUIPABLE.includes(item.type))) {
 		return;
 	}
 
@@ -129,16 +128,7 @@ async function handleEffectsSuppresion(_desiredState: EquipmentState, items: Gen
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in equippedItems" :key="item.id">
-				<InventoryItem
-					:item="item"
-					draggable="true"
-					:allow-equipping="false"
-					:allow-dropping="false"
-					@dragstart="draggingItem = true"
-					@dragend="draggingItem = false"
-					:dragging="draggingItem"
-					@equipment-state-change="handleEffectsSuppresion"
-				/>
+				<InventoryItem :item="item" draggable="true" :allow-dropping="false" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
 
 				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Equipped, index)" />
 			</template>
@@ -152,16 +142,7 @@ async function handleEffectsSuppresion(_desiredState: EquipmentState, items: Gen
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in carriedItems" :key="item.id">
-				<InventoryItem
-					:item="item"
-					draggable="true"
-					:allow-equipping="false"
-					:allow-dropping="false"
-					@dragstart="draggingItem = true"
-					@dragend="draggingItem = false"
-					:dragging="draggingItem"
-					@equipment-state-change="handleEffectsSuppresion"
-				/>
+				<InventoryItem :item="item" draggable="true" :allow-dropping="false" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
 
 				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Carried, index)" />
 			</template>
