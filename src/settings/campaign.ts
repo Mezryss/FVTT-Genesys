@@ -19,7 +19,7 @@ export const KEY_SKILL_FOR_INJURIES = 'skillForInjuries';
 /**
  * The name of the skill to use for repairing Critical Hits.
  */
-export const KEY_SKILL_FOR_VEHICLE_INJURIES = 'skillForVehicleInjuries';
+export const KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS = 'skillForRepairingVehicleHits';
 
 /**
  * Name of the currency used for the setting.
@@ -74,9 +74,9 @@ export function register(namespace: string) {
 		type: String,
 	});
 
-	game.settings.register(namespace, KEY_SKILL_FOR_VEHICLE_INJURIES, {
-		name: game.i18n.localize('Genesys.Settings.SkillForVehicleInjuries'),
-		hint: game.i18n.localize('Genesys.Settings.SkillForVehicleInjuriesHint'),
+	game.settings.register(namespace, KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS, {
+		name: game.i18n.localize('Genesys.Settings.SkillForRepairingVehicleHits'),
+		hint: game.i18n.localize('Genesys.Settings.SkillForRepairingVehicleHitsHint'),
 		scope: 'world',
 		config: true,
 		default: 'Mechanics',

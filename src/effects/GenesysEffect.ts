@@ -27,9 +27,6 @@ export default class GenesysEffect extends ActiveEffect {
 	override apply(actor: Actor, change: ApplicableChangeData<this>): unknown {
 		const originItem = this.originItem;
 
-		console.error('Applying Effect!');
-		console.log(originItem);
-
 		if (originItem && originItem.systemData instanceof TalentDataModel) {
 			const talentData = <TalentDataModel>originItem.systemData;
 
