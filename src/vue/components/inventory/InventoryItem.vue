@@ -251,6 +251,7 @@ function dragStart(event: DragEvent) {
 		JSON.stringify({
 			id: props.item.id,
 			itemType: props.item.type,
+			source: toRaw(rootContext.data.actor).id,
 		}),
 	);
 
@@ -314,7 +315,6 @@ async function drop(event: DragEvent) {
 	}
 
 	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
-
 	if (!dragSource.id) {
 		return;
 	}
@@ -442,7 +442,7 @@ async function drop(event: DragEvent) {
 			<i :class="{'fas': true, [damageStateToIcon.get(item.systemData.damage)!]: true}"></i>
 		</a>
 
-		<ContextMenu v-if="!mini" class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable">
+		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable || mini">
 			<template v-slot:menu-items>
 				<MenuItem v-if="allowEquipping && ['weapon', 'vehicleWeapon'].includes(item.type) && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-sword"></i></template>

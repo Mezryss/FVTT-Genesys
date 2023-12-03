@@ -66,6 +66,16 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 	abstract superCharacteristics: Set<Characteristic>;
 
 	/**
+	 * A list of Document types that a Character actor cares about for different reasons.
+	 */
+	static readonly RELEVANT_TYPES = {
+		// Item types that can be handled when dropped into the sheet.
+		DROP_ITEM: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+		// Item types that are listed on the Inventory tab.
+		INVENTORY: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+	};
+
+	/**
 	 * Total value for Soak (base + Brawn + Armor).
 	 */
 	get totalSoak(): number {

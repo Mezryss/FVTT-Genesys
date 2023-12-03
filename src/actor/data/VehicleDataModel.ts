@@ -48,12 +48,12 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	abstract roles: RoleData[];
 
 	/**
-	 * A list of Document types that a Vehicle actor care about for different reasons.
+	 * A list of Document types that a Vehicle actor cares about for different reasons.
 	 */
 	static readonly RELEVANT_TYPES = {
-		// Item types that can be handled when dropped into the vehicle sheet.
+		// Item types that can be handled when dropped into the sheet.
 		DROP_ITEM: ['vehicleWeapon', 'weapon', 'armor', 'consumable', 'gear', 'container', 'skill', 'injury'],
-		// Actor types that can be handled when dropped into the vehicle sheet.
+		// Actor types that can be handled when dropped into the sheet.
 		DROP_ACTOR: ['character', 'minion', 'rival', 'nemesis'],
 		// Item types that are used to calculate encumbrance values.
 		ENCUMBRANCE: ['vehicleWeapon', 'weapon', 'armor', 'consumable', 'gear', 'container'],

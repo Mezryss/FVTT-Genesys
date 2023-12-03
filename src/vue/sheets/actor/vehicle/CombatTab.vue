@@ -18,7 +18,7 @@ import Tooltip from '@/vue/components/Tooltip.vue';
 import SelectCharacterSkillPrompt, { CharacterSkillOption } from '@/app/SelectCharacterSkillPrompt';
 
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_SKILL_FOR_VEHICLE_INJURIES } from '@/settings/campaign';
+import { KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS } from '@/settings/campaign';
 
 const rootContext = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 
@@ -82,7 +82,7 @@ async function pickAttackerAndRollAttack(weapon: GenesysItem<VehicleWeaponDataMo
 }
 
 async function repairHit(criticalHit: GenesysItem<InjuryDataModel>) {
-	const skillNameForRepairing = game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_VEHICLE_INJURIES) as string;
+	const skillNameForRepairing = game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS) as string;
 	const relevantRoles = actor.value.systemData.roles.filter((role) => role.skills.includes(skillNameForRepairing));
 	const potentialRepairer = relevantRoles.reduce((accum, role) => {
 		for (const member of role.members) {

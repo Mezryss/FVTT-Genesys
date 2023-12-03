@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import VehicleDataModel from '@/actor/data/VehicleDataModel';
 import { inject, computed, toRaw, ref } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
+
+import GenesysActor from '@/actor/GenesysActor';
 import GenesysItem from '@/item/GenesysItem';
+import VehicleDataModel from '@/actor/data/VehicleDataModel';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import GenesysEffect from '@/effects/GenesysEffect';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
@@ -103,10 +105,70 @@ async function handleEffectsSuppresion(_desiredState: EquipmentState, items: Gen
 
 	await Promise.all(allUpdates);
 }
+
+async function drop(event: DragEvent) {
+	const actor = toRaw(context.data.actor);
+
+	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
+	if (!dragData.source || dragData.source === actor.id || !actor.isOwner) {
+		return;
+	}
+
+	const sourceActor = game.actors.get(dragData.source) as GenesysActor | undefined;
+	if (!sourceActor || !sourceActor.isOwner) {
+		return;
+	}
+
+	if (!VehicleDataModel.RELEVANT_TYPES.DROP_ITEM.includes(dragData.itemType) || !VehicleDataModel.RELEVANT_TYPES.INVENTORY.includes(dragData.itemType)) {
+		return;
+	}
+
+	let containedItems: GenesysItem<EquipmentDataModel>[] = [];
+	if (dragData.itemType === 'container') {
+		containedItems = sourceActor.items.filter((item) => (item as GenesysItem<EquipmentDataModel>).systemData.container === dragData.id) as GenesysItem<EquipmentDataModel>[];
+		if (!containedItems.every((item) => VehicleDataModel.RELEVANT_TYPES.DROP_ITEM.includes(item.type) && VehicleDataModel.RELEVANT_TYPES.INVENTORY.includes(item.type))) {
+			return;
+		}
+	}
+
+	const droppedItem = sourceActor.items.get(dragData.id) as GenesysItem | undefined;
+	if (!droppedItem) {
+		return;
+	}
+
+	const clonedItem = droppedItem.toObject();
+	const clonedItemSystem = clonedItem.system as EquipmentDataModel;
+	clonedItemSystem.state = EquipmentState.Carried;
+	clonedItemSystem.container = '';
+
+	const allCreatedItems = await actor.createEmbeddedDocuments('Item', [clonedItem]);
+	const itemInSelf = allCreatedItems[0];
+
+	if (containedItems.length > 0) {
+		allCreatedItems.push(
+			...(await actor.createEmbeddedDocuments(
+				'Item',
+				containedItems.map((item) => {
+					const itemAsObject = item.toObject();
+					const itemAsObjectSystem = itemAsObject.system as EquipmentDataModel;
+					itemAsObjectSystem.state = EquipmentState.Carried;
+					itemAsObjectSystem.container = itemInSelf.id;
+					return itemAsObject;
+				}),
+			)),
+		);
+
+		containedItems.forEach((item) => item.delete());
+	}
+
+	await droppedItem.delete();
+
+	handleEffectsSuppresion(EquipmentState.Carried, allCreatedItems as GenesysItem<EquipmentDataModel>[]);
+}
 </script>
 
 <template>
-	<section class="tab-inventory">
+	<section class="tab-inventory" @drop="drop">
 		<div class="encumbrance-currency-row">
 			<div class="currency-row">
 				<label><i class="fas fa-coins"></i> {{ CURRENCY_LABEL }}:</label>
