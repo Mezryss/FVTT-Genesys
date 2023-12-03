@@ -19,6 +19,7 @@ import { register as registerStoryPointTracker } from '@/app/StoryPointTracker';
 import { register as registerActors, AdversaryTypes } from '@/actor';
 import { register as registerEffects } from '@/effects';
 import { register as registerItems, CharacterCreationItemTypes, EquipmentItemTypes } from '@/item';
+import { register as registerVehiclesRerender } from '@/actor/data/VehicleDataModel';
 
 import './scss/index.scss';
 
@@ -108,6 +109,7 @@ Hooks.once('ready', async () => {
 	await doAlphaNotice();
 
 	readyConfigs();
+	registerVehiclesRerender();
 });
 
 function constructOptGroup(select: HTMLSelectElement, groupLabel: string, optValues?: string[]): HTMLOptGroupElement {

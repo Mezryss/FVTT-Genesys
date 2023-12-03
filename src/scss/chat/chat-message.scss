@@ -92,6 +92,16 @@
 			border-bottom: 1px dashed colors.$gold;
 		}
 
+		.weapon-firing-arc {
+			label {
+				grid-column: 1 / span 2;
+			}
+
+			span {
+				grid-column: 1 / span 2;
+			}
+		}
+
 		// Left for now due to backwards compatibility with version <= 0.1.13 of this package.
 		.defenseAndSoak,
 		.skillAndRange,

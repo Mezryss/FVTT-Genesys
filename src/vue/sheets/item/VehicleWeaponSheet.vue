@@ -18,19 +18,19 @@ const system = computed(() => context.data.item.systemData);
 				<div class="firing-arc-options">
 					<div>
 						<input type="checkbox" name="system.firingArc.fore" :checked="system.firingArc.fore" />
-						<label>Fore</label>
+						<label><Localized label="Genesys.FiringArc.Fore" /></label>
 					</div>
 					<div>
 						<input type="checkbox" name="system.firingArc.aft" :checked="system.firingArc.aft" />
-						<label>Aft</label>
+						<label><Localized label="Genesys.FiringArc.Aft" /></label>
 					</div>
 					<div>
 						<input type="checkbox" name="system.firingArc.port" :checked="system.firingArc.port" />
-						<label>Port</label>
+						<label><Localized label="Genesys.FiringArc.Port" /></label>
 					</div>
 					<div>
 						<input type="checkbox" name="system.firingArc.starboard" :checked="system.firingArc.starboard" />
-						<label>Starbord</label>
+						<label><Localized label="Genesys.FiringArc.Starboard" /></label>
 					</div>
 				</div>
 			</div>

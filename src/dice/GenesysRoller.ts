@@ -11,6 +11,7 @@ import GenesysDie from '@/dice/types/GenesysDie';
 import { Characteristic } from '@/data/Characteristics';
 import GenesysItem from '@/item/GenesysItem';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
+import VehicleWeaponDataModel from '@/item/data/VehicleWeaponDataModel';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_SHOW_DAMAGE_ON_FAILURE } from '@/settings/campaign';
 
@@ -133,7 +134,7 @@ export default class GenesysRoller {
 		skillId: string;
 		formula: string;
 		symbols: Record<string, number>;
-		weapon: GenesysItem<WeaponDataModel>;
+		weapon: GenesysItem<WeaponDataModel | VehicleWeaponDataModel>;
 	}) {
 		const roll = new Roll(formula, { symbols });
 		await roll.evaluate({ async: true });
@@ -144,9 +145,10 @@ export default class GenesysRoller {
 		let totalDamage = weapon.systemData.baseDamage;
 		let damageFormula = weapon.systemData.baseDamage.toString();
 
-		if (actor && weapon.systemData.damageCharacteristic !== '-') {
-			totalDamage += (actor.system as any).characteristics[weapon.systemData.damageCharacteristic] as number;
-			damageFormula = game.i18n.localize(`Genesys.CharacteristicAbbr.${weapon.systemData.damageCharacteristic.capitalize()}`) + ` + ${damageFormula}`;
+		const withDamageCharacteristic = (weapon.systemData as WeaponDataModel).damageCharacteristic;
+		if (actor && withDamageCharacteristic && withDamageCharacteristic !== '-') {
+			totalDamage += (actor.system as any).characteristics[withDamageCharacteristic] as number;
+			damageFormula = game.i18n.localize(`Genesys.CharacteristicAbbr.${withDamageCharacteristic.capitalize()}`) + ` + ${damageFormula}`;
 		}
 
 		if (results.netSuccess > 0) {

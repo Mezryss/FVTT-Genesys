@@ -17,7 +17,14 @@
 	{{/if}}
 
 	{{!-- Weapon: Damage, Critical, Range, Skill --}}
-	{{#if (eq type 'weapon')}}
+	{{#if (or (eq type 'weapon') (eq type 'vehicleWeapon'))}}
+        {{#if (eq type 'vehicleWeapon')}}
+            <div class="details-grid weapon-firing-arc">
+                <label class="firing-arc">{{localize 'Genesys.Labels.FiringArc'}}</label>
+                <span class="firing-arc">{{ weapon.firingArc }}</span>
+            </div>
+        {{/if}}
+
 		<div class="details-grid">
 			<label class="skill">{{localize 'Genesys.Labels.Skill'}}</label>
 			<label class="range">{{localize 'Genesys.Labels.Range'}}</label>

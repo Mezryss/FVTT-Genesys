@@ -55,7 +55,7 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 		}
 
 		const droppedItem: GenesysItem | undefined = await (<any>GenesysItem.implementation).fromDropData(data);
-		if (!droppedItem) {
+		if (!droppedItem || droppedItem.type === 'vehicleWeapon') {
 			return false;
 		}
 
