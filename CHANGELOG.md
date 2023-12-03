@@ -1,3 +1,11 @@
+## Alpha 0.2.0
+
+### Features
+-	[PR #99](https://github.com/Mezryss/FVTT-Genesys/pull/99): Adds support for vehicles
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.1.15
 
 ### Features
@@ -10,9 +18,6 @@
 
 -	[#90](https://github.com/Mezryss/FVTT-Genesys/issues/90): Makes the tier bubble display properly
 -	[PR #97](https://github.com/Mezryss/FVTT-Genesys/pull/97): Allows rolling dice pools without dice
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.1.14
 
