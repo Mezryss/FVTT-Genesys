@@ -10,7 +10,7 @@ ITEM:
   TypeAbility: Special Ability
   TypeArchetype: Archetype
   TypeCareer: Career
-  TypeInjury: Critical Injury
+  TypeInjury: Critical Injury/Hit
   TypeSkill: Skill
   TypeTalent: Talent
 
@@ -399,7 +399,9 @@ Genesys:
     Speed: Speed
     Handling: Handling
     HullTrauma: Hull Trauma
+    HullTraumaThreshold: Hull Trauma Threshold
     SystemStrain: System Strain
+    SystemStrainThreshold: System Strain Threshold
     Illustration: Illustration
     Complement: Complement
     Consumables: Consumables

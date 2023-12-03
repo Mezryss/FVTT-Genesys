@@ -39,13 +39,6 @@ export default class GenesysEffectSheet extends ActiveEffectConfig {
 		}
 	}
 
-	override getData(options?: DocumentSheetOptions | undefined): ActiveEffectConfigData<ActiveEffect> {
-		const context = super.getData(options);
-		return foundry.utils.mergeObject(context, {
-			isVehicle: this.object.parent.type === 'vehicle',
-		});
-	}
-
 	protected async _onEditImage(event: Event) {
 		const fp = new FilePicker({
 			type: 'image',
