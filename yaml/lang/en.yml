@@ -47,8 +47,16 @@ Genesys:
     SkillForRepairingVehicleHitsHint: Name of the skill used when recovering from Critical Hits.
     UseMagicalGirlSymbols: Use Magical Girl Symbols by MilkMyth (Client-Only)
     UseMagicalGirlSymbolsHint: Swap the Genesys symbol set for MilkMyth's Magical Girls symbol set. This will not affect other users.
-    DicePoolApproximation: Dice Pool Approximation
-    DicePoolApproximationHint: The number of simulated rolls to run in order to approximate the chance to succeed. Be mindful when increasing this number since it will have a direct impact on Foundry's performance; a good number to start is 100. If a value of 0 is provided this feature is disabled.
+    DicePoolChanceToSucceedByPermutation: Calculate the Chance to Succeed for Dice Pools
+    DicePoolChanceToSucceedByPermutationHint: >-
+      If enabled this will spawn a Web Worker that calculates the exact chance to succeed.
+      However, if the dice pool uses a super characteristic the calculated value is lower than the true value beccause it assumes that the pool didn't explode.
+      For dice pools that use super characteristics you can get a more accurate value by using simulations.
+    DicePoolChanceToSucceedBySimulation: Approximate the Chance to Succeed for Dice Pools
+    DicePoolChanceToSucceedBySimulationHint: >-
+      The number of simulated rolls to run in order to approximate the chance to succeed.
+      Be mindful when increasing this number since it will have a direct impact on Foundry's performance; a good number to start is 100. If a value of 0 is provided this feature is disabled.
+      This setting is ignored if the chance is already being calculated some other way.
     SuperCharacteristics: Super-Characteristics
     SuperCharacteristicsHint: Allows marking characteristics as being 'super' during character creation, per the Super-Characteristics optional rule (Core Rulebook, p.251).
 
@@ -140,8 +148,9 @@ Genesys:
     Title: Dice Pool
     Roll: Roll!
     Hint: Use the dice box on the right to add, upgrade, and downgrade. Click dice in the pool to remove them!
-    Approximation: 'Chance to Succeed:'
-    ApproximationDisclaimer: The displayed probability is an approximation that uses the Monte Carlo method.
+    ChanceToSucceed: 'Chance to Succeed:'
+    ChanceToSucceedByPermutationDisclaimer: The displayed probability is exact unless the dice pool includes a super characteristic.
+    ChanceToSucceedBySimulationDisclaimer: The displayed probability is an approximation that uses the Monte Carlo method.
 
   # Experience Journal Labels
   XPJournal:

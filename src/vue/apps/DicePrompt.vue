@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { computed, inject, onMounted, ref, toRaw } from 'vue';
-import { DicePromptContext, type AttackRollData, RollType, InitiativeRollData } from '@/app/DicePrompt';
+import { DicePromptContext, type AttackRollData, RollType, type InitiativeRollData, CALCULATE_CHANCE_WORKER_NAME } from '@/app/DicePrompt';
 import { Characteristic } from '@/data/Characteristics';
 import GenesysRoller from '@/dice/GenesysRoller';
 import GenesysItem from '@/item/GenesysItem';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS, KEY_SUPER_CHARACTERISTICS } from '@/settings/campaign';
-import { KEY_DICE_POOL_APPROXIMATION } from '@/settings/user';
+import { KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION } from '@/settings/user';
 import { RootContext } from '@/vue/SheetContext';
 import Localized from '@/vue/components/Localized.vue';
 import MinionDataModel from '@/actor/data/MinionDataModel';
@@ -72,7 +72,9 @@ const successApproximation = ref('');
 const availableSkills = computed<GenesysItem<SkillDataModel>[]>(() => toRaw(context.skills).sort(sortSkills));
 const canChangeCharacteristic = computed(() => !selectedSkill.value || (game.settings.get(SETTINGS_NAMESPACE, KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS) as boolean));
 
-const DICE_POOL_APPROXIMATION = Math.floor(game.settings.get(SETTINGS_NAMESPACE, KEY_DICE_POOL_APPROXIMATION) as number);
+const USE_CHANCE_TO_SUCCEED_BY_SIMULATION = Math.floor(game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION) as number);
+const USE_CHANCE_TO_SUCCEED_BY_PERMUTATION = game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) as boolean;
+const USE_CHANCE_TO_SUCCEED = USE_CHANCE_TO_SUCCEED_BY_PERMUTATION || USE_CHANCE_TO_SUCCEED_BY_SIMULATION > 0;
 
 let currentDicePool: DicePool = {
 	dice: {} as Record<DieString, number>,
@@ -339,7 +341,7 @@ function hasSameChanceToSucceed(firstDicePool: DicePool, secondDicePool: DicePoo
 }
 
 async function approximateProbability() {
-	if (DICE_POOL_APPROXIMATION <= 0) {
+	if (!USE_CHANCE_TO_SUCCEED) {
 		return;
 	}
 
@@ -364,16 +366,27 @@ async function approximateProbability() {
 		return;
 	}
 
-	const simulation = await Promise.all(
-		[...Array(DICE_POOL_APPROXIMATION)].map(async () => {
-			const roll = new Roll(formula, { symbols });
-			const result = await roll.evaluate({ async: true });
-			return GenesysRoller.parseRollResults(result);
-		}),
-	);
+	let chanceToSucceed = 0;
+	if (USE_CHANCE_TO_SUCCEED_BY_PERMUTATION) {
+		const worker = game.workers.get(CALCULATE_CHANCE_WORKER_NAME);
+		chanceToSucceed = await worker.executeFunction('calculateChanceForDicePool', {
+			dicePool: dice,
+			extraSymbols: symbols,
+			criteriaType: 'SUCCESS',
+		});
+	} else {
+		const simulation = await Promise.all(
+			[...Array(USE_CHANCE_TO_SUCCEED_BY_SIMULATION)].map(async () => {
+				const roll = new Roll(formula, { symbols });
+				const result = await roll.evaluate({ async: true });
+				return GenesysRoller.parseRollResults(result);
+			}),
+		);
+		const successfulRolls = simulation.filter((roll) => roll.netSuccess > 0);
+		chanceToSucceed = successfulRolls.length / simulation.length;
+	}
 
-	const successfulRolls = simulation.filter((roll) => roll.netSuccess > 0);
-	successApproximation.value = (Math.round((successfulRolls.length / simulation.length) * 10000) / 100).toFixed(2);
+	successApproximation.value = (Math.round(chanceToSucceed * 10000) / 100).toFixed(2);
 }
 </script>
 
@@ -450,8 +463,11 @@ async function approximateProbability() {
 			<option v-for="skill in availableSkills" :key="skill.id" :value="skill.id">{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.systemData.characteristic.capitalize()}`" />)</option>
 		</select>
 
-		<div v-if="DICE_POOL_APPROXIMATION > 0" class="approximation">
-			<label> <i class="fas fa-circle-info" data-tooltip="Genesys.DicePrompt.ApproximationDisclaimer"></i> <Localized label="Genesys.DicePrompt.Approximation" /> </label>
+		<div v-if="USE_CHANCE_TO_SUCCEED" class="approximation">
+			<label>
+				<i class="fas fa-circle-info" :data-tooltip="`Genesys.DicePrompt.ChanceToSucceedBy${USE_CHANCE_TO_SUCCEED_BY_PERMUTATION ? 'Permutation' : 'Simulation'}Disclaimer`"></i>
+				<Localized label="Genesys.DicePrompt.ChanceToSucceed" />
+			</label>
 
 			<i v-if="successApproximation === ''" class="fas fa-spinner fa-spin"></i>
 			<span v-else>{{ successApproximation }}%</span>

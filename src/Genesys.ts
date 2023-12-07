@@ -20,6 +20,7 @@ import { register as registerActors, AdversaryTypes } from '@/actor';
 import { register as registerEffects } from '@/effects';
 import { register as registerItems, CharacterCreationItemTypes, EquipmentItemTypes } from '@/item';
 import { register as registerVehiclesRerender } from '@/actor/data/VehicleDataModel';
+import { registerWorker } from '@/app/DicePrompt';
 
 import './scss/index.scss';
 
@@ -107,6 +108,7 @@ Hooks.once('ready', async () => {
 
 	readyConfigs();
 	registerVehiclesRerender();
+	registerWorker();
 });
 
 function constructOptGroup(select: HTMLSelectElement, groupLabel: string, optValues?: string[]): HTMLOptGroupElement {

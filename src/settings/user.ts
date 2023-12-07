@@ -12,9 +12,14 @@
 export const KEY_USE_MAGICAL_GIRL_SYMBOLS = 'useMagicalGirlSymbols';
 
 /**
+ * Wheter the user wants to calculate the chance to succeed by constructing the permutations on a Web Worker.
+ */
+export const KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION = 'dicePoolChanceToSucceedByPermutation';
+
+/**
  * Number of simulated rolls to do to calculate the dice pool success chance. A value of 0 disables the feature.
  */
-export const KEY_DICE_POOL_APPROXIMATION = 'dicePoolApproximation';
+export const KEY_CHANCE_TO_SUCCEED_BY_SIMULATION = 'dicePoolApproximation';
 
 export function register(namespace: string) {
 	game.settings.register(namespace, KEY_USE_MAGICAL_GIRL_SYMBOLS, {
@@ -27,9 +32,23 @@ export function register(namespace: string) {
 		requiresReload: true,
 	});
 
-	game.settings.register(namespace, KEY_DICE_POOL_APPROXIMATION, {
-		name: game.i18n.localize('Genesys.Settings.DicePoolApproximation'),
-		hint: game.i18n.localize('Genesys.Settings.DicePoolApproximationHint'),
+	// This setting is only available for FVTT v11+ because it depends on the changes made to the workers API
+	// introduced in that version.
+	if (game.workers.get) {
+		game.settings.register(namespace, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, {
+			name: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutation'),
+			hint: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutationHint'),
+			scope: 'client',
+			config: true,
+			default: false,
+			type: Boolean,
+			requiresReload: true,
+		});
+	}
+
+	game.settings.register(namespace, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION, {
+		name: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedBySimulation'),
+		hint: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedBySimulationHint'),
 		scope: 'client',
 		config: true,
 		default: 0,
