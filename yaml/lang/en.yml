@@ -50,7 +50,7 @@ Genesys:
     DicePoolChanceToSucceedByPermutation: Calculate the Chance to Succeed for Dice Pools
     DicePoolChanceToSucceedByPermutationHint: >-
       If enabled this will spawn a Web Worker that calculates the exact chance to succeed.
-      However, if the dice pool uses a super characteristic the calculated value is lower than the true value beccause it assumes that the pool didn't explode.
+      However, if the dice pool uses a super characteristic the calculated value is lower than the true value because it assumes that the pool doesn't explode.
       For dice pools that use super characteristics you can get a more accurate value by using simulations.
     DicePoolChanceToSucceedBySimulation: Approximate the Chance to Succeed for Dice Pools
     DicePoolChanceToSucceedBySimulationHint: >-

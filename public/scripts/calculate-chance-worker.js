@@ -260,7 +260,7 @@ const Permutations = (function () {
 		const dicePool = new Map();
 		const matchedDice = [...poolString.matchAll(/(\d+)(\w)/g)];
 
-		for (const [amount, denomination] of matchedDice) {
+		for (const [, amount, denomination] of matchedDice) {
 			dicePool.set(DiceFromDenomination.get(denomination), parseInt(amount, 10));
 		}
 
@@ -288,43 +288,7 @@ const Permutations = (function () {
 	}
 
 	/**
-	 * This function creates all the possible permutations for pool of dice of mixed type.
-	 * @param {Map<GenesysDie, number>} dicePool - The pool of dice with their types and amount.
-	 * @returns {Record<string, number>} All the permutations for the passed pool.
-	 */
-	function forMixedPool(dicePool) {
-		const poolKey = constructKeyFromMixedPool(dicePool);
-		if (cacheForMixed[poolKey]) {
-			return cacheForMixed[poolKey];
-		}
-
-		let closestCachedPoolKey = '';
-		let closestCachedPool = new Map([...dicePool.keys()].map((dice) => [dice, 0]));
-		for (const cacheKey of Object.keys(cacheForMixed)) {
-			const currentDicePool = generateMixedPoolFromString(cacheKey);
-			if (
-				dicePool.size >= currentDicePool.size &&
-				[...currentDicePool.entries()].every(([dice, amount]) => {
-					return dicePool.get(dice) >= amount && amount >= closestCachedPool.get(dice);
-				})
-			) {
-				closestCachedPoolKey = cacheKey;
-				closestCachedPool = currentDicePool;
-			}
-		}
-
-		let partialPermutations = cacheForMixed[closestCachedPoolKey] ?? {};
-		for (const [dice, amount] of dicePool) {
-			const remainingDice = amount - (closestCachedPool.get(dice) ?? 0);
-			partialPermutations = combinePermutations(partialPermutations, forSimplePool(dice, remainingDice));
-		}
-
-		cacheForMixed[poolKey] = partialPermutations;
-		return partialPermutations;
-	}
-
-	/**
-	 * This function creates all the possible permutations for pool of dice of only one type.
+	 * This function creates all the possible permutations for a pool of dice of only one type.
 	 * @param {GenesysDie} dice - The type of dice that's on the pool.
 	 * @param {number} amount - The number of dice of the provided type that are on the pool.
 	 * @returns {Record<string, number>} All the permutations for the passed pool.
@@ -353,6 +317,44 @@ const Permutations = (function () {
 		}
 
 		return {};
+	}
+
+	/**
+	 * This function creates all the possible permutations for a pool of dice of mixed type.
+	 * @param {Map<GenesysDie, number>} dicePool - The pool of dice with their types and amount.
+	 * @returns {Record<string, number>} All the permutations for the passed pool.
+	 */
+	function forMixedPool(dicePool) {
+		const poolKey = constructKeyFromMixedPool(dicePool);
+		if (cacheForMixed[poolKey]) {
+			return cacheForMixed[poolKey];
+		}
+
+		// Find the closest dice pool with their permutations already generated, and then use it as the base
+		// to generate the current pool's permutations.
+		let closestCachedPoolKey = '';
+		let closestCachedPool = new Map([...dicePool.keys()].map((dice) => [dice, 0]));
+		for (const cacheKey of Object.keys(cacheForMixed)) {
+			const currentDicePool = generateMixedPoolFromString(cacheKey);
+			if (
+				dicePool.size >= currentDicePool.size &&
+				[...currentDicePool.entries()].every(([dice, amount]) => {
+					return dicePool.get(dice) >= amount && amount >= closestCachedPool.get(dice);
+				})
+			) {
+				closestCachedPoolKey = cacheKey;
+				closestCachedPool = currentDicePool;
+			}
+		}
+
+		let partialPermutations = cacheForMixed[closestCachedPoolKey] ?? {};
+		for (const [dice, amount] of dicePool) {
+			const remainingDice = amount - (closestCachedPool.get(dice) ?? 0);
+			partialPermutations = combinePermutations(partialPermutations, forSimplePool(dice, remainingDice));
+		}
+
+		cacheForMixed[poolKey] = partialPermutations;
+		return partialPermutations;
 	}
 
 	/**
@@ -426,7 +428,7 @@ function getAndGroupSymbols(symbolsString) {
 function evaluateSymbols(symbols, extraSymbols) {
 	const evaluation = new Map();
 
-	for (const [symbol] of extraSymbols) {
+	for (const symbol of Object.values(Symbols)) {
 		let total = 0;
 
 		total += extraSymbols.get(symbol) ?? 0;
@@ -508,17 +510,24 @@ const cacheForPool = {};
  */
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars -- This is used by the Dice Prompt.
 async function calculateChanceForDicePool({ dicePool, extraSymbols, criteriaType }) {
-	const processedDicePool = Object.values(Dice).reduce((accum, dice) => {
-		const targetDiceAmount = dicePool[dice.denomination];
-		if (targetDiceAmount > 0) {
-			accum.set(dice, targetDiceAmount);
+	const processedDicePool = Object.entries(dicePool ?? {}).reduce((accum, [denomination, amount]) => {
+		const targetDice = DiceFromDenomination.get(denomination);
+		const targetDiceAmount = parseInt(amount, 10);
+
+		if (targetDice && targetDiceAmount > 0) {
+			accum.set(targetDice, targetDiceAmount);
 		}
 		return accum;
 	}, new Map());
 	const dicePoolAsString = constructKeyFromMixedPool(processedDicePool);
 
-	const processedExtraSymbols = Object.values(Symbols).reduce((accum, symbol) => {
-		accum.set(symbol, extraSymbols[symbol.denomination] ?? 0);
+	const processedExtraSymbols = Object.entries(extraSymbols ?? {}).reduce((accum, [denomination, amount]) => {
+		const targetSymbol = SymbolFromDenomination.get(denomination);
+		const targetSymbolAmount = parseInt(amount, 10);
+
+		if (targetSymbol && targetSymbolAmount > 0) {
+			accum.set(targetSymbol, targetSymbolAmount);
+		}
 		return accum;
 	}, new Map());
 	const extraSymbolsAsString = constructKeyFromMixedPool(processedExtraSymbols);
