@@ -14,6 +14,8 @@ import VueDicePrompt from '@/vue/apps/DicePrompt.vue';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
 import VueSheet from '@/vue/VueSheet';
 import { Characteristic } from '@/data/Characteristics';
+import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
+import { KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION } from '@/settings/user';
 
 export enum RollType {
 	Skill,
@@ -122,5 +124,18 @@ export default class DicePrompt extends VueSheet(Application) {
 			rollUnskilled: this.rollUnskilled,
 			rollData: this.rollData,
 		};
+	}
+}
+
+export const CALCULATE_CHANCE_WORKER_NAME = 'CalculateChance';
+
+export function registerWorker() {
+	if (game.workers.get) {
+		const setupWorker = game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) as boolean;
+		if (setupWorker) {
+			game.workers.createWorker(CALCULATE_CHANCE_WORKER_NAME, {
+				scripts: ['../systems/genesys/scripts/calculate-chance-worker.js'],
+			});
+		}
 	}
 }
