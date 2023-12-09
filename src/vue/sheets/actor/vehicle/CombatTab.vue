@@ -75,6 +75,11 @@ async function pickAttackerAndRollAttack(weapon: GenesysItem<VehicleWeaponDataMo
 		return;
 	}
 
+	if (!selectAttacker.actor.isOwner) {
+		ui.notifications.warn(game.i18n.localize('Genesys.Notifications.CannotSelectActor'));
+		return;
+	}
+
 	await DicePrompt.promptForRoll(selectAttacker.actor, selectAttacker.skill.id, {
 		rollType: RollType.Attack,
 		rollData: { weapon },
@@ -101,6 +106,11 @@ async function repairHit(criticalHit: GenesysItem<InjuryDataModel>) {
 
 	const selectRepairer = await SelectCharacterSkillPrompt.promptFromCharactersList(potentialRepairer);
 	if (!selectRepairer) {
+		return;
+	}
+
+	if (!selectRepairer.actor.isOwner) {
+		ui.notifications.warn(game.i18n.localize('Genesys.Notifications.CannotSelectActor'));
 		return;
 	}
 

@@ -180,6 +180,7 @@ Genesys:
     SelectOneTokenForAction: You need to selected a single token to perform this action.
     TokenIsNotCombatant: The selected token is not participating on the current combat.
     CannotClaimOppositeSlot: You can't claim this initiative slot with {name} - it's on the wrong side!
+    CannotSelectActor: You do not have sufficient permission to select this Actor.
 
   # Story Points
   StoryPoints:
