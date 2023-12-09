@@ -371,7 +371,7 @@ const Permutations = (function () {
 		}
 
 		const sgEntries = Object.entries(secondGroup);
-		if (secondGroup.length === 0) {
+		if (sgEntries.length === 0) {
 			return firstGroup;
 		}
 

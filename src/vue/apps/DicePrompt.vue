@@ -356,7 +356,9 @@ async function approximateProbability() {
 
 	// Slight optimization for a pool without dice.
 	if (!Object.keys(dice).length) {
-		const deterministicResult = (symbols.s ?? 0) > (symbols.f ?? 0) ? 100 : 0;
+		const totalSuccesses = (symbols.s ?? 0) + (symbols.t ?? 0);
+		const totalFailures = (symbols.f ?? 0) + (symbols.d ?? 0);
+		const deterministicResult = totalSuccesses > totalFailures ? 100 : 0;
 		successApproximation.value = deterministicResult.toFixed(2);
 		return;
 	}

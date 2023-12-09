@@ -1,4 +1,4 @@
-## Alpha 0.2.1
+## Alpha 0.2.2
 
 ### Features
 -	[PR #104](https://github.com/Mezryss/FVTT-Genesys/pull/104): Adds an alternate way to calculate the chance to succeed (FVTTv11 only)
