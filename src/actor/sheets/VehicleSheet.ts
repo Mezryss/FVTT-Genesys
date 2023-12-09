@@ -86,7 +86,7 @@ export default class VehicleSheet extends VueSheet(GenesysActorSheet<VehicleData
 		}
 
 		const actor = (await fromUuid(data.uuid)) as GenesysActor;
-		if (!actor || !VehicleDataModel.RELEVANT_TYPES.DROP_ACTOR.includes(actor.type)) {
+		if (!actor || !VehicleDataModel.RELEVANT_TYPES.DROP_ACTOR.includes(actor.type) || !actor.isOwner) {
 			return false;
 		}
 		const actorId = actor.id;
