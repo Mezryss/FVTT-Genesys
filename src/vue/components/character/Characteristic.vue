@@ -45,7 +45,7 @@ withDefaults(
 		/**
 		 * Value to display for the Characteristic.
 		 */
-		value: number;
+		value: number | string;
 	}>(),
 	{
 		canUpgrade: false,
@@ -94,7 +94,7 @@ const unmarkSuperCharacteristicLabel = game.i18n.localize('Genesys.Labels.Unmark
 		<div class="value">
 			<i v-if="allowSuperCharacteristics && isSuper" class="fas fa-star super-star"></i>
 
-			<input v-if="canEdit" type="number" :name="name" :value="value" min="0" />
+			<input v-if="canEdit" type="text" data-dtype="Number" :name="name" :value="value" />
 			<div v-else>{{ value }}</div>
 		</div>
 	</div>

@@ -73,7 +73,7 @@ const availableSkills = computed<GenesysItem<SkillDataModel>[]>(() => toRaw(cont
 const canChangeCharacteristic = computed(() => !selectedSkill.value || (game.settings.get(SETTINGS_NAMESPACE, KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS) as boolean));
 
 const USE_CHANCE_TO_SUCCEED_BY_SIMULATION = Math.floor(game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION) as number);
-const USE_CHANCE_TO_SUCCEED_BY_PERMUTATION = game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) as boolean;
+const USE_CHANCE_TO_SUCCEED_BY_PERMUTATION = game.workers.get && (game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) as boolean);
 const USE_CHANCE_TO_SUCCEED = USE_CHANCE_TO_SUCCEED_BY_PERMUTATION || USE_CHANCE_TO_SUCCEED_BY_SIMULATION > 0;
 
 let currentDicePool: DicePool = {
