@@ -54,6 +54,10 @@ async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDa
 		await DicePrompt.promptForRoll(actor, skill.id);
 	}
 }
+
+async function openActorSheet(actor: GenesysActor) {
+	await actor.sheet.render(true);
+}
 </script>
 
 <template>
@@ -62,7 +66,7 @@ async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDa
 			<section v-for="[memberId, details] in dataGroupedByMember" :key="memberId">
 				<div class="member-details">
 					<img class="member-image" :src="details.actor.img" :alt="details.actor.name" draggable="false" />
-					<div class="member-name">{{ details.actor.name }}</div>
+					<a class="member-name" @click="openActorSheet(details.actor)">{{ details.actor.name }}</a>
 					<div class="member-roles"><Localized label="Genesys.Labels.Roles" />: {{ details.roles.join(', ') }}</div>
 
 					<div class="member-skills" v-if="details.skills.size > 0">
