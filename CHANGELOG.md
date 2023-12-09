@@ -1,10 +1,24 @@
+## Alpha 0.2.1
+
+### Features
+-	[PR #104](https://github.com/Mezryss/FVTT-Genesys/pull/104): Adds an alternate way to calculate the chance to succeed (FVTTv11 only)
+
+### Bug Fixes/Misc
+-	[PR #105](https://github.com/Mezryss/FVTT-Genesys/pull/105): Additional enhacenments and fixes to vehicle's sheets
+	-	Adds a plus sign to values equal or greater than 0 when displaying the "Handling" characteristic
+	-	Limits the actors that can be dropped into a vehicle to only those you own
+	-	Display skill ranks on the "Skills" tab and the "Character Skill Selection" prompt.
+	-	Open a character sheet when clicking on their name in the "Skills" tab.
+	-	When selecting a skill from the "Character Skill Selection" prompt it now throws a warning when selecting an actor that you don't own (previously it was letting you roll for anyone).
+	-	Adds the option to modify a vehicle's passenger quantity and capacity using after effects
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.0
 
 ### Features
 -	[PR #99](https://github.com/Mezryss/FVTT-Genesys/pull/99): Adds support for vehicles
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.1.15
 

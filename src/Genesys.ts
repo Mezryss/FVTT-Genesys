@@ -48,7 +48,8 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/pp">PR #99</a>: Feature - Adds support for vehicles</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/104">PR #104</a>: Feature - Adds an alternate way to calculate the chance to succeed (FVTTv11 only)</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/105">PR #105</a>: Enhancement - Additional enhacenments and fixes to vehicle's sheets</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
