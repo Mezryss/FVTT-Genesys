@@ -40,7 +40,9 @@ function submitSelection(event: Event) {
 		>
 			<img class="char-image" :src="characterSkillOption.actor.img" :alt="characterSkillOption.actor.name" draggable="false" />
 			<div class="char-name">{{ characterSkillOption.actor.name }}</div>
+
 			<div class="skill-name">{{ characterSkillOption.skill.name }}</div>
+			<div class="skill-rank">{{ characterSkillOption.skill.systemData.rank }}</div>
 			<SkillRanks
 				:skill-value="characterSkillOption.skill.systemData.rank"
 				:characteristic-value="(characterSkillOption.actor.systemData as _NonVehicleDataModel).characteristics[characterSkillOption.skill.systemData.characteristic]"
@@ -67,7 +69,7 @@ function submitSelection(event: Event) {
 .select-character-skill-prompt {
 	.char-skill-option {
 		display: grid;
-		grid-template-columns: 2rem 1fr auto auto;
+		grid-template-columns: 2rem 1fr auto auto auto;
 		gap: 0.3em;
 		align-items: center;
 		margin-bottom: 0.3rem;
@@ -88,6 +90,18 @@ function submitSelection(event: Event) {
 
 		.skill-name {
 			font-family: 'Roboto', sans-serif;
+		}
+
+		.skill-rank {
+			font-family: 'Roboto', sans-serif;
+			background: transparentize(white, 0.5);
+			border: 1px dashed black;
+			border-radius: 0.75rem;
+			text-align: center;
+			margin: 0.1em 0.1em 0.1em 0.2em;
+			min-width: 1.5rem;
+			height: 1.5rem;
+			font-size: 1rem;
 		}
 	}
 

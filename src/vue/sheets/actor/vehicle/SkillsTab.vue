@@ -77,6 +77,7 @@ async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDa
 									<span>{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.systemData.characteristic.capitalize()}`" />)</span>
 								</a>
 
+								<span class="skill-rank">{{ skill.systemData.rank }}</span>
 								<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="(details.actor.systemData as _NonVehicleDataModel).characteristics[skill.systemData.characteristic]" />
 							</div>
 						</div>
@@ -151,12 +152,16 @@ async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDa
 					.member-skill {
 						width: 100%;
 						display: grid;
-						grid-template-columns: /* image */ 1.5rem /* name */ 1fr /* Dice Preview */ 80px;
+						grid-template-columns: /* image */ 1.5rem /* name */ 1fr /* rank */ auto /* Dice Preview */ 80px;
 						align-items: center;
 						gap: 0.25rem;
 
 						border-bottom: 1px dashed black;
 						padding: 1px;
+
+						&:last-of-type {
+							border-bottom: none;
+						}
 
 						& > * {
 							padding: 0.2em;
@@ -177,8 +182,14 @@ async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDa
 							}
 						}
 
-						&:last-of-type {
-							border-bottom: none;
+						.skill-rank {
+							background: transparentize(white, 0.5);
+							border: 1px dashed black;
+							border-radius: 0.75rem;
+							text-align: center;
+							margin: 0.1em 0.1em 0.1em 0.2em;
+							min-width: 1.5rem;
+							height: 1.5rem;
 						}
 					}
 				}
