@@ -170,7 +170,7 @@ async function addXPJournalEntry() {
 	</section>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@scss/mixins/reset.scss';
 @use '@scss/vars/colors.scss';
 
@@ -187,8 +187,10 @@ async function addXPJournalEntry() {
 		padding: 0.75em;
 
 		&.experience {
-			background: none;
 			grid-column: 1 / span all;
+			display: grid;
+			grid-template-columns: auto 1fr auto;
+			width: 100%;
 		}
 
 		& > .header {
@@ -406,13 +408,5 @@ async function addXPJournalEntry() {
 			background: transparentize(colors.$light-blue, 0.8);
 		}
 	}
-}
-
-.experience {
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-	width: 100%;
-	padding-top: 0;
-	padding-bottom: 0;
 }
 </style>

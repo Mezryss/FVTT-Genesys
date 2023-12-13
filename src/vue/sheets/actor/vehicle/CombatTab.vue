@@ -199,7 +199,7 @@ async function repairHit(criticalHit: GenesysItem<InjuryDataModel>) {
 	</section>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@scss/vars/colors.scss';
 
 .tab-combat {

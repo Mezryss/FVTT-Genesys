@@ -62,7 +62,7 @@ const system = computed(() => toRaw(context.data.actor).systemData);
 	</section>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@scss/mixins/reset.scss';
 @use '@scss/vars/colors.scss';
 
