@@ -311,6 +311,9 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 	.experience {
 		grid-column: 1 / span all;
 		padding: 0.5em;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		width: 100%;
 	}
 
 	.skills-row {

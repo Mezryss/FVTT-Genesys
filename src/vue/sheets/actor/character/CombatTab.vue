@@ -172,7 +172,7 @@ function damageForWeapon(weapon: GenesysItem<WeaponDataModel>) {
 	</section>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@scss/vars/colors.scss';
 
 .tab-combat {

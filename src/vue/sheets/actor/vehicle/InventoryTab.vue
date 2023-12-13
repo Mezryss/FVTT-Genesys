@@ -212,7 +212,7 @@ async function drop(event: DragEvent) {
 	</section>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@scss/mixins/reset.scss';
 @use '@scss/vars/colors.scss';
 
