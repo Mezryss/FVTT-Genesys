@@ -1,0 +1,380 @@
+ACTOR:
+  TypeCharacter: Personnage
+  TypeMinion: Sbire
+  TypeRival: Rival
+  TypeNemesis: Nemesis
+  TypeVehicle : Vehicule
+
+ITEM:
+  # Character Creation Items
+  TypeAbility: Aptitude spéciale
+  TypeArchetype: Archétype
+  TypeCareer: Carrière
+  TypeInjury: Bléssure Critique
+  TypeSkill: Skill
+  TypeTalent: Talent
+
+  # Equipment Items
+  TypeArmor: Armor
+  TypeConsumable: Consumable
+  TypeContainer: Container
+  TypeGear: Gear
+  TypeQuality: Item Quality
+  TypeWeapon: Weapon
+
+# Genesys
+Genesys:
+  # System Strings
+  System:
+    Name: Genesys
+
+  # System Settings
+  Settings:
+    SkillsCompendium: Skills Compendium
+    SkillsCompendiumHint: An Item compendium containing all of the skills that should be applied to new characters. Changing this value will have no impact on existing characters.
+    Money: Currency Label
+    MoneyHint: The name (such as Gold, Credits, Cash, Doubloons, etc) used for Currency in the system.
+    CareerSkillRanks: Career Skill Ranks
+    CareerSkillRanksHint: Number of skills you can select from your Career Skills list during character creation.
+    UncoupleSkillsAlternateRule: Uncouple Skills from Characteristics
+    UncoupleSkillsAlternateRuleHint: Allows selecting an alternative Characteristic for a skill in the dice prompt window, per the Uncoupling Skills from Characteristics alternate rule (Core Rulebook, p.205).
+    ShowDamageOnFailure: Show Attack Damage On Failure
+    ShowDamageOnFailureHint: Whether to show Damage, Critical, and Qualities on attack roll chat cards even when the roll was a failure.
+    SkillForInjuries: Resilience Skill Name
+    SkillForInjuriesHint: Name of the skill used when recovering from Critical Injuries.
+    UseMagicalGirlSymbols: Use Magical Girl Symbols by MilkMyth (Client-Only)
+    UseMagicalGirlSymbolsHint: Swap the Genesys symbol set for MilkMyth's Magical Girls symbol set. This will not affect other users.
+    DicePoolApproximation: Dice Pool Approximation
+    DicePoolApproximationHint: The number of simulated rolls to run in order to approximate the chance to succeed. Be mindful when increasing this number since it will have a direct impact on Foundry's performance; a good number to start is 100. If a value of 0 is provided this feature is disabled.
+    SuperCharacteristics: Super-Characteristics
+    SuperCharacteristicsHint: Allows marking characteristics as being 'super' during character creation, per the Super-Characteristics optional rule (Core Rulebook, p.251).
+
+  # Tooltips
+  Tooltips:
+    NoDescription: No Description Available
+    IsInitiative: Whether the skill is commonly used for Initiative or not. Setting this to true will make it appear as an option in the combat tracker for mass rolls.
+    CycleInitiativeSkill: Cycle which initiative skill the combatant is using.
+    AddExtraInitiativeSlot: Adds an extra initiative slot.
+
+  # Dice Rolls
+  Rolls:
+    Dice: Dice
+    Results: Roll Results
+    Description:
+      Initiative: Rolling Initiative with <strong>{skill}</strong>...
+      Characteristic: Rolling <strong>{characteristic}</strong>...
+      Skill: Rolling <strong>{skill} ({characteristic})</strong>...
+      SkillWithoutCharacteristic: Rolling <strong>{skill}</strong>...
+      AttackCharacteristic: Attacking with <strong>{name}</strong> using <strong>{characteristic}</strong>!
+      AttackSkill: Attacking with <strong>{name}</strong> using <strong>{skill} ({characteristic})</strong>!
+      AttackSkillWithoutCharacteristic: Attacking with <strong>{name}</strong> using <strong>{skill}</strong>!
+    Attack:
+      Critical: Critical
+      Label: Attack Results
+      Damage: Damage
+      Qualities: Attack Qualities
+    Summary:
+      Label: Summary
+      Successes: Successes
+      Failures: Failures
+      Advantage: Advantage
+      Threat: Threat
+      Triumph: Triumph
+      Despair: Despair
+
+  # Career Skill Prompt
+  CareerSkillPrompt:
+    Header: Career Skills
+    Hint: 'Select Career Skills to gain a rank:'
+    RemainingChoices: Remaining Choices
+    Confirm: Done
+
+  # Dice So Nice strings
+  DiceCat:
+    Normal: Genesys Dice
+    MagicalGirl: Magical Girl by MilkMyth
+    Custom: Genesys Dice (Customizable)
+  DiceColors:
+    Boost: Boost Die
+    Ability: Ability Die
+    Proficiency: Proficiency Die
+    Setback: Setback Die
+    Difficulty: Difficulty Die
+    Challenge: Challenge Die
+
+  # Difficulty Ranks
+  Difficulty:
+    Simple: Simple
+    Easy: Easy
+    Average: Average
+    Hard: Hard
+    Daunting: Daunting
+    Impossible: Impossible
+
+  Inventory:
+    Sections:
+      Armor: Armor
+      Consumable: Consumables
+      Container: Containers
+      Gear: Gear
+      Weapon: Weapons
+
+  # ActiveEffects System Strings
+  ActiveEffects:
+    Passive: Passive Effects
+    Temporary: Temporary Effects
+    Suppressed: Inactive Effects
+    Source: Source
+    Duration: Duration
+    Types:
+      ModifyCharacteristic: Modify Characteristic
+      ModifyStat: Modify Stat
+      ModifySkill: Modify Skill
+      ModifyDicePool: Modify Dice Pool
+
+  # Dice Prompt Labels
+  DicePrompt:
+    Title: Dice Pool
+    Roll: Roll!
+    Hint: Use the dice box on the right to add, upgrade, and downgrade. Click dice in the pool to remove them!
+    Approximation: 'Chance to Succeed:'
+    ApproximationDisclaimer: The displayed probability is an approximation that uses the Monte Carlo method.
+
+  # Experience Journal Labels
+  XPJournal:
+    Award: '<strong>XP Awarded by GM</strong>: {reason}'
+    Starting: <strong>Starting XP from Archetype</strong>
+    Characteristic: Increased <strong>{characteristic}</strong> to {rank}.
+    Skill: Increased <strong>{name}</strong> to {rank}.
+    NewTalent: 'Purchased Talent: <strong>{name}</strong> (Tier {tier}).'
+    TalentRank: Increased <strong>{name}</strong> to Rank {rank} (Effective Tier {tier}).
+
+  # Notification Prompts
+  Notifications:
+    AlreadyHaveSpecialAbility: Unable to add {abilityName}; Special Abilities are not ranked, and you already have it!
+    TalentNotRanked: Unable to add {talentName}; It is not a ranked talent, and you already have it!
+    NoSkillsCompendium: Skills compendium setting is empty! Attempting to use default skills compendium.
+    MissingCompendium: Unable to load Skills Compendium '{name}'. Actor was created with no initial skill data. Reconfigure the skills compendium in Genesys Settings.
+    WrongCompendiumType: Configured Skills Compendium '{name}' is a {type} Compendium, not an Item Compendium! Actor was created with no initial skill data. Reconfigure the skills compendium in Genesys Settings.
+    NoSkillsInCompendium: Configured Skills Compendium '{name}' does not contain any skills. Actor was created with no initial skill data. Reconfigure the skills compendium in Genesys Settings.
+    CannotDeleteCharacteristic: Cannot delete XP Journal Entry for characteristic '{characteristic}' - you must delete the advance to the next rank first!
+    CannotDeleteSkill: Cannot delete XP Journal Entry for skill '{name}' - you must delete the advance to the next rank first!
+    CannotAffordTalent: Cannot afford talent '{name}' ({cost}xp).
+    CannotAffordRankedTalent: Cannot afford to increase talent '{name}' to rank {newRank} ({cost}xp).
+    CannotDeleteNewTalent: Cannot delete XP Journal Entry for new talent '{name}' - you must delete the talent's rank increases first!
+    CannotDeleteExistingTalent: Cannot delete XP Journal Entry for increasing talent '{name}' to rank {rank} - you must delete the higher rank increases first!
+    CannotPurchaseTalentTier: Cannot purchase talents at tier {tier} - you must have at least {minimum} talents at rank {lowerTier} first.
+    NotEnoughStoryPoints: You can't spend Story Points you don't have!
+    SelectOneTokenForAction: You need to selected a single token to perform this action.
+    TokenIsNotCombatant: The selected token is not participating on the current combat.
+    CannotClaimOppositeSlot: You can't claim this initiative slot with {name} - it's on the wrong side!
+
+  # Story Points
+  StoryPoints:
+    Player: Player Story Points
+    GM: GM Story Points
+    Reset: Reset Story Points
+    Spend: Spend Point
+    ChatMessage: Spending a Story Point!
+
+  # Localized strings used in TextEditor enrichers.
+  Enrichers:
+    Difficulty: '{difficulty} [{symbols}] {skill} check'  # e.g. Average [♦♦] Coercion Check
+
+  # Combat Tracker
+  CombatTracker:
+    RevokeInitiativeClaim: Revoke Initiative Claim
+
+  # Sheet Tab names
+  Tabs:
+    Skills: Skills
+    Combat: Combat
+    Talents: Talents
+    Magic: Magic
+    Inventory: Inventory
+    Effects: Effects
+    Journal: Journal
+    Description: Description
+    Data: Data
+    Details: Details
+    Duration: Duration
+    Miscellaneous: Miscellaneous
+
+  # Characteristics
+  Characteristics:
+    Brawn: Brawn
+    Agility: Agility
+    Intellect: Intellect
+    Cunning: Cunning
+    Willpower: Willpower
+    Presence: Presence
+
+  # Characteristic Abbreviations
+  CharacteristicAbbr:
+    Brawn: Br
+    Agility: Ag
+    Intellect: Int
+    Cunning: Cun
+    Willpower: Will
+    Presence: Pr
+
+  # Skill Categories
+  SkillCategory:
+    General: General
+    Magic: Magic
+    Combat: Combat
+    Social: Social
+    Knowledge: Knowledge
+
+  # Archetype Data
+  Archetype:
+    Abilities: Archetype Abilities
+    StartingWounds: Starting Wound Threshold
+    StartingStrain: Starting Strain Threshold
+    StartingXP: Starting Experience
+    GrantedItems: Granted Items
+
+  # Adversary Labels
+  Adversary:
+    MinionSkills: Skills (group only)
+    Skills: Skills
+    Talents: Talents
+    Abilities: Abilities
+    Equipment: Equipment
+    None: None.
+    Base: Base
+    Remaining: remaining
+
+  # Career Data
+  Career:
+    Skills: Career Skills
+
+  # Range Values
+  Range:
+    Engaged: Engaged
+    Short: Short
+    Medium: Medium
+    Long: Long
+    Extreme: Extreme
+
+  # Dialog Groups
+  DialogGroups:
+    Item:
+      CharacterCreation: Character Creation
+      Equipment: Equipment
+      Other: Other
+    Actor:
+      Adversary: Adversary
+      Other: Other
+
+  # Equipment Data
+  Equipment:
+    DamageState:
+      Undamaged: Undamaged
+      Minor: Minor Damage
+      Moderate: Moderate Damage
+      Major: Major Damage
+
+  # Misc. Unsorted Labels (to be cleaned up later)
+  Labels:
+    Name: Name
+    CharacterName: Character Name
+    SpeciesArchetype: Species/Archetype
+    Career: Career
+    Soak: Soak
+    SoakValue: Soak Value
+    Wounds: Wounds
+    WoundThreshold: Wound Threshold
+    Strain: Strain
+    StrainThreshold: Strain Threshold
+    Defense: Defense
+    Threshold: Threshold
+    Current: Current
+    DefenseMelee: Melee
+    MeleeDefense: Melee Defense
+    DefenseRanged: Ranged
+    RangedDefense: Ranged Defense
+    TotalXP: Total XP
+    AvailableXP: Available XP
+    Characteristic: Characteristic
+    IsMagicSkill: Is Magic Skill
+    Source: Source
+    GeneralSkills: General Skills
+    MagicSkills: Magic Skills
+    CombatSkills: Combat Skills
+    SocialSkills: Social Skills
+    KnowledgeSkills: Knowledge Skills
+    Category: Category
+    Skills: Skills
+    Delete: Delete
+    Edit: Edit
+    NoCareer: No career selected - drag one over!
+    NoArchetype: No archetype selected - drag one over!
+    MarkCareerSkill: Mark As Career Skill
+    UnmarkCareerSkill: Unmark As Career Skill
+    MarkSuperCharacteristic: Mark As Super-Characteristic
+    UnmarkSuperCharacteristic: Unmark As Super-Characteristic
+    Motivations: Motivations
+    Strength: Strength
+    Flaw: Flaw
+    Desire: Desire
+    Fear: Fear
+    CharacterIllustration: Character Illustration
+    CharacterDescription: Character Description
+    Pronouns: Pronouns
+    Age: Age
+    Height: Height
+    Build: Build
+    Hair: Hair
+    Eyes: Eyes
+    NotableFeatures: Notable Features
+    Notes: Notes
+    XPJournal: XP Journal
+    Tier: Tier
+    Activation: Activation
+    Rank: Rank
+    Ranked: Ranked
+    Active: Active
+    Passive: Passive
+    Yes: Yes
+    No: No
+    Talents: Talents
+    SpecialAbilities: Special Abilities
+    TierCount: Tier {tier}
+    DeletedItemData: 'ERR: Deleted item {name}'
+    Add: Add
+    Encumbrance: Encumbrance
+    Price: Price
+    Rarity: Rarity
+    Damage: Damage
+    DamageCharacteristic: Damage From Characteristic
+    Critical: Critical
+    Range: Range
+    Quantity: Quantity
+    EncumbranceThreshold: Encumbrance Threshold
+    Encumbered: Encumbered!
+    RankUp: Rank Up
+    RankDown: Rank Down
+    FreeRankUp: Rank Up (Free)
+    FreeRankDown: Rank Down (Free)
+    AwardXP: Award XP
+    Amount: Amount
+    Reason: Reason
+    IsRated: Is Rated?
+    Qualities: Qualities
+    Severity: Severity
+    Attacks: Attacks
+    Armor: Armor
+    CriticalInjuries: Critical Injuries
+    Injury: Injury
+    Skill: Skill
+    Crit: Crit
+    Special: Special
+    GroupSize: Group Size
+    SkillNotFound: Skill Not Found
+    IsInitiative: Initiative Skill?
+    Equipped: Equipped
+    Carried: Carried
+    Dropped: Dropped
+    NotApplicable: N/A
+    EffectiveTier: Effective Tier
