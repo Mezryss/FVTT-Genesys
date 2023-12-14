@@ -11,17 +11,17 @@ ITEM:
   TypeArchetype: Archetype
   TypeCareer: Career
   TypeInjury: Critical Injury/Hit
-  TypeSkill: Skill
+  TypeSkill: Compétence
   TypeTalent: Talent
 
   # Equipment Items
-  TypeArmor: Armor
-  TypeConsumable: Consumable
-  TypeContainer: Container
-  TypeGear: Gear
-  TypeQuality: Item Quality
-  TypeWeapon: Weapon
-  TypeVehicleweapon: Vehicle Weapon
+  TypeArmor: Armure
+  TypeConsumable: Consommable
+  TypeContainer: Conteneur
+  TypeGear: Equipement
+  TypeQuality: Attribut d'item
+  TypeWeapon: Arme
+  TypeVehicleweapon: Arme sur véhicule
 
 # Genesys
 Genesys:
@@ -31,34 +31,34 @@ Genesys:
 
   # System Settings
   Settings:
-    SkillsCompendium: Skills Compendium
-    SkillsCompendiumHint: An Item compendium containing all of the skills that should be applied to new characters. Changing this value will have no impact on existing characters.
-    Money: Currency Label
-    MoneyHint: The name (such as Gold, Credits, Cash, Doubloons, etc) used for Currency in the system.
-    CareerSkillRanks: Career Skill Ranks
-    CareerSkillRanksHint: Number of skills you can select from your Career Skills list during character creation.
-    UncoupleSkillsAlternateRule: Uncouple Skills from Characteristics
-    UncoupleSkillsAlternateRuleHint: Allows selecting an alternative Characteristic for a skill in the dice prompt window, per the Uncoupling Skills from Characteristics alternate rule (Core Rulebook, p.205).
-    ShowDamageOnFailure: Show Attack Damage On Failure
-    ShowDamageOnFailureHint: Whether to show Damage, Critical, and Qualities on attack roll chat cards even when the roll was a failure.
-    SkillForInjuries: Resilience Skill Name
-    SkillForInjuriesHint: Name of the skill used when recovering from Critical Injuries.
-    SkillForRepairingVehicleHits: Mechanics Skill Name
-    SkillForRepairingVehicleHitsHint: Name of the skill used when recovering from Critical Hits.
-    UseMagicalGirlSymbols: Use Magical Girl Symbols by MilkMyth (Client-Only)
-    UseMagicalGirlSymbolsHint: Swap the Genesys symbol set for MilkMyth's Magical Girls symbol set. This will not affect other users.
-    DicePoolChanceToSucceedByPermutation: Calculate the Chance to Succeed for Dice Pools
+    SkillsCompendium: Compendium des Compétences
+    SkillsCompendiumHint: Un compenduim d'item contenant l'ensemble des compétences qui peut être ajouter à un nouveau personnage. Changer cette valeur n'a pas d'effet rétroactif sur les anciens personnages.
+    Money: Monaie
+    MoneyHint: Le nom de la monaie (comme l'or, les crédits, le Cash, les Doublons, etc) utiliser pour l'argent du système.
+    CareerSkillRanks: Nombre de Compétence de Carrière
+    CareerSkillRanksHint: Nombre de compétencs que vous pouvez sélectionné dans la liste des compétences pendant la création du personnage
+    UncoupleSkillsAlternateRule: Désolidariser les compétences des caractéristiques
+    UncoupleSkillsAlternateRuleHint: Autorise la sélection d'une caractéristique pour une compétence au moment du dialogue des dés, pour permettre la règle optionnelle 'Désolidariser compétence-caractéristique' (livre de base p 205).
+    ShowDamageOnFailure: Montrer les dommages de l'attaque en cas d'échec
+    ShowDamageOnFailureHint: Afficher ou non les dégâts, les critiques et les qualités sur les cartes de discussion des jets d'attaque, même en cas d'échec.
+    SkillForInjuries: Compétence du jet de Résistance
+    SkillForInjuriesHint: Nom de la compétence utilisée pour se remettre d'une blessure critique.
+    SkillForRepairingVehicleHits: Compétence mécanique utilisée
+    SkillForRepairingVehicleHitsHint: Nom de la compétence utilisée pour récupérer des dommages critiques.
+    UseMagicalGirlSymbols: Utilise le symbole Magical Girls pour MilkMyth (Utilisateur seulement)
+    UseMagicalGirlSymbolsHint: Remplacer le jeu de symboles Genesys par le jeu de symboles Magical Girls de MilkMyth. Cela n'affectera pas les autres utilisateurs.
+    DicePoolChanceToSucceedByPermutation: Calcul les chances de succès pour ce pool.
     DicePoolChanceToSucceedByPermutationHint: >-
-      If enabled this will spawn a Web Worker that calculates the exact chance to succeed.
-      However, if the dice pool uses a super characteristic the calculated value is lower than the true value because it assumes that the pool doesn't explode.
-      For dice pools that use super characteristics you can get a more accurate value by using simulations.
-    DicePoolChanceToSucceedBySimulation: Approximate the Chance to Succeed for Dice Pools
+      Si cette option est activée, elle génère un Web Worker qui calcule les chances exactes de réussite.
+      Toutefois, si le jeu de dés utilise une supercaractéristique, la valeur calculée est inférieure à la valeur réelle car elle suppose que le jeu n'explose pas.
+      Pour les pools de dés qui utilisent des super caractéristiques, vous pouvez obtenir une valeur plus précise en utilisant des simulations.
+    DicePoolChanceToSucceedBySimulation: Chance de succès approximative du Pool de dés
     DicePoolChanceToSucceedBySimulationHint: >-
-      The number of simulated rolls to run in order to approximate the chance to succeed.
-      Be mindful when increasing this number since it will have a direct impact on Foundry's performance; a good number to start is 100. If a value of 0 is provided this feature is disabled.
-      This setting is ignored if the chance is already being calculated some other way.
-    SuperCharacteristics: Super-Characteristics
-    SuperCharacteristicsHint: Allows marking characteristics as being 'super' during character creation, per the Super-Characteristics optional rule (Core Rulebook, p.251).
+      Le nombre de jets simulés à effectuer afin d'approximer les chances de réussite.
+      Soyez prudent lorsque vous augmentez ce nombre car il aura un impact direct sur les performances de Foundry ; une bonne valeur de départ est 100. Si une valeur de 0 est fournie, cette fonctionnalité est désactivée.
+      Ce paramètre est ignoré si les chances sont déjà calculées d'une autre manière.
+    SuperCharacteristics: Super-Characteristiques
+    SuperCharacteristicsHint: Permet de marquer des caractéristiques comme étant "super" lors de la création du personnage, selon la règle optionnelle des super-caractéristiques (Core Rulebook, p.251).
 
   # Tooltips
   Tooltips:
