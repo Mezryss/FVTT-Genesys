@@ -12,6 +12,7 @@ import GenesysActor from '@/actor/GenesysActor';
 import MinionDataModel from '@/actor/data/MinionDataModel';
 import RivalDataModel from '@/actor/data/RivalDataModel';
 import NemesisDataModel from '@/actor/data/NemesisDataModel';
+import VehicleDataModel from '@/actor/data/VehicleDataModel';
 
 export function register() {
 	CONFIG.Actor.documentClass = GenesysActor;
@@ -27,4 +28,5 @@ function registerDataModels() {
 	CONFIG.Actor.systemDataModels.minion = MinionDataModel;
 	CONFIG.Actor.systemDataModels.rival = RivalDataModel;
 	CONFIG.Actor.systemDataModels.nemesis = NemesisDataModel;
+	CONFIG.Actor.systemDataModels.vehicle = VehicleDataModel;
 }

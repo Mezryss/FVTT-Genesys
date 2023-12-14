@@ -20,6 +20,7 @@ import SkillDataModel from '@/item/data/SkillDataModel';
 import TalentDataModel from '@/item/data/TalentDataModel';
 import ItemQualityDataModel from '@/item/data/ItemQualityDataModel';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
+import VehicleWeaponDataModel from '@/item/data/VehicleWeaponDataModel';
 
 export function register() {
 	CONFIG.Item.documentClass = GenesysItem;
@@ -30,7 +31,7 @@ export function register() {
 
 export const CharacterCreationItemTypes = ['ability', 'archetype', 'career', 'skill', 'talent'];
 
-export const EquipmentItemTypes = ['armor', 'consumable', 'container', 'gear', 'quality', 'weapon'];
+export const EquipmentItemTypes = ['armor', 'consumable', 'container', 'gear', 'quality', 'weapon', 'vehicleWeapon'];
 
 function registerDataModels() {
 	CONFIG.Item.systemDataModels.ability = AbilityDataModel;
@@ -45,4 +46,5 @@ function registerDataModels() {
 	CONFIG.Item.systemDataModels.talent = TalentDataModel;
 	CONFIG.Item.systemDataModels.quality = ItemQualityDataModel;
 	CONFIG.Item.systemDataModels.weapon = WeaponDataModel;
+	CONFIG.Item.systemDataModels.vehicleWeapon = VehicleWeaponDataModel;
 }

@@ -1,115 +1,113 @@
 <script lang="ts" setup>
-import { computed, inject, ref, toRaw } from 'vue';
+import { inject, computed, toRaw, ref } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
-import CharacterDataModel from '@/actor/data/CharacterDataModel';
+
+import GenesysActor from '@/actor/GenesysActor';
+import GenesysItem from '@/item/GenesysItem';
+import VehicleDataModel from '@/actor/data/VehicleDataModel';
+import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
+import GenesysEffect from '@/effects/GenesysEffect';
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import { KEY_MONEY_NAME } from '@/settings/campaign';
+
 import Localized from '@/vue/components/Localized.vue';
-import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
-import GenesysItem from '@/item/GenesysItem';
-import InventoryItem from '@/vue/components/inventory/InventoryItem.vue';
 import InventorySortSlot from '@/vue/components/inventory/InventorySortSlot.vue';
-import GenesysEffect from '@/effects/GenesysEffect';
-import GenesysActor from '@/actor/GenesysActor';
+import InventoryItem from '@/vue/components/inventory/InventoryItem.vue';
 
-const EQUIPMENT_TYPES = ['weapon', 'armor', 'consumable', 'gear', 'container'];
+const CURRENCY_LABEL = game.settings.get(SETTINGS_NAMESPACE, KEY_MONEY_NAME);
 
-const rootContext = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
-const inventory = computed(() => toRaw(rootContext.data.actor).items.filter((i) => EQUIPMENT_TYPES.includes(i.type)) as GenesysItem<EquipmentDataModel>[]);
-const system = computed(() => toRaw(rootContext.data.actor).systemData);
-
-const equippedItems = computed(() => inventory.value.filter((i) => i.systemData.state === 'equipped').sort(sortItems));
-const carriedItems = computed(() => inventory.value.filter((i) => i.systemData.state === 'carried' && i.systemData.container === '').sort(sortItems));
-const droppedItems = computed(() => inventory.value.filter((i) => i.systemData.state === 'dropped' && i.systemData.container === '').sort(sortItems));
+const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
+const system = computed(() => toRaw(context.data.actor).systemData);
 
 const draggingItem = ref(false);
 
-const CURRENCY_LABEL = game.settings.get(SETTINGS_NAMESPACE, KEY_MONEY_NAME);
+const inventory = computed(() => toRaw(context.data.actor).items.filter((item) => VehicleDataModel.RELEVANT_TYPES.INVENTORY.includes(item.type)) as GenesysItem<EquipmentDataModel>[]);
+const equippedItems = computed(() => inventory.value.filter((item) => item.systemData.state === EquipmentState.Equipped).sort(sortItems));
+const carriedItems = computed(() => inventory.value.filter((item) => item.systemData.state === EquipmentState.Carried && item.systemData.container === '').sort(sortItems));
 
 function sortItems(left: GenesysItem, right: GenesysItem) {
 	return left.sort - right.sort;
 }
 
 async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, sortIndex: number) {
-	console.log('SORTING');
 	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
-	console.log(dragSource);
-
 	if (!dragSource.id) {
 		return;
 	}
 
-	const actor = toRaw(rootContext.data.actor);
+	const actor = toRaw(context.data.actor);
+	const item = actor.items.get(dragSource.id) as GenesysItem<EquipmentDataModel>;
 
-	const item = actor.items.get(dragSource.id);
-	if (!item || (sortCategory === EquipmentState.Equipped && !['weapon', 'armor'].includes(item.type))) {
+	if (!item || (sortCategory === EquipmentState.Equipped && !VehicleDataModel.RELEVANT_TYPES.EQUIPABLE.includes(item.type))) {
 		return;
 	}
-	console.log(item);
 
-	let sortedInventory = equippedItems;
+	let sortedInventory;
 	switch (sortCategory) {
+		case EquipmentState.Equipped:
+			sortedInventory = equippedItems;
+			break;
+
 		case EquipmentState.Carried:
 			sortedInventory = carriedItems;
 			break;
 
-		case EquipmentState.Dropped:
-			sortedInventory = droppedItems;
-			break;
+		default:
+			return;
 	}
 
-	let newSort = item.sort;
-	if (sortIndex === -1) {
-		// Sort the item at the beginning of the list.
-		if (sortedInventory.value.length > 0) {
-			newSort = sortedInventory.value[0].sort - 1;
-		}
-	} else {
-		newSort = sortedInventory.value[sortIndex].sort + 1;
-
-		if (sortedInventory.value.length > sortIndex + 1) {
-			newSort = Math.floor((newSort + sortedInventory.value[sortIndex + 1].sort) / 2);
-		}
-	}
-
-	console.log('UPDATING');
-
-	await item.update({
-		'system.container': '',
-		'system.state': sortCategory,
-		sort: newSort,
+	const sortUpdates = SortingHelpers.performIntegerSort(item, {
+		target: sortedInventory.value[sortIndex < 0 ? 0 : sortIndex],
+		siblings: sortedInventory.value.filter((sortedItem) => sortedItem.id !== item.id),
+		sortBefore: sortIndex < 0,
 	});
 
-	handleEffectsSuppresion(sortCategory, [item as GenesysItem]);
+	await actor.updateEmbeddedDocuments(
+		'Item',
+		sortUpdates.map((change) => {
+			return foundry.utils.mergeObject(change.update, {
+				_id: change.target.id,
+			});
+		}),
+	);
+
+	const updateObject: Record<string, string> = {
+		'system.container': '',
+	};
+
+	if (item.system.state !== sortCategory) {
+		updateObject['system.state'] = sortCategory;
+		handleEffectsSuppresion(sortCategory, [item as GenesysItem]);
+	}
+
+	await item.update(updateObject);
 }
 
-async function handleEffectsSuppresion(desiredState: EquipmentState, items: GenesysItem[]) {
-	const actor = toRaw(rootContext.data.actor);
+async function handleEffectsSuppresion(_desiredState: EquipmentState, items: GenesysItem[]) {
+	const actor = toRaw(context.data.actor);
 
+	const allUpdates = [];
+
+	// TODO: Currently we are disabling every active effect but we should only disable active effects from items unrelated to vehicles.
+	//       Additionally, effects related only to encumbrance should remain enabled.
 	for (const item of items) {
-		// More work is required before we also handle consumables.
-		if (item.type == 'consumable') {
-			continue;
-		}
-
-		const preferredState = ['weapon', 'armor'].includes(item.type) ? EquipmentState.Equipped : EquipmentState.Carried;
-		const shouldDisable = desiredState !== preferredState;
-
-		await Promise.all(
-			actor.effects
-				.filter((effect) => (effect as GenesysEffect).originItem?.id === item.id && effect.disabled !== shouldDisable)
+		allUpdates.push(
+			...actor.effects
+				.filter((effect) => (effect as GenesysEffect).originItem?.id === item.id && !effect.disabled)
 				.map(
 					async (effect) =>
 						await effect.update({
-							disabled: shouldDisable,
+							disabled: true,
 						}),
 				),
 		);
 	}
+
+	await Promise.all(allUpdates);
 }
 
 async function drop(event: DragEvent) {
-	const actor = toRaw(rootContext.data.actor);
+	const actor = toRaw(context.data.actor);
 
 	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
 	if (!dragData.source || dragData.source === actor.id || !actor.isOwner) {
@@ -121,14 +119,14 @@ async function drop(event: DragEvent) {
 		return;
 	}
 
-	if (!CharacterDataModel.RELEVANT_TYPES.DROP_ITEM.includes(dragData.itemType) || !CharacterDataModel.RELEVANT_TYPES.INVENTORY.includes(dragData.itemType)) {
+	if (!VehicleDataModel.RELEVANT_TYPES.DROP_ITEM.includes(dragData.itemType) || !VehicleDataModel.RELEVANT_TYPES.INVENTORY.includes(dragData.itemType)) {
 		return;
 	}
 
 	let containedItems: GenesysItem<EquipmentDataModel>[] = [];
 	if (dragData.itemType === 'container') {
 		containedItems = sourceActor.items.filter((item) => (item as GenesysItem<EquipmentDataModel>).systemData.container === dragData.id) as GenesysItem<EquipmentDataModel>[];
-		if (!containedItems.every((item) => CharacterDataModel.RELEVANT_TYPES.DROP_ITEM.includes(item.type) && CharacterDataModel.RELEVANT_TYPES.INVENTORY.includes(item.type))) {
+		if (!containedItems.every((item) => VehicleDataModel.RELEVANT_TYPES.DROP_ITEM.includes(item.type) && VehicleDataModel.RELEVANT_TYPES.INVENTORY.includes(item.type))) {
 			return;
 		}
 	}
@@ -171,6 +169,19 @@ async function drop(event: DragEvent) {
 
 <template>
 	<section class="tab-inventory" @drop="drop">
+		<div class="encumbrance-currency-row">
+			<div class="currency-row">
+				<label><i class="fas fa-coins"></i> {{ CURRENCY_LABEL }}:</label>
+				<input type="text" name="system.currency" :value="system.currency" />
+			</div>
+
+			<div :class="`encumbrance-row ${system.isEncumbered ? 'encumbered' : ''}`">
+				<span v-if="system.isEncumbered"><Localized label="Genesys.Labels.Encumbered" /></span>
+				<span><i class="fas fa-weight-hanging"></i></span>
+				<span>{{ system.currentEncumbrance.value }}/{{ system.currentEncumbrance.threshold }}</span>
+			</div>
+		</div>
+
 		<div class="section-header">
 			<span><Localized label="Genesys.Labels.Equipped" /></span>
 		</div>
@@ -179,7 +190,7 @@ async function drop(event: DragEvent) {
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in equippedItems" :key="item.id">
-				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
+				<InventoryItem :item="item" draggable="true" :allow-dropping="false" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
 
 				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Equipped, index)" />
 			</template>
@@ -193,38 +204,11 @@ async function drop(event: DragEvent) {
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in carriedItems" :key="item.id">
-				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
+				<InventoryItem :item="item" draggable="true" :allow-dropping="false" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
 
 				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Carried, index)" />
 			</template>
 		</TransitionGroup>
-
-		<div class="section-header">
-			<span><Localized label="Genesys.Labels.Dropped" /></span>
-		</div>
-
-		<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Dropped, -1)" />
-
-		<TransitionGroup name="inv">
-			<template v-for="(item, index) in droppedItems" :key="item.id">
-				<InventoryItem :item="item" draggable="true" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
-
-				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Dropped, index)" />
-			</template>
-		</TransitionGroup>
-
-		<div class="encumbrance-currency-row">
-			<div class="currency-row">
-				<label><i class="fas fa-coins"></i> {{ CURRENCY_LABEL }}:</label>
-				<input type="text" name="system.currency" :value="system.currency" />
-			</div>
-
-			<div :class="`encumbrance-row ${system.isEncumbered ? 'encumbered' : ''}`">
-				<span v-if="system.isEncumbered"><Localized label="Genesys.Labels.Encumbered" /></span>
-				<span><i class="fas fa-weight-hanging"></i></span>
-				<span>{{ system.currentEncumbrance.value }}/{{ system.currentEncumbrance.threshold }}</span>
-			</div>
-		</div>
 	</section>
 </template>
 

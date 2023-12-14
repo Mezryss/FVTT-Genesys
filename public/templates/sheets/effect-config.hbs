@@ -118,26 +118,43 @@
 							<select name="changes.{{i}}.key">
 								<option value="">—</option>
 
-								{{!-- Stat Changes --}}
-								<optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyCharacteristic'}}">
-									{{!-- Characteristics --}}
-									<option value="system.characteristics.brawn">{{localize 'Genesys.Characteristics.Brawn'}}</option>
-									<option value="system.characteristics.agility">{{localize 'Genesys.Characteristics.Agility'}}</option>
-									<option value="system.characteristics.intellect">{{localize 'Genesys.Characteristics.Intellect'}}</option>
-									<option value="system.characteristics.cunning">{{localize 'Genesys.Characteristics.Cunning'}}</option>
-									<option value="system.characteristics.willpower">{{localize 'Genesys.Characteristics.Willpower'}}</option>
-									<option value="system.characteristics.presence">{{localize 'Genesys.Characteristics.Presence'}}</option>
-								</optgroup>
+                                {{!-- Characteristics Changes --}}
+                                <optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyCharacteristic'}}">
+                                    {{!-- Character & Adversary Characteristics --}}
+                                    <option value="system.characteristics.brawn">&#x1F9D1; {{localize 'Genesys.Characteristics.Brawn'}}</option>
+                                    <option value="system.characteristics.agility">&#x1F9D1; {{localize 'Genesys.Characteristics.Agility'}}</option>
+                                    <option value="system.characteristics.intellect">&#x1F9D1; {{localize 'Genesys.Characteristics.Intellect'}}</option>
+                                    <option value="system.characteristics.cunning">&#x1F9D1; {{localize 'Genesys.Characteristics.Cunning'}}</option>
+                                    <option value="system.characteristics.willpower">&#x1F9D1; {{localize 'Genesys.Characteristics.Willpower'}}</option>
+                                    <option value="system.characteristics.presence">&#x1F9D1; {{localize 'Genesys.Characteristics.Presence'}}</option>
 
-								<optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyStat'}}">
-									{{!-- Secondary Stats --}}
-									<option value="system.soak">{{localize 'Genesys.Labels.SoakValue'}}</option>
-									<option value="system.wounds.max">{{localize 'Genesys.Labels.WoundThreshold'}}</option>
-									<option value="system.strain.max">{{localize 'Genesys.Labels.StrainThreshold'}}</option>
-									<option value="system.defense.melee">{{localize 'Genesys.Labels.MeleeDefense'}}</option>
-									<option value="system.defense.ranged">{{localize 'Genesys.Labels.RangedDefense'}}</option>
-									<option value="system.encumbrance.threshold">{{localize 'Genesys.Labels.EncumbranceThreshold'}}</option>
-								</optgroup>
+                                    {{!-- Vehicle Characteristics --}}
+                                    <option value="system.silhouette">&#x1F697; {{localize 'Genesys.Labels.Silhouette'}}</option>
+                                    <option value="system.speed">&#x1F697; {{localize 'Genesys.Labels.Speed'}}</option>
+                                    <option value="system.handling">&#x1F697; {{localize 'Genesys.Labels.Handling'}}</option>
+                                    <option value="system.defense">&#x1F697; {{localize 'Genesys.Labels.Defense'}}</option>
+                                    <option value="system.armor">&#x1F697; {{localize 'Genesys.Labels.Armor'}}</option>
+                                </optgroup>
+
+                                {{!-- Stat Changes --}}
+                                <optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyStat'}}">
+                                    {{!-- Characert and Adversary Secondary Stats --}}
+                                    <option value="system.soak">&#x1F9D1; {{localize 'Genesys.Labels.SoakValue'}}</option>
+                                    <option value="system.wounds.max">&#x1F9D1; {{localize 'Genesys.Labels.WoundThreshold'}}</option>
+                                    <option value="system.strain.max">&#x1F9D1; {{localize 'Genesys.Labels.StrainThreshold'}}</option>
+                                    <option value="system.defense.melee">&#x1F9D1; {{localize 'Genesys.Labels.MeleeDefense'}}</option>
+                                    <option value="system.defense.ranged">&#x1F9D1; {{localize 'Genesys.Labels.RangedDefense'}}</option>
+
+                                    {{!-- Vehicle Secondary Stats --}}
+                                    <option value="system.hullTrauma.max">&#x1F697; {{localize 'Genesys.Labels.HullTraumaThreshold'}}</option>
+                                    <option value="system.systemStrain.max">&#x1F697; {{localize 'Genesys.Labels.SystemStrainThreshold'}}</option>
+                                    <option value="system.passengers.value">&#x1F697; {{localize 'Genesys.Labels.Passengers'}}</option>
+                                    <option value="system.passengers.threshold">&#x1F697; {{localize 'Genesys.Labels.PassengerCapacity'}}</option>
+
+                                    {{!-- Shared Secondary Stats --}}
+                                    <option value="system.encumbrance.value">&#x1F310; {{localize 'Genesys.Labels.Encumbrance'}}</option>
+                                    <option value="system.encumbrance.threshold">&#x1F310; {{localize 'Genesys.Labels.EncumbranceThreshold'}}</option>
+                                </optgroup>
 
 								{{!-- Skill Changes --}}
 

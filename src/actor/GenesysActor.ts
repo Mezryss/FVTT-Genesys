@@ -8,6 +8,7 @@
 import GenesysCombat from '@/combat/GenesysCombat';
 import GenesysCombatant from '@/combat/GenesysCombatant';
 import IHasPreCreate from '@/data/IHasPreCreate';
+import IHasOnDelete from '@/data/IHasOnDelete';
 
 export default class GenesysActor<ActorDataModel extends foundry.abstract.DataModel = foundry.abstract.DataModel> extends Actor {
 	/**
@@ -25,6 +26,16 @@ export default class GenesysActor<ActorDataModel extends foundry.abstract.DataMo
 		await (<IHasPreCreate<this>>this.systemData).preCreate?.(this, data, options, user);
 
 		return super._preCreate(data, options, user);
+	}
+
+	/**
+	 * Override the _onDelete callback to call onDelete from the data model class, if present.
+	 * @inheritDoc
+	 */
+	protected override _onDelete(options: DocumentModificationContext<this>, userId: string) {
+		(<IHasOnDelete<this>>this.systemData).onDelete?.(this, options, userId);
+
+		super._onDelete(options, userId);
 	}
 
 	/**

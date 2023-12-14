@@ -4,6 +4,7 @@ Actor:
     - minion
     - rival
     - nemesis
+    - vehicle
   templates:
     # Has basic characteristics.
     characteristics:
@@ -103,6 +104,35 @@ Actor:
     strain:
       value: 0
       max: 0
+  vehicle:
+    silhouette: 0
+    speed: 0
+    handling: 0
+    defense: 0
+    armor: 0
+    hullTrauma:
+      value: 0
+      max: 0
+    systemStrain:
+      value: 0
+      max: 0
+    illustration: 'icons/svg/mystery-man.svg'
+    description: ''
+    complement: ''
+    consumables: ''
+    source: ''
+    price: 0
+    rarity: 0
+    currency: 0
+    passengers:
+      value: 0
+      threshold: 0
+      list: []
+    encumbrance:
+      value: 0
+      threshold: 0
+    roles: []
+
 
 Item:
   types:
@@ -114,6 +144,7 @@ Item:
     - gear
     - quality
     - weapon
+    - vehicleWeapon
 
     # Character Building
     - ability
@@ -143,6 +174,17 @@ Item:
       quantity: 1
       # (Owned) Current item state. (Carried, Dropped, or Equipped)
       state: 'carried'
+    baseWeapon:
+      # Weapon's base damage value.
+      baseDamage: 0
+      # Weapon's critical rating.
+      critical: 0
+      # Weapon's range - one of Engaged, Close, Medium, Long, or Extreme.
+      range: 'engaged'
+      # Skill names that can be used when wielding the weapon.
+      skills: []
+      # Item qualities applicable to the weapon.
+      qualities: []
   ability:
     templates: [basic]
     # Whether this talent is active or passive and, if active, details on the activation requirement.
@@ -229,15 +271,17 @@ Item:
     templates:
       - basic
       - equipment
-    # Weapon's base damage value.
-    baseDamage: 0
+      - baseWeapon
     # Characteristic added to damage value.
     damageCharacteristic: '-'
-    # Weapon's critical rating.
-    critical: 0
-    # Weapon's range - one of Engaged, Close, Medium, Long, or Extreme.
-    range: 'engaged'
-    # Skill names that can be used when wielding the weapon.
-    skills: []
-    # Item qualities applicable to the weapon.
-    qualities: []
+  vehicleWeapon:
+    templates:
+      - basic
+      - equipment
+      - baseWeapon
+    # Directions a weapon can be fired, based on its mounting.
+    firingArc:
+      fore: false
+      aft: false
+      port: false
+      starboard: false

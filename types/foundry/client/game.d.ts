@@ -151,6 +151,8 @@ declare global {
 		tables: RollTables;
 		users: Users<TUser>;
 
+		workers: WorkerManager;
+
 		constructor(view: string, worldData: {}, sessionId: string, socket: io.Socket);
 
 		/** Returns the current version of the Release, usable for comparisons using isNewerVersion */

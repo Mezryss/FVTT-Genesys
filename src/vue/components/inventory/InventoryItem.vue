@@ -1,14 +1,18 @@
 <script lang="ts" setup>
 import { computed, inject, ref, toRaw } from 'vue';
+import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 
 import GenesysItem from '@/item/GenesysItem';
 import ArmorDataModel from '@/item/data/ArmorDataModel';
 import EquipmentDataModel, { EquipmentDamageState, EquipmentState } from '@/item/data/EquipmentDataModel';
+import BaseWeaponDataModel from '@/item/data/BaseWeaponDataModel';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
+import VehicleWeaponDataModel from '@/item/data/VehicleWeaponDataModel';
+import CharacterDataModel from '@/actor/data/CharacterDataModel';
+import VehicleDataModel from '@/actor/data/VehicleDataModel';
+
 import Localized from '@/vue/components/Localized.vue';
 import Tooltip from '@/vue/components/Tooltip.vue';
-import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
-import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
 import DicePrompt, { RollType } from '@/app/DicePrompt';
@@ -18,10 +22,14 @@ const props = withDefaults(
 		item: GenesysItem<EquipmentDataModel>;
 		dragging?: boolean;
 		mini?: boolean;
+		allowEquipping?: boolean;
+		allowDropping?: boolean;
 	}>(),
 	{
 		dragging: false,
 		mini: false,
+		allowEquipping: true,
+		allowDropping: true,
 	},
 );
 
@@ -42,13 +50,13 @@ const damageStateProgression = Array.from(damageStateToIcon.keys());
 const dragCounter = ref(0);
 const isBeingDragged = ref(false);
 
-const rootContext = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
+const rootContext = inject<ActorSheetContext<CharacterDataModel | VehicleDataModel>>(RootContext)!;
 
 const isBasicItem = computed(() => ['consumable', 'gear'].includes(props.item.type));
 const system = computed(() => props.item.systemData);
 
 const armorData = computed(() => system.value as ArmorDataModel);
-const weaponData = computed(() => system.value as WeaponDataModel);
+const weaponData = computed(() => ({ baseWeapon: system.value as BaseWeaponDataModel, charWeapon: system.value as WeaponDataModel, vehWeapon: system.value as VehicleWeaponDataModel }));
 
 const dimForDrag = computed(() => props.dragging && props.item.type !== 'container');
 
@@ -56,11 +64,12 @@ const displayContainerContents = ref(false);
 const containedItems = computed(() => toRaw(rootContext.data.actor).items.filter((i) => (i as GenesysItem<EquipmentDataModel>).systemData.container === props.item.id) as GenesysItem<EquipmentDataModel>[]);
 
 const weaponDamage = computed(() => {
-	if (weaponData.value.damageCharacteristic === '-') {
-		return weaponData.value.baseDamage;
+	const characterActor = rootContext.data.actor.systemData as CharacterDataModel;
+	if (weaponData.value.charWeapon.damageCharacteristic && weaponData.value.charWeapon.damageCharacteristic !== '-' && characterActor.characteristics) {
+		return characterActor.characteristics[weaponData.value.charWeapon.damageCharacteristic] + weaponData.value.baseWeapon.baseDamage;
 	}
 
-	return rootContext.data.actor.systemData.characteristics[weaponData.value.damageCharacteristic] + weaponData.value.baseDamage;
+	return weaponData.value.baseWeapon.baseDamage;
 });
 
 async function rollAttack() {
@@ -97,7 +106,7 @@ async function sendItemToChat() {
 
 	let qualities = undefined;
 
-	if (['armor', 'weapon'].includes(props.item.type)) {
+	if (['armor', 'weapon', 'vehicleWeapon'].includes(props.item.type)) {
 		const itemQualities = (system.value as WeaponDataModel | ArmorDataModel).qualities;
 
 		await Promise.all(
@@ -109,15 +118,21 @@ async function sendItemToChat() {
 		qualities = itemQualities;
 	}
 
-	const weapon =
-		props.item.type !== 'weapon'
-			? undefined
-			: {
-					skill: skillForWeapon()[0],
-					damage:
-						(system.value as WeaponDataModel).baseDamage.toString() +
-						((system.value as WeaponDataModel).damageCharacteristic !== '-' ? ' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${(system.value as WeaponDataModel).damageCharacteristic.capitalize()}`) : ''),
-			  };
+	let weapon = undefined;
+	if (props.item.type === 'weapon') {
+		weapon = {
+			skill: weaponData.value.charWeapon.skills[0] ?? '-',
+			damage:
+				weaponData.value.charWeapon.baseDamage.toString() +
+				(weaponData.value.charWeapon.damageCharacteristic !== '-' ? ' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${weaponData.value.charWeapon.damageCharacteristic.capitalize()}`) : ''),
+		};
+	} else if (props.item.type === 'vehicleWeapon') {
+		weapon = {
+			skill: weaponData.value.vehWeapon.skills[0] ?? '-',
+			damage: weaponData.value.vehWeapon.baseDamage.toString(),
+			firingArc: getFiringArcLabels(weaponData.value.vehWeapon).join(', '),
+		};
+	}
 
 	const chatTemplate = await renderTemplate('systems/genesys/templates/chat/item.hbs', {
 		img: props.item.img,
@@ -157,7 +172,7 @@ async function setItemState(state: EquipmentState) {
 }
 
 function skillForWeapon(): [name: string, id: string] {
-	const validSkillNames = weaponData.value.skills.map((s) => s.toLowerCase());
+	const validSkillNames = weaponData.value.baseWeapon.skills.map((s) => s.toLowerCase());
 
 	// Does the Adversary have one of these skills?
 	const possessedSkill = toRaw(rootContext.data.actor).items.find((i) => i.type === 'skill' && validSkillNames.includes(i.name.toLowerCase()));
@@ -165,8 +180,67 @@ function skillForWeapon(): [name: string, id: string] {
 	if (possessedSkill) {
 		return [possessedSkill.name, possessedSkill.id];
 	} else {
-		return [weaponData.value.skills[0], '-'];
+		return [weaponData.value.baseWeapon.skills[0], '-'];
 	}
+}
+
+function getFiringArcLabels(weapon: VehicleWeaponDataModel) {
+	const possibleDirections = Object.entries(weapon.firingArc);
+	const firingArc = possibleDirections.filter(([_arc, canFire]) => canFire);
+
+	if (possibleDirections.length == firingArc.length) {
+		return [game.i18n.localize('Genesys.FiringArc.All')];
+	} else if (firingArc.length === 0) {
+		return [game.i18n.localize('Genesys.FiringArc.None')];
+	} else {
+		return firingArc.map(([arc, _canFire]) => game.i18n.localize(`Genesys.FiringArc.${arc.capitalize()}`));
+	}
+}
+
+function isEquipableItem(item: GenesysItem<EquipmentDataModel>) {
+	if (rootContext.data.actor.type === 'character') {
+		return ['weapon', 'armor'].includes(item.type);
+	} else if (rootContext.data.actor.type === 'vehicle') {
+		return ['vehicleWeapon'].includes(item.type);
+	}
+
+	return false;
+}
+
+function canEquipItem(item: GenesysItem<EquipmentDataModel>) {
+	if (rootContext.data.actor.type === 'character') {
+		return ['weapon', 'armor'].includes(item.type) && item.systemData.state !== EquipmentState.Equipped;
+	} else if (rootContext.data.actor.type === 'vehicle') {
+		return ['vehicleWeapon'].includes(item.type) && item.systemData.state !== EquipmentState.Equipped;
+	}
+
+	return false;
+}
+
+function canUnequipItem(item: GenesysItem<EquipmentDataModel>) {
+	if (rootContext.data.actor.type === 'character') {
+		return ['weapon', 'armor'].includes(item.type) && item.systemData.state === EquipmentState.Equipped;
+	} else if (rootContext.data.actor.type === 'vehicle') {
+		return ['vehicleWeapon'].includes(item.type) && item.systemData.state === EquipmentState.Equipped;
+	}
+
+	return false;
+}
+
+function canDropItem(item: GenesysItem<EquipmentDataModel>) {
+	if (rootContext.data.actor.type === 'character') {
+		return [EquipmentState.Carried, EquipmentState.Equipped].includes(item.systemData.state);
+	}
+
+	return false;
+}
+
+function canPickupItem(item: GenesysItem<EquipmentDataModel>) {
+	if (rootContext.data.actor.type === 'character') {
+		return item.systemData.state === EquipmentState.Dropped;
+	}
+
+	return false;
 }
 
 function dragStart(event: DragEvent) {
@@ -177,6 +251,7 @@ function dragStart(event: DragEvent) {
 		JSON.stringify({
 			id: props.item.id,
 			itemType: props.item.type,
+			source: toRaw(rootContext.data.actor).id,
 		}),
 	);
 
@@ -240,22 +315,25 @@ async function drop(event: DragEvent) {
 	}
 
 	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
-
 	if (!dragSource.id) {
 		return;
 	}
 
-	const item = toRaw(rootContext.data.actor).items.get(dragSource.id);
+	const item = toRaw(rootContext.data.actor).items.get(dragSource.id) as GenesysItem<EquipmentDataModel>;
 	if (!item || item.type === 'container') {
 		return;
 	}
 
-	emit('equipmentStateChange', props.item.systemData.state, [item as GenesysItem]);
-
-	await item.update({
+	const updateObject: Record<string, string> = {
 		'system.container': props.item.id,
-		'system.state': props.item.systemData.state,
-	});
+	};
+
+	if (props.item.systemData.state !== item.systemData.state) {
+		emit('equipmentStateChange', props.item.systemData.state, [item as GenesysItem]);
+		updateObject['system.state'] = props.item.systemData.state;
+	}
+
+	await item.update(updateObject);
 }
 </script>
 
@@ -290,28 +368,35 @@ async function drop(event: DragEvent) {
 
 			<div :data-item-type="item.type">
 				<!-- Weapon Details -->
-				<template v-if="item.type === 'weapon'">
+				<template v-if="item.type === 'weapon' || item.type === 'vehicleWeapon'">
 					<!-- Skill -->
-					<div>{{ skillForWeapon()[0] }}</div>
+					<div>{{ weaponData.baseWeapon.skills[0] ?? '-' }}</div>
+
+					<!-- Firing Arc -->
+					<div v-if="weaponData.vehWeapon.firingArc" class="firing-arc">
+						<Localized label="Genesys.Labels.FiringArc" /> <span v-for="arc in getFiringArcLabels(weaponData.vehWeapon)" :key="arc">{{ arc }}</span>
+					</div>
 
 					<!-- Damage -->
 					<div>
-						Damage
-
-						<span v-if="weaponData.damageCharacteristic === '-'">{{ weaponData.baseDamage }}</span>
-						<span v-else-if="weaponData.baseDamage >= 0"> <Localized :label="`Genesys.CharacteristicAbbr.${weaponData.damageCharacteristic.capitalize()}`" />+{{ weaponData.baseDamage }} ({{ weaponDamage }})</span>
-						<span v-else><Localized :label="`Genesys.CharacteristicAbbr.${weaponData.damageCharacteristic.capitalize()}`" />{{ weaponData.baseDamage }} ({{ weaponDamage }})</span>
+						<Localized label="Genesys.Labels.Damage" /> <span v-if="!weaponData.charWeapon.damageCharacteristic || weaponData.charWeapon.damageCharacteristic === '-'">{{ weaponData.baseWeapon.baseDamage }}</span>
+						<span v-else-if="weaponData.baseWeapon.baseDamage >= 0">
+							<Localized :label="`Genesys.CharacteristicAbbr.${weaponData.charWeapon.damageCharacteristic.capitalize()}`" />+{{ weaponData.baseWeapon.baseDamage }} ({{ weaponDamage }})</span
+						>
+						<span v-else><Localized :label="`Genesys.CharacteristicAbbr.${weaponData.charWeapon.damageCharacteristic.capitalize()}`" />{{ weaponData.baseWeapon.baseDamage }} ({{ weaponDamage }})</span>
 					</div>
 
 					<!-- Critical -->
-					<div>Critical {{ weaponData.critical }}</div>
+					<div><Localized label="Genesys.Labels.Critical" /> {{ weaponData.baseWeapon.critical }}</div>
 
 					<!-- Range -->
-					<div>Range [<Localized :label="`Genesys.Range.${weaponData.range.capitalize()}`" />]</div>
+					<div><Localized label="Genesys.Labels.Range" /> [<Localized :label="`Genesys.Range.${weaponData.baseWeapon.range.capitalize()}`" />]</div>
 
 					<!-- Qualities -->
-					<div v-if="weaponData.qualities.length > 0" class="item-qualities">
-						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description"> {{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }} </Tooltip>
+					<div v-if="weaponData.baseWeapon.qualities.length > 0" class="item-qualities">
+						<Tooltip v-for="quality in weaponData.baseWeapon.qualities" :key="quality.name" :content="quality.description === '' ? 'Genesys.Tooltips.NoDescription' : quality.description" :localized="quality.description === ''">
+							{{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }}
+						</Tooltip>
 					</div>
 				</template>
 
@@ -327,7 +412,9 @@ async function drop(event: DragEvent) {
 
 					<!-- Qualities -->
 					<div v-if="armorData.qualities.length > 0" class="item-qualities">
-						<Tooltip v-for="quality in weaponData.qualities" :key="quality.name" :content="quality.description"> {{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }} </Tooltip>
+						<Tooltip v-for="quality in armorData.qualities" :key="quality.name" :content="quality.description === '' ? 'Genesys.Tooltips.NoDescription' : quality.description" :localized="quality.description === ''">
+							{{ quality.name }}{{ quality.isRated ? ` ${quality.rating}` : '' }}
+						</Tooltip>
 					</div>
 				</template>
 
@@ -355,34 +442,34 @@ async function drop(event: DragEvent) {
 			<i :class="{'fas': true, [damageStateToIcon.get(item.systemData.damage)!]: true}"></i>
 		</a>
 
-		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable">
+		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable || mini">
 			<template v-slot:menu-items>
-				<MenuItem v-if="item.type === 'weapon' && item.systemData.state !== EquipmentState.Equipped" @click="setItemState(EquipmentState.Equipped)">
+				<MenuItem v-if="allowEquipping && ['weapon', 'vehicleWeapon'].includes(item.type) && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-sword"></i></template>
 					Equip
 				</MenuItem>
 
-				<MenuItem v-if="item.type === 'armor' && item.systemData.state !== EquipmentState.Equipped" @click="setItemState(EquipmentState.Equipped)">
+				<MenuItem v-if="allowEquipping && item.type === 'armor' && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-shield"></i></template>
 					Equip
 				</MenuItem>
 
-				<MenuItem v-if="['weapon', 'armor'].includes(item.type) && item.systemData.state === EquipmentState.Equipped" @click="setItemState(EquipmentState.Carried)">
+				<MenuItem v-if="allowEquipping && canUnequipItem(item)" @click="setItemState(EquipmentState.Carried)">
 					<template v-slot:icon><i class="fas fa-backpack"></i></template>
 					Unequip
 				</MenuItem>
 
-				<MenuItem v-if="[EquipmentState.Carried, EquipmentState.Equipped].includes(item.systemData.state)" @click="setItemState(EquipmentState.Dropped)">
+				<MenuItem v-if="allowDropping && canDropItem(item)" @click="setItemState(EquipmentState.Dropped)">
 					<template v-slot:icon><i class="fas fa-shelves"></i></template>
 					Drop
 				</MenuItem>
 
-				<MenuItem v-if="item.systemData.state === EquipmentState.Dropped" @click="setItemState(EquipmentState.Carried)">
+				<MenuItem v-if="allowDropping && canPickupItem(item)" @click="setItemState(EquipmentState.Carried)">
 					<template v-slot:icon><i class="fas fa-backpack"></i></template>
 					Pick Up
 				</MenuItem>
 
-				<hr />
+				<hr v-if="(allowEquipping && isEquipableItem(item)) || allowDropping" />
 
 				<MenuItem @click="sendItemToChat">
 					<template v-slot:icon><i class="fas fa-comment"></i></template>
@@ -413,6 +500,8 @@ async function drop(event: DragEvent) {
 					:key="item.id"
 					mini
 					draggable="true"
+					:allow-equipping="allowEquipping"
+					:allow-dropping="allowDropping"
 					@dragstart="
 						$event.stopPropagation();
 						emit('dragstart', $event);
@@ -522,8 +611,12 @@ async function drop(event: DragEvent) {
 		grid-row: 2 / span all;
 		transform-origin: top center;
 		max-height: 100px;
-		overflow-y: scroll;
+		overflow-y: auto;
 		padding-right: 0.5em;
+
+		&:empty {
+			display: none;
+		}
 	}
 
 	.name {
@@ -571,6 +664,27 @@ async function drop(event: DragEvent) {
 				}
 
 				&:last-child:after {
+					display: none;
+				}
+			}
+		}
+
+		.firing-arc {
+			text-align: center;
+
+			& > span {
+				display: inline-flex;
+				flex-direction: row;
+				flex-wrap: nowrap;
+				gap: 0.5em;
+
+				&::after {
+					content: ',';
+					margin-right: 0.25em;
+					margin-left: -0.4em;
+				}
+
+				&:last-of-type::after {
 					display: none;
 				}
 			}
