@@ -62,104 +62,104 @@ Genesys:
 
   # Tooltips
   Tooltips:
-    NoDescription: No Description Available
-    IsInitiative: Whether the skill is commonly used for Initiative or not. Setting this to true will make it appear as an option in the combat tracker for mass rolls.
-    CycleInitiativeSkill: Cycle which initiative skill the combatant is using.
-    AddExtraInitiativeSlot: Adds an extra initiative slot.
+    NoDescription: Aucune description disponible
+    IsInitiative: Si la compétence est utilisée pour l'Initiative ou non. En mettant cette valeur à true, elle apparaîtra comme une option dans le traqueur de combat pour les jets de masse.
+    CycleInitiativeSkill: Cycle de la compétence d'initiative utilisée par le combattant.
+    AddExtraInitiativeSlot: Ajoute un slot supplémentaire pour l'initiative.
 
   # Dice Rolls
   Rolls:
-    Dice: Dice
-    Results: Roll Results
+    Dice: Dé
+    Results: Résultats
     Description:
-      Initiative: Rolling Initiative with <strong>{skill}</strong>...
-      Characteristic: Rolling <strong>{characteristic}</strong>...
-      Skill: Rolling <strong>{skill} ({characteristic})</strong>...
-      SkillWithoutCharacteristic: Rolling <strong>{skill}</strong>...
-      AttackCharacteristic: Attacking with <strong>{name}</strong> using <strong>{characteristic}</strong>!
-      AttackSkill: Attacking with <strong>{name}</strong> using <strong>{skill} ({characteristic})</strong>!
-      AttackSkillWithoutCharacteristic: Attacking with <strong>{name}</strong> using <strong>{skill}</strong>!
+      Initiative: Jet d'initiative avec <strong>{skill}</strong>...
+      Characteristic: Jet de <strong>{characteristic}</strong>...
+      Skill: Jet de <strong>{skill} ({characteristic})</strong>...
+      SkillWithoutCharacteristic: Jet direct <strong>{skill}</strong>...
+      AttackCharacteristic: Attaque de <strong>{name}</strong> en utilisant <strong>{characteristic}</strong>!
+      AttackSkill: Attaque de <strong>{name}</strong> en utilisant <strong>{skill} ({characteristic})</strong>!
+      AttackSkillWithoutCharacteristic: Attaque de <strong>{name}</strong> en utilisant <strong>{skill}</strong>!
     Attack:
-      Critical: Critical
-      Label: Attack Results
-      Damage: Damage
-      Qualities: Attack Qualities
+      Critical: Critique
+      Label: Résultats de l'attaque
+      Damage: Dommage
+      Qualities: Qualité de l'attaque
     Summary:
-      Label: Summary
-      Successes: Successes
-      Failures: Failures
-      Advantage: Advantage
-      Threat: Threat
-      Triumph: Triumph
-      Despair: Despair
+      Label: Résumé
+      Successes: Succès
+      Failures: Echec
+      Advantage: Avantage
+      Threat: Menace
+      Triumph: Triomphe
+      Despair: Désastre
 
   # Career Skill Prompt
   CareerSkillPrompt:
-    Header: Career Skills
-    Hint: 'Select Career Skills to gain a rank:'
-    RemainingChoices: Remaining Choices
-    Confirm: Done
+    Header: Compétence de Carrière
+    Hint: 'Choissisez une compétence de Carrière pour gagner un rang:'
+    RemainingChoices: Autres choix
+    Confirm: Confrimer
 
   # Dice So Nice strings
   DiceCat:
-    Normal: Genesys Dice
+    Normal: Dés Genesys
     MagicalGirl: Magical Girl by MilkMyth
-    Custom: Genesys Dice (Customizable)
+    Custom: Genesys Dés (Customisable)
   DiceColors:
-    Boost: Boost Die
-    Ability: Ability Die
-    Proficiency: Proficiency Die
-    Setback: Setback Die
-    Difficulty: Difficulty Die
-    Challenge: Challenge Die
+    Boost: Dé de fortune
+    Ability: Dé d'aptitude
+    Proficiency: Dé de maîtrise
+    Setback: Dé d'Infortune
+    Difficulty: Dés de difficulté
+    Challenge: Dé de défi
 
   # Difficulty Ranks
   Difficulty:
     Simple: Simple
-    Easy: Easy
-    Average: Average
-    Hard: Hard
-    Daunting: Daunting
+    Easy: Facile
+    Average: Moyen
+    Hard: Difficile
+    Daunting: Intimidant
     Impossible: Impossible
 
   Inventory:
     Sections:
-      Armor: Armor
-      Consumable: Consumables
-      Container: Containers
-      Gear: Gear
-      Weapon: Weapons
+      Armor: Armure
+      Consumable: Consommable
+      Container: Containeur
+      Gear: Equipement
+      Weapon: Armes
 
   # ActiveEffects System Strings
   ActiveEffects:
-    Passive: Passive Effects
-    Temporary: Temporary Effects
-    Suppressed: Inactive Effects
+    Passive: Effects Passifs
+    Temporary: Effets Temporaire
+    Suppressed: Effets inactifs
     Source: Source
-    Duration: Duration
+    Duration: Durée
     Types:
-      ModifyCharacteristic: Modify Characteristic
-      ModifyStat: Modify Stat
-      ModifySkill: Modify Skill
-      ModifyDicePool: Modify Dice Pool
+      ModifyCharacteristic: Modifier la Caractérisitique
+      ModifyStat: Modifier la Stat
+      ModifySkill: Modifier La compétence
+      ModifyDicePool: Modifier la Réserve de Dés
 
   # Dice Prompt Labels
   DicePrompt:
-    Title: Dice Pool
-    Roll: Roll!
-    Hint: Use the dice box on the right to add, upgrade, and downgrade. Click dice in the pool to remove them!
-    ChanceToSucceed: 'Chance to Succeed:'
-    ChanceToSucceedByPermutationDisclaimer: The displayed probability is exact unless the dice pool includes a super characteristic.
-    ChanceToSucceedBySimulationDisclaimer: The displayed probability is an approximation that uses the Monte Carlo method.
-
+    Title: Réserve de Dés
+    Roll: Jet!
+    Hint: Utilisez la boîte à dés sur la droite pour ajouter, améliorer et rétrograder. Cliquez sur les dés dans la réserve pour les retirer!
+    ChanceToSucceed: 'Chance de réussite:'
+    ChanceToSucceedByPermutationDisclaimer: Affiche la probabilité exacte à moins qu'un dé dans le pool soit une super-caractéristique.
+    ChanceToSucceedBySimulationDisclaimer: La probabilité affiché est une approximation caculé à partir de la méthode de Monte Carlo.
+    
   # Experience Journal Labels
   XPJournal:
-    Award: '<strong>XP Awarded by GM</strong>: {reason}'
-    Starting: <strong>Starting XP from Archetype</strong>
-    Characteristic: Increased <strong>{characteristic}</strong> to {rank}.
-    Skill: Increased <strong>{name}</strong> to {rank}.
-    NewTalent: 'Purchased Talent: <strong>{name}</strong> (Tier {tier}).'
-    TalentRank: Increased <strong>{name}</strong> to Rank {rank} (Effective Tier {tier}).
+    Award: '<strong>XP attribué par le MJ</strong>: {reason}'
+    Starting: <strong>XP de départ de l'Archétype</strong>
+    Characteristic: Augmentation de la  <strong>{characteristic}</strong> à {rank}.
+    Skill: Augmente <strong>{name}</strong> à {rank}.
+    NewTalent: 'Talent acheté: <strong>{name}</strong> (Niveau {tier}).'
+    TalentRank: Augmentation de <strong>{name}</strong> au Rang {rank} (Niveau Effectif {tier}).
 
   # Notification Prompts
   Notifications:
