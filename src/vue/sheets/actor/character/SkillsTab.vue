@@ -46,11 +46,11 @@ const editLabel = game.i18n.localize('Genesys.Labels.Edit');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 
 async function rollSkill(skill: GenesysItem<SkillDataModel>) {
-	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.id);
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.name);
 }
 
 async function rollUnskilled(characteristic: CharacteristicType) {
-	await DicePrompt.promptForRoll(toRaw(context.data.actor), '-', { rollUnskilled: characteristic });
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), '', { rollUnskilled: characteristic });
 }
 
 async function purchaseCharacteristic(characteristic: keyof typeof system.value.characteristics) {

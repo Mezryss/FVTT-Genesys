@@ -10,8 +10,6 @@ import Enriched from '@/vue/components/Enriched.vue';
 import InjuryDataModel from '@/item/data/InjuryDataModel';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import DicePrompt, { RollType } from '@/app/DicePrompt';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_SKILL_FOR_INJURIES } from '@/settings/campaign';
 import SkillRanks from '@/vue/components/character/SkillRanks.vue';
 import Tooltip from '@/vue/components/Tooltip.vue';
 
@@ -40,7 +38,7 @@ async function deleteItem(item: GenesysItem) {
 }
 
 async function rollAttack(weapon: GenesysItem<WeaponDataModel>) {
-	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), skillForWeapon(weapon)?.id ?? '-', {
+	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), skillForWeapon(weapon)?.name ?? '', {
 		rollType: RollType.Attack,
 		rollData: {
 			weapon,
@@ -49,12 +47,8 @@ async function rollAttack(weapon: GenesysItem<WeaponDataModel>) {
 }
 
 async function healInjury(injury: GenesysItem<InjuryDataModel>) {
-	const resilienceSkillName = game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_INJURIES) as string;
-
-	const resilienceSkill = toRaw(rootContext.data.actor).items.find((s) => s.name.toLowerCase() === resilienceSkillName.toLowerCase());
-
-	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), resilienceSkill?.id ?? '-', {
-		startingDifficulty: SEVERITY_TO_DIFFICULTY[injury.systemData.severity],
+	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), CONFIG.genesys.skillForHealingInjury, {
+		difficulty: SEVERITY_TO_DIFFICULTY[injury.systemData.severity],
 	});
 }
 

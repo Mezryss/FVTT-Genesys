@@ -146,12 +146,11 @@ export default class GenesysCombat extends Combat {
 
 			// Initiative roll result
 			let skillName = combatant.initiativeSkill?.skillName ?? this.initiativeSkills[0]?.skillName ?? 'Unskilled';
-			const skillId = combatant.actor.items.find((i) => i.type === 'skill' && i.name.toLowerCase() === skillName.toLowerCase())?.id ?? '-';
 			let roll: Roll | undefined;
 
 			if (prompt) {
 				try {
-					const promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillId, { startingDifficulty: 0 });
+					const promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillName, { difficulty: 0 });
 
 					roll = promptedRoll.roll;
 					skillName = promptedRoll.skillName;

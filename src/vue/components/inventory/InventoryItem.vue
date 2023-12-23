@@ -73,8 +73,8 @@ const weaponDamage = computed(() => {
 });
 
 async function rollAttack() {
-	const [_, skillId] = skillForWeapon();
-	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), skillId, {
+	const [skillName] = skillForWeapon();
+	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), skillName, {
 		rollType: RollType.Attack,
 		rollData: {
 			weapon: props.item,

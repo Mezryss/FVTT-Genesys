@@ -16,13 +16,23 @@ import ChallengeDie from '@/dice/types/ChallengeDie';
 import './diceSoNice';
 
 /**
+ * An object used to get general details of each dice type.
+ */
+export const DieType = {
+	Proficiency: ProficiencyDie,
+	Ability: AbilityDie,
+	Boost: BoostDie,
+
+	Challenge: ChallengeDie,
+	Difficulty: DifficultyDie,
+	Setback: SetbackDie,
+};
+
+/**
  * Registers custom dice types.
  */
 export function register() {
-	CONFIG.Dice.terms[BoostDie.DENOMINATION] = BoostDie;
-	CONFIG.Dice.terms[AbilityDie.DENOMINATION] = AbilityDie;
-	CONFIG.Dice.terms[ProficiencyDie.DENOMINATION] = ProficiencyDie;
-	CONFIG.Dice.terms[SetbackDie.DENOMINATION] = SetbackDie;
-	CONFIG.Dice.terms[DifficultyDie.DENOMINATION] = DifficultyDie;
-	CONFIG.Dice.terms[ChallengeDie.DENOMINATION] = ChallengeDie;
+	Object.values(DieType).forEach((dieType) => {
+		CONFIG.Dice.terms[dieType.DENOMINATION] = dieType;
+	});
 }

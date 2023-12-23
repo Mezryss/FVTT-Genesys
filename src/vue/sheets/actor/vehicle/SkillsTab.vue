@@ -51,7 +51,7 @@ const dataGroupedByMember = computed(() =>
 
 async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDataModel>) {
 	if (actor.isOwner) {
-		await DicePrompt.promptForRoll(actor, skill.id);
+		await DicePrompt.promptForRoll(actor, skill.name);
 	}
 }
 

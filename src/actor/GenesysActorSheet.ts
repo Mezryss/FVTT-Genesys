@@ -42,12 +42,7 @@ export default class GenesysActorSheet<ActorDataModel extends foundry.abstract.D
 				const skillName = <string>target.data('skill-check');
 				const difficulty = parseInt(target.data('difficulty'));
 
-				// Does this actor possess the skill in question?
-				const matchingSkill = <GenesysItem>this.actor.items.find((i) => i.name.toLowerCase() === skillName.toLowerCase());
-
-				const skillId = matchingSkill ? matchingSkill.id : '-';
-
-				await DicePrompt.promptForRoll(this.actor, skillId, { startingDifficulty: difficulty });
+				await DicePrompt.promptForRoll(this.actor, skillName, { difficulty });
 			});
 		}, 250);
 	}
