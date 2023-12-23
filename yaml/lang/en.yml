@@ -50,8 +50,8 @@ Genesys:
     DicePoolChanceToSucceedByPermutation: Calculate the Chance to Succeed for Dice Pools
     DicePoolChanceToSucceedByPermutationHint: >-
       If enabled this will spawn a Web Worker that calculates the exact chance to succeed.
-      However, if the dice pool uses a super characteristic the calculated value is lower than the true value because it assumes that the pool doesn't explode.
-      For dice pools that use super characteristics you can get a more accurate value by using simulations.
+      However, if the dice pool uses a super-characteristic the calculated value is lower than the true value because it assumes that the pool doesn't explode.
+      For dice pools that use super-characteristics you can get a more accurate value by using simulations.
     DicePoolChanceToSucceedBySimulation: Approximate the Chance to Succeed for Dice Pools
     DicePoolChanceToSucceedBySimulationHint: >-
       The number of simulated rolls to run in order to approximate the chance to succeed.
@@ -72,6 +72,7 @@ Genesys:
     Dice: Dice
     Results: Roll Results
     Description:
+      Simple: Rolling...
       Initiative: Rolling Initiative with <strong>{skill}</strong>...
       Characteristic: Rolling <strong>{characteristic}</strong>...
       Skill: Rolling <strong>{skill} ({characteristic})</strong>...
@@ -148,8 +149,9 @@ Genesys:
     Title: Dice Pool
     Roll: Roll!
     Hint: Use the dice box on the right to add, upgrade, and downgrade. Click dice in the pool to remove them!
+    UseSuperCharacteristic: Roll as a super-characteristic
     ChanceToSucceed: 'Chance to Succeed:'
-    ChanceToSucceedByPermutationDisclaimer: The displayed probability is exact unless the dice pool includes a super characteristic.
+    ChanceToSucceedByPermutationDisclaimer: The displayed probability is exact unless the dice pool includes a super-characteristic.
     ChanceToSucceedBySimulationDisclaimer: The displayed probability is an approximation that uses the Monte Carlo method.
 
   # Experience Journal Labels
@@ -178,9 +180,11 @@ Genesys:
     CannotPurchaseTalentTier: Cannot purchase talents at tier {tier} - you must have at least {minimum} talents at rank {lowerTier} first.
     NotEnoughStoryPoints: You can't spend Story Points you don't have!
     SelectOneTokenForAction: You need to selected a single token to perform this action.
+    SelectNoneOrOneTokenForAction: You need to select no tokens, or a single token, to perform this action.
     TokenIsNotCombatant: The selected token is not participating on the current combat.
     CannotClaimOppositeSlot: You can't claim this initiative slot with {name} - it's on the wrong side!
     CannotSelectActor: You do not have sufficient permission to select this Actor.
+    InvalidTokenTypeForAction: The selected token is of an invalid type to perform this action.
 
   # Story Points
   StoryPoints:
