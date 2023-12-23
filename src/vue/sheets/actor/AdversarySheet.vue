@@ -54,11 +54,11 @@ function updateEffects() {
 }
 
 async function rollSkill(skill: GenesysItem<SkillDataModel>) {
-	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.id);
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.name);
 }
 
 async function rollUnskilled(characteristic: CharacteristicType) {
-	await DicePrompt.promptForRoll(toRaw(context.data.actor), '-', { rollUnskilled: characteristic });
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), '', { rollUnskilled: characteristic });
 }
 
 async function rollAttack(weapon: GenesysItem) {
@@ -66,7 +66,7 @@ async function rollAttack(weapon: GenesysItem) {
 		return;
 	}
 
-	await DicePrompt.promptForRoll(toRaw(context.data.actor), skillForWeapon(weapon)[1], { rollType: RollType.Attack, rollData: { weapon } });
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), skillForWeapon(weapon)[0], { rollType: RollType.Attack, rollData: { weapon } });
 }
 
 async function editItem(item: GenesysItem) {

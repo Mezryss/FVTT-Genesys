@@ -17,9 +17,6 @@ import Tooltip from '@/vue/components/Tooltip.vue';
 
 import SelectCharacterSkillPrompt, { CharacterSkillOption } from '@/app/SelectCharacterSkillPrompt';
 
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS } from '@/settings/campaign';
-
 const rootContext = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 
 const actor = computed(() => toRaw(rootContext.data.actor));
@@ -80,14 +77,14 @@ async function pickAttackerAndRollAttack(weapon: GenesysItem<VehicleWeaponDataMo
 		return;
 	}
 
-	await DicePrompt.promptForRoll(selectAttacker.actor, selectAttacker.skill.id, {
+	await DicePrompt.promptForRoll(selectAttacker.actor, selectAttacker.skill.name, {
 		rollType: RollType.Attack,
 		rollData: { weapon },
 	});
 }
 
 async function repairHit(criticalHit: GenesysItem<InjuryDataModel>) {
-	const skillNameForRepairing = game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS) as string;
+	const skillNameForRepairing = CONFIG.genesys.skillForRepairingHit;
 	const relevantRoles = actor.value.systemData.roles.filter((role) => role.skills.includes(skillNameForRepairing));
 	const potentialRepairer = relevantRoles.reduce((accum, role) => {
 		for (const member of role.members) {
@@ -114,8 +111,8 @@ async function repairHit(criticalHit: GenesysItem<InjuryDataModel>) {
 		return;
 	}
 
-	await DicePrompt.promptForRoll(selectRepairer.actor, selectRepairer.skill.id, {
-		startingDifficulty: SEVERITY_TO_DIFFICULTY[criticalHit.systemData.severity],
+	await DicePrompt.promptForRoll(selectRepairer.actor, selectRepairer.skill.name, {
+		difficulty: SEVERITY_TO_DIFFICULTY[criticalHit.systemData.severity],
 	});
 }
 </script>

@@ -1,109 +1,132 @@
 <script lang="ts" setup>
-import { computed, inject, onMounted, ref, toRaw } from 'vue';
+import { inject, onMounted, ref, toRaw } from 'vue';
 import { DicePromptContext, type AttackRollData, RollType, type InitiativeRollData, CALCULATE_CHANCE_WORKER_NAME } from '@/app/DicePrompt';
 import { Characteristic } from '@/data/Characteristics';
 import GenesysRoller from '@/dice/GenesysRoller';
 import GenesysItem from '@/item/GenesysItem';
 import SkillDataModel from '@/item/data/SkillDataModel';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS, KEY_SUPER_CHARACTERISTICS } from '@/settings/campaign';
-import { KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION } from '@/settings/user';
 import { RootContext } from '@/vue/SheetContext';
 import Localized from '@/vue/components/Localized.vue';
 import MinionDataModel from '@/actor/data/MinionDataModel';
+import { DieType } from '@/dice';
+import { DieCategory } from '@/dice/types/GenesysDie';
+import CharacterDataModel from '@/actor/data/CharacterDataModel';
+import AdversaryDataModel from '@/actor/data/AdversaryDataModel';
+import GenesysActor from '@/actor/GenesysActor';
 
-enum UpgradeType {
-	Positive,
-	Negative,
-}
+const SymbolType = {
+	Triumph: {
+		GLYPH: 't',
+		CATEGORY: 'positive',
+	},
+	Success: {
+		GLYPH: 's',
+		CATEGORY: 'positive',
+	},
+	Advantagge: {
+		GLYPH: 'a',
+		CATEGORY: 'positive',
+	},
 
-type DieString = 'A' | 'P' | 'B' | 'D' | 'C' | 'S';
-type SymbolString = 'a' | 's' | 't' | 'h' | 'f' | 'd';
+	Despair: {
+		GLYPH: 'd',
+		CATEGORY: 'negative',
+	},
+	Failure: {
+		GLYPH: 'f',
+		CATEGORY: 'negative',
+	},
+	Threat: {
+		GLYPH: 'h',
+		CATEGORY: 'negative',
+	},
+};
+
+type AlsoNone<T> = T | undefined;
+type PartialRecord<K extends keyof any, T> = Partial<Record<K, T>>;
+
+type DieName = keyof typeof DieType;
+type SymbolName = keyof typeof SymbolType;
+type PoolEntity = DieName | SymbolName;
+
+type NonVehicleActorDataModel = CharacterDataModel | AdversaryDataModel;
 
 type DicePool = {
-	dice: Record<DieString, number>;
-	symbols: Record<SymbolString, number>;
+	dice: PartialRecord<DieName, number>;
+	symbols: PartialRecord<SymbolName, number>;
 	usesSuperCharacteristic: boolean;
 };
 
-const SORT_ORDER: Record<DieString | SymbolString, number> = {
-	// Proficiency & Challenge Dice
-	P: 0,
-	C: 0,
-	// Ability & Difficulty Dice
-	A: 1,
-	D: 1,
-	// Boost & Setback Dice
-	B: 2,
-	S: 2,
-	// Success & Failure Symbols
-	s: 3,
-	f: 3,
-	// Triumph & Despair Symbols
-	t: 4,
-	d: 4,
-	// Advantage & Threat Symbols
-	a: 5,
-	h: 5,
+const SORT_ORDER: Record<PoolEntity, number> = {
+	Proficiency: 0,
+	Ability: 1,
+	Boost: 2,
+
+	Success: 3,
+	Triumph: 4,
+	Advantagge: 5,
+
+	Challenge: 0,
+	Difficulty: 1,
+	Setback: 2,
+
+	Failure: 3,
+	Despair: 4,
+	Threat: 5,
 };
 
-/**
- * A mapping of dice font glyphs to their corresponding dice formula strings.
- */
-const ICON_TO_FORMULA: Record<DieString, string> = {
-	A: 'dA', // Ability Dice
-	P: 'dP', // Proficiency Dice
-	B: 'dB', // Boost Dice
-	D: 'dI', // Difficulty Dice
-	C: 'dC', // Challenge Dice
-	S: 'dS', // Setback Dice
-};
+const USE_UNCOUPLED_SKILLS = CONFIG.genesys.uncoupleSkillsFromCharacteristics;
+const USE_SUPER_CHARACTERISTICS = CONFIG.genesys.useSuperCharacteristics;
+const CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS = CONFIG.genesys.showChanceToSucceedFromSimulations.amountOfRolls;
+const USE_CHANCE_TO_SUCCEED_BY_PERMUTATION = game.workers.get && CONFIG.genesys.showChanceToSucceedFromPermutations;
+const USE_CHANCE_TO_SUCCEED = USE_CHANCE_TO_SUCCEED_BY_PERMUTATION || CONFIG.genesys.showChanceToSucceedFromSimulations.enabled;
 
 const context = inject<DicePromptContext>(RootContext)!;
 
-const positiveDice = ref<DieString[]>([]);
-const negativeDice = ref<DieString[]>(new Array(context.startingDifficulty).fill('D'));
-const positiveSymbols = ref<SymbolString[]>([]);
-const negativeSymbols = ref<SymbolString[]>([]);
-const selectedCharacteristic = ref<Characteristic | '-'>(!context.rollUnskilled ? context.skills.find((s) => s.id === context.startingSkillId)?.systemData.characteristic ?? '-' : context.rollUnskilled);
-const selectedSkill = ref<GenesysItem<SkillDataModel> | undefined>(!context.rollUnskilled ? context.skills.find((s) => s.id === context.startingSkillId) : undefined);
-const successApproximation = ref('');
+const positiveDice = ref<DieName[]>([]);
+const negativeDice = ref<DieName[]>([]);
+const positiveSymbols = ref<SymbolName[]>([]);
+const negativeSymbols = ref<SymbolName[]>([]);
+const availableSkills = ref<GenesysItem<SkillDataModel>[]>([]);
+const selectedSkill = ref<AlsoNone<GenesysItem<SkillDataModel>>>();
+const selectedCharacteristic = ref<AlsoNone<Characteristic>>(); /// Might need to change this to not use undefined
+const probabilityOfSuccess = ref<AlsoNone<string>>();
 
-const availableSkills = computed<GenesysItem<SkillDataModel>[]>(() => toRaw(context.skills).sort(sortSkills));
-const canChangeCharacteristic = computed(() => !selectedSkill.value || (game.settings.get(SETTINGS_NAMESPACE, KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS) as boolean));
-
-const USE_CHANCE_TO_SUCCEED_BY_SIMULATION = Math.floor(game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION) as number);
-const USE_CHANCE_TO_SUCCEED_BY_PERMUTATION = game.workers.get && (game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) as boolean);
-const USE_CHANCE_TO_SUCCEED = USE_CHANCE_TO_SUCCEED_BY_PERMUTATION || USE_CHANCE_TO_SUCCEED_BY_SIMULATION > 0;
+const useSuperCharacteristic = ref(false);
 
 let currentDicePool: DicePool = {
-	dice: {} as Record<DieString, number>,
-	symbols: {} as Record<SymbolString, number>,
+	dice: {},
+	symbols: {},
 	usesSuperCharacteristic: false,
 };
 
-const allowSuperCharacteristics = game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS) as boolean;
+onMounted(() => {
+	const actor = toRaw(context.actor);
+	negativeDice.value = new Array<DieName>(context.difficulty).fill('Difficulty');
+	availableSkills.value = actor ? (actor.items.filter((item) => item.type === 'skill') as GenesysItem<SkillDataModel>[]).sort(sortSkills) : [];
+	selectedSkill.value = availableSkills.value.find((skill) => !!context.skill && skill.name === context.skill) as AlsoNone<GenesysItem<SkillDataModel>>;
+	selectedCharacteristic.value = selectedSkill.value?.systemData.characteristic ?? context.rollUnskilled;
 
-onMounted(recalculateDicePool);
-
-function selectDefaultCharacteristicForSkill(event: Event) {
-	const target = event.currentTarget as HTMLSelectElement;
-
-	const skill = toRaw(context.skills).find((s) => s.id === target.value);
-	if (!skill) {
-		selectedSkill.value = undefined;
-	} else {
-		selectedCharacteristic.value = skill.systemData.characteristic;
-		selectedSkill.value = skill;
+	if (actor) {
+		recalculateDicePool();
 	}
+
+	approximateProbability();
+});
+
+function onSkillChange(event: Event) {
+	const selectedOption = event.currentTarget as HTMLSelectElement;
+
+	selectedSkill.value = availableSkills.value.find((s) => s.id === selectedOption.value) as AlsoNone<GenesysItem<SkillDataModel>>;
+	selectedCharacteristic.value = selectedSkill.value?.systemData.characteristic;
 
 	recalculateDicePool();
 }
 
-function characteristicChanged(event: Event) {
-	const target = event.currentTarget as HTMLSelectElement;
+function onCharacteristicChange(event: Event) {
+	const selectedOption = event.currentTarget as HTMLSelectElement;
 
-	selectedCharacteristic.value = target.value as Characteristic | '-';
+	selectedCharacteristic.value = selectedOption.value !== '-' ? (selectedOption.value as Characteristic) : undefined;
 
 	recalculateDicePool();
 }
@@ -111,16 +134,16 @@ function characteristicChanged(event: Event) {
 /**
  * Sorting function for sorting dice & symbol arrays.
  */
-function sortDice(a: DieString | SymbolString, b: DieString | SymbolString) {
-	return SORT_ORDER[a] - SORT_ORDER[b];
+function sortPoolEntities(f: PoolEntity, s: PoolEntity) {
+	return SORT_ORDER[f] - SORT_ORDER[s];
 }
 
 /**
  * Utility method to sort skills alphabetically.
  */
-function sortSkills(a: GenesysItem, b: GenesysItem) {
-	const nameA = a.name.toLowerCase();
-	const nameB = b.name.toLowerCase();
+function sortSkills(f: GenesysItem, s: GenesysItem) {
+	const nameA = f.name.toLowerCase();
+	const nameB = s.name.toLowerCase();
 
 	if (nameA < nameB) {
 		return -1;
@@ -133,13 +156,13 @@ function sortSkills(a: GenesysItem, b: GenesysItem) {
 }
 
 /**
- * Reduce arrays of dice & symbols into an object mapping the die type to the number of times it appears in the array.
+ * Reduce arrays of dice or symbols into an object mapping the entity to the number of times it appears in the array.
  */
-function reduceDice(pool: Record<DieString | SymbolString, number | undefined>, die: DieString | SymbolString) {
-	if (pool[die] === undefined) {
-		pool[die] = 1;
+function reducePool(pool: PartialRecord<PoolEntity, number>, entity: PoolEntity) {
+	if (pool[entity] === undefined) {
+		pool[entity] = 1;
 	} else {
-		pool[die]! += 1;
+		pool[entity]! += 1;
 	}
 
 	return pool;
@@ -150,133 +173,130 @@ function reduceDice(pool: Record<DieString | SymbolString, number | undefined>, 
  */
 function recalculateDicePool() {
 	// Do nothing if the characteristic & skill are both unselected.
-	if (selectedCharacteristic.value === '-' && !selectedSkill.value) {
+	if (!selectedCharacteristic.value && !selectedSkill.value) {
 		return;
 	}
 
-	const characteristicValue = selectedCharacteristic.value !== '-' ? ((context.actor.system as any).characteristics[selectedCharacteristic.value] as number) : 0;
+	const actor = context.actor as GenesysActor<NonVehicleActorDataModel>;
+
+	const characteristicValue = actor.systemData.characteristics[selectedCharacteristic.value!];
 	let skillValue = selectedSkill.value?.systemData.rank ?? 0;
 
-	if (context.actor.type === 'minion' && selectedSkill.value) {
-		skillValue = Math.max(0, (context.actor.system as MinionDataModel).remainingMembers - 1);
+	if (actor.type === 'minion' && selectedSkill.value) {
+		skillValue = Math.max(0, (actor.systemData as MinionDataModel).remainingMembers - 1);
 	}
 
 	// Clear the Ability & Proficiency dice in the pool, but leave Boost Dice alone.
-	const boostDice = positiveDice.value.filter((d) => d === 'B');
+	const boostDice = positiveDice.value.filter((dice) => dice === 'Boost');
 
-	const yellow = Math.min(characteristicValue, skillValue);
-	const green = Math.max(characteristicValue, skillValue) - yellow;
+	const proficiencyDice = Math.min(characteristicValue, skillValue);
+	const abilityDice = Math.max(characteristicValue, skillValue) - proficiencyDice;
 
-	positiveDice.value = [...new Array(yellow).fill('P'), ...new Array(green).fill('A'), ...boostDice];
-
-	approximateProbability();
-}
-
-function addDie(dieType: DieString) {
-	if (['A', 'P', 'B'].includes(dieType)) {
-		positiveDice.value.push(dieType);
-		positiveDice.value.sort(sortDice);
-	} else {
-		negativeDice.value.push(dieType);
-		negativeDice.value.sort(sortDice);
-	}
+	positiveDice.value = [...new Array<DieName>(proficiencyDice).fill('Proficiency'), ...new Array<DieName>(abilityDice).fill('Ability'), ...boostDice];
 
 	approximateProbability();
 }
 
-function removeDie(dieType: DieString) {
-	let diceArrayRef = negativeDice;
-	if (['A', 'P', 'B'].includes(dieType)) {
-		//eslint-disable-next-line vue/no-ref-as-operand
-		diceArrayRef = positiveDice;
-	}
-	let index = diceArrayRef.value.findIndex((s) => s === dieType);
-	diceArrayRef.value.splice(index, 1);
+function addDie(dieName: DieName) {
+	const dice = DieType[dieName].CATEGORY === 'positive' ? positiveDice : negativeDice;
+
+	dice.value.push(dieName);
+	dice.value.sort(sortPoolEntities);
 
 	approximateProbability();
 }
 
-function addSymbol(symbolType: SymbolString) {
-	if (['a', 's', 't'].includes(symbolType)) {
-		positiveSymbols.value.push(symbolType);
-		positiveSymbols.value.sort(sortDice);
-	} else {
-		negativeSymbols.value.push(symbolType);
-		negativeSymbols.value.sort(sortDice);
-	}
+function removeDie(dieName: DieName, index: number) {
+	const dice = DieType[dieName].CATEGORY === 'positive' ? positiveDice : negativeDice;
+
+	dice.value.splice(index, 1);
 
 	approximateProbability();
 }
 
-function removeSymbol(symbolType: SymbolString) {
-	let symbolArrayRef = negativeSymbols;
-	if (['a', 's', 't'].includes(symbolType)) {
-		//eslint-disable-next-line vue/no-ref-as-operand
-		symbolArrayRef = positiveSymbols;
-	}
-	let index = symbolArrayRef.value.findIndex((s) => s === symbolType);
-	symbolArrayRef.value.splice(index, 1);
+function addSymbol(symbolName: SymbolName) {
+	const symbols = SymbolType[symbolName].CATEGORY === 'positive' ? positiveSymbols : negativeSymbols;
+
+	symbols.value.push(symbolName);
+	symbols.value.sort(sortPoolEntities);
 
 	approximateProbability();
 }
 
-function upgradeDie(type: UpgradeType) {
-	let diceArrayRef = negativeDice;
-	let baseDie: DieString = 'D';
-	let upgradedDie: DieString = 'C';
+function removeSymbol(symbolName: SymbolName, index: number) {
+	const symbols = SymbolType[symbolName].CATEGORY === 'positive' ? positiveSymbols : negativeSymbols;
 
-	if (type === UpgradeType.Positive) {
-		//eslint-disable-next-line vue/no-ref-as-operand
-		diceArrayRef = positiveDice;
-		baseDie = 'A';
-		upgradedDie = 'P';
+	symbols.value.splice(index, 1);
+
+	approximateProbability();
+}
+
+function upgradeDie(dieCategory: DieCategory) {
+	let dice = negativeDice;
+	let baseDie: DieName = 'Difficulty';
+	let upgradedDie: DieName = 'Challenge';
+
+	if (dieCategory === 'positive') {
+		dice = positiveDice;
+		baseDie = 'Ability';
+		upgradedDie = 'Proficiency';
 	}
 
-	const index = diceArrayRef.value.findIndex((d) => d === baseDie);
+	const index = dice.value.findIndex((d) => d === baseDie);
 	if (index >= 0) {
-		diceArrayRef.value[index] = upgradedDie;
+		dice.value[index] = upgradedDie;
 	} else {
-		diceArrayRef.value.push(baseDie);
-		diceArrayRef.value.sort(sortDice);
+		dice.value.push(baseDie);
+		dice.value.sort(sortPoolEntities);
 	}
 
 	approximateProbability();
 }
 
-function downgradeDie(type: UpgradeType) {
-	let diceArrayRef = negativeDice;
-	let baseDie: DieString = 'C';
-	let downgradedDie: DieString = 'D';
+function downgradeDie(dieCategory: DieCategory) {
+	let dice = negativeDice;
+	let baseDie: DieName = 'Challenge';
+	let downgradedDie: DieName = 'Difficulty';
 
-	if (type === UpgradeType.Positive) {
-		//eslint-disable-next-line vue/no-ref-as-operand
-		diceArrayRef = positiveDice;
-		baseDie = 'P';
-		downgradedDie = 'A';
+	if (dieCategory === 'positive') {
+		dice = positiveDice;
+		baseDie = 'Proficiency';
+		downgradedDie = 'Ability';
 	}
 
-	const index = diceArrayRef.value.findIndex((d) => d === baseDie);
+	const index = dice.value.findIndex((d) => d === baseDie);
 	if (index >= 0) {
-		diceArrayRef.value[index] = downgradedDie;
-		diceArrayRef.value.sort(sortDice);
+		dice.value[index] = downgradedDie;
+		dice.value.sort(sortPoolEntities);
 	}
 
 	approximateProbability();
 }
 
 function compileDicePool() {
-	const dice = positiveDice.value.concat(negativeDice.value).reduce(reduceDice, {} as Record<DieString | SymbolString, number>);
-	const symbols = positiveSymbols.value.concat(negativeSymbols.value).reduce(reduceDice, {} as Record<DieString | SymbolString, number>);
+	const dice: PartialRecord<DieName, number> = positiveDice.value.concat(negativeDice.value).reduce(reducePool, {});
+	const symbols: PartialRecord<SymbolName, number> = positiveSymbols.value.concat(negativeSymbols.value).reduce(reducePool, {});
 
-	const useSuperCharacteristic = allowSuperCharacteristics && 'superCharacteristics' in context.actor.systemData && (context.actor.systemData.superCharacteristics as Set<Characteristic | '-'>).has(selectedCharacteristic.value);
+	let poolHasSuperCharacteristic = false;
+	if (USE_SUPER_CHARACTERISTICS) {
+		if (context.actor) {
+			const actor = context.actor as GenesysActor<NonVehicleActorDataModel>;
+			poolHasSuperCharacteristic = !!selectedCharacteristic.value && actor.systemData.superCharacteristics.has(selectedCharacteristic.value);
+		} else {
+			poolHasSuperCharacteristic = useSuperCharacteristic.value;
+		}
+	}
 
 	const formula = Object.keys(dice)
-		.map((d) => `${dice[d as DieString]}${ICON_TO_FORMULA[d as DieString]}${d == 'P' && useSuperCharacteristic ? 'X' : ''}`)
+		.map((dieKey) => {
+			const dieName = dieKey as DieName;
+			return `${dice[dieName]}${DieType[dieName].FORMULA}${dieName == 'Proficiency' && poolHasSuperCharacteristic ? 'X' : ''}`;
+		})
 		.join('+');
 
 	return {
 		formula: formula === '' ? '0' : formula,
-		usesSuperCharacteristic: (useSuperCharacteristic && dice['P']) as boolean,
+		usesSuperCharacteristic: poolHasSuperCharacteristic && !!dice['Proficiency'],
 		dice,
 		symbols,
 	};
@@ -287,13 +307,17 @@ async function rollPool() {
 
 	const baseRollData = {
 		actor: toRaw(context.actor),
-		characteristic: selectedCharacteristic.value === '-' ? undefined : (selectedCharacteristic.value as Characteristic),
+		characteristic: selectedCharacteristic.value,
 		skillId: selectedSkill.value?.id ?? '-',
 		formula,
-		symbols: symbols as Record<string, number>,
+		symbols: symbols,
 	};
 
 	switch (context.rollType) {
+		case RollType.Simple:
+			await GenesysRoller.skillRoll(baseRollData);
+			break;
+
 		case RollType.Attack:
 			await GenesysRoller.attackRoll({
 				...baseRollData,
@@ -324,7 +348,7 @@ function hasSameChanceToSucceed(firstDicePool: DicePool, secondDicePool: DicePoo
 	}
 
 	for (const [diceKey, diceAmount] of firstPoolDiceEntries) {
-		if (secondDicePool.dice[diceKey as DieString] !== diceAmount) {
+		if (secondDicePool.dice[diceKey as DieName] !== diceAmount) {
 			return false;
 		}
 	}
@@ -334,8 +358,8 @@ function hasSameChanceToSucceed(firstDicePool: DicePool, secondDicePool: DicePoo
 	}
 
 	// Advantages and threats do not impact the chance to succeed so we ignore them.
-	const firstPoolNetSuccesses = (firstDicePool.symbols['s'] ?? 0) + (firstDicePool.symbols['t'] ?? 0) - (firstDicePool.symbols['f'] ?? 0) - (firstDicePool.symbols['d'] ?? 0);
-	const secondPoolNetSuccesses = (secondDicePool.symbols['s'] ?? 0) + (secondDicePool.symbols['t'] ?? 0) - (secondDicePool.symbols['f'] ?? 0) - (secondDicePool.symbols['d'] ?? 0);
+	const firstPoolNetSuccesses = (firstDicePool.symbols.Success ?? 0) + (firstDicePool.symbols.Triumph ?? 0) - (firstDicePool.symbols.Failure ?? 0) - (firstDicePool.symbols.Despair ?? 0);
+	const secondPoolNetSuccesses = (secondDicePool.symbols.Success ?? 0) + (secondDicePool.symbols.Triumph ?? 0) - (secondDicePool.symbols.Failure ?? 0) - (secondDicePool.symbols.Despair ?? 0);
 
 	return firstPoolNetSuccesses === secondPoolNetSuccesses;
 }
@@ -349,17 +373,17 @@ async function approximateProbability() {
 
 	const previousDicePool = currentDicePool;
 	currentDicePool = {
-		dice: dice as Record<DieString, number>,
-		symbols: symbols as Record<SymbolString, number>,
+		dice: dice,
+		symbols: symbols,
 		usesSuperCharacteristic,
 	};
 
 	// Slight optimization for a pool without dice.
 	if (!Object.keys(dice).length) {
-		const totalSuccesses = (symbols.s ?? 0) + (symbols.t ?? 0);
-		const totalFailures = (symbols.f ?? 0) + (symbols.d ?? 0);
+		const totalSuccesses = (symbols.Success ?? 0) + (symbols.Triumph ?? 0);
+		const totalFailures = (symbols.Failure ?? 0) + (symbols.Despair ?? 0);
 		const deterministicResult = totalSuccesses > totalFailures ? 100 : 0;
-		successApproximation.value = deterministicResult.toFixed(2);
+		probabilityOfSuccess.value = deterministicResult.toFixed(2);
 		return;
 	}
 
@@ -378,7 +402,7 @@ async function approximateProbability() {
 		});
 	} else {
 		const simulation = await Promise.all(
-			[...Array(USE_CHANCE_TO_SUCCEED_BY_SIMULATION)].map(async () => {
+			[...Array(CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS)].map(async () => {
 				const roll = new Roll(formula, { symbols });
 				const result = await roll.evaluate({ async: true });
 				return GenesysRoller.parseRollResults(result);
@@ -388,7 +412,7 @@ async function approximateProbability() {
 		chanceToSucceed = successfulRolls.length / simulation.length;
 	}
 
-	successApproximation.value = (Math.round(chanceToSucceed * 10000) / 100).toFixed(2);
+	probabilityOfSuccess.value = (Math.round(chanceToSucceed * 10000) / 100).toFixed(2);
 }
 </script>
 
@@ -404,75 +428,78 @@ async function approximateProbability() {
 		<div class="preview">
 			<!-- Positive Pool -->
 			<div class="positive">
-				<div v-for="(die, index) in positiveDice" :key="index" @click="removeDie(die)" :class="`die die-${die}`">{{ die }}</div>
-				<div v-for="(symbol, index) in positiveSymbols" :key="index" @click="removeSymbol(symbol)" class="symbol">{{ symbol }}</div>
+				<div v-for="(dieName, index) in positiveDice" :key="index" @click="removeDie(dieName, index)" :class="`die die-${dieName}`">{{ DieType[dieName].GLYPH }}</div>
+				<div v-for="(symbolName, index) in positiveSymbols" :key="index" @click="removeSymbol(symbolName, index)" class="symbol">{{ SymbolType[symbolName].GLYPH }}</div>
 			</div>
 
 			<!-- Negative Pool -->
 			<div class="negative">
-				<div v-for="(die, index) in negativeDice" :key="index" @click="removeDie(die)" :class="`die die-${die}`">{{ die }}</div>
-				<div v-for="(symbol, index) in negativeSymbols" :key="index" @click="removeSymbol(symbol)" class="symbol">{{ symbol }}</div>
+				<div v-for="(dieName, index) in negativeDice" :key="index" @click="removeDie(dieName, index)" :class="`die die-${dieName}`">{{ DieType[dieName].GLYPH }}</div>
+				<div v-for="(symbolName, index) in negativeSymbols" :key="index" @click="removeSymbol(symbolName, index)" class="symbol">{{ SymbolType[symbolName].GLYPH }}</div>
 			</div>
 
 			<!-- Dice Box -->
 			<div class="dice-box">
 				<!-- Add Positive Dice -->
-				<a @click="addDie('A')" data-die="A">A<i class="fas fa-plus"></i></a>
-				<a @click="addDie('P')" data-die="P">P<i class="fas fa-plus"></i></a>
-				<a @click="addDie('B')" data-die="B">B<i class="fas fa-plus"></i></a>
+				<a @click="addDie('Ability')" data-die="Ability">A<i class="fas fa-plus"></i></a>
+				<a @click="addDie('Proficiency')" data-die="Proficiency">P<i class="fas fa-plus"></i></a>
+				<a @click="addDie('Boost')" data-die="Boost">B<i class="fas fa-plus"></i></a>
 
 				<!-- Upgrade/Downgrade Positive Dice -->
-				<a @click="upgradeDie(UpgradeType.Positive)" data-die="A">A<i class="fas fa-arrow-up"></i></a>
-				<a @click="downgradeDie(UpgradeType.Positive)" data-die="P">P<i class="fas fa-arrow-down"></i></a>
+				<a @click="upgradeDie('positive')" data-die="Ability">A<i class="fas fa-arrow-up"></i></a>
+				<a @click="downgradeDie('positive')" data-die="Proficiency">P<i class="fas fa-arrow-down"></i></a>
 				<span />
 
 				<!-- Add Negative Dice -->
-				<a @click="addDie('D')" data-die="D">D<i class="fas fa-plus"></i></a>
-				<a @click="addDie('C')" data-die="C">C<i class="fas fa-plus"></i></a>
-				<a @click="addDie('S')" data-die="S">S<i class="fas fa-plus"></i></a>
+				<a @click="addDie('Difficulty')" data-die="Difficulty">D<i class="fas fa-plus"></i></a>
+				<a @click="addDie('Challenge')" data-die="Challenge">C<i class="fas fa-plus"></i></a>
+				<a @click="addDie('Setback')" data-die="Setback">S<i class="fas fa-plus"></i></a>
 
 				<!-- Upgrade/Downgrade Negative Dice -->
-				<a @click="upgradeDie(UpgradeType.Negative)" data-die="D">D<i class="fas fa-arrow-up"></i></a>
-				<a @click="downgradeDie(UpgradeType.Negative)" data-die="C">C<i class="fas fa-arrow-down"></i></a>
+				<a @click="upgradeDie('negative')" data-die="Difficulty">D<i class="fas fa-arrow-up"></i></a>
+				<a @click="downgradeDie('negative')" data-die="Challenge">C<i class="fas fa-arrow-down"></i></a>
 				<span />
 
 				<!-- Add Positive Symbols -->
-				<a @click="addSymbol('a')">a<i class="fas fa-plus"></i></a>
-				<a @click="addSymbol('s')">s<i class="fas fa-plus"></i></a>
-				<a @click="addSymbol('t')">t<i class="fas fa-plus"></i></a>
+				<a @click="addSymbol('Advantagge')">a<i class="fas fa-plus"></i></a>
+				<a @click="addSymbol('Success')">s<i class="fas fa-plus"></i></a>
+				<a @click="addSymbol('Triumph')">t<i class="fas fa-plus"></i></a>
 
 				<!-- Add Negative Symbols -->
-				<a @click="addSymbol('h')">h<i class="fas fa-plus"></i></a>
-				<a @click="addSymbol('f')">f<i class="fas fa-plus"></i></a>
-				<a @click="addSymbol('d')">d<i class="fas fa-plus"></i></a>
+				<a @click="addSymbol('Threat')">h<i class="fas fa-plus"></i></a>
+				<a @click="addSymbol('Failure')">f<i class="fas fa-plus"></i></a>
+				<a @click="addSymbol('Despair')">d<i class="fas fa-plus"></i></a>
 			</div>
 		</div>
 
-		<!-- Characteristic Selection -->
-		<select name="characteristic" :value="selectedCharacteristic" :disabled="!canChangeCharacteristic" @change="characteristicChanged">
-			<option value="-">—</option>
-			<option :value="Characteristic.Brawn"><Localized label="Genesys.Characteristics.Brawn" /></option>
-			<option :value="Characteristic.Agility"><Localized label="Genesys.Characteristics.Agility" /></option>
-			<option :value="Characteristic.Intellect"><Localized label="Genesys.Characteristics.Intellect" /></option>
-			<option :value="Characteristic.Cunning"><Localized label="Genesys.Characteristics.Cunning" /></option>
-			<option :value="Characteristic.Willpower"><Localized label="Genesys.Characteristics.Willpower" /></option>
-			<option :value="Characteristic.Presence"><Localized label="Genesys.Characteristics.Presence" /></option>
-		</select>
+		<!-- -------------------------- Add class behavior -->
+		<div v-if="context.actor" class="characteristic-skill-row">
+			<!-- Characteristic Selection -->
+			<select name="characteristic" :value="selectedCharacteristic ?? '-'" :disabled="selectedSkill && !USE_UNCOUPLED_SKILLS" @change="onCharacteristicChange">
+				<option value="-">—</option>
+				<option v-for="[charLabel, charValue] in Object.entries(Characteristic)" :key="charValue" :value="charValue"><Localized :label="`Genesys.Characteristics.${charLabel}`" /></option>
+			</select>
 
-		<!-- Skill Selection -->
-		<select name="skill" :value="selectedSkill?.id ?? '-'" @change="selectDefaultCharacteristicForSkill">
-			<option value="-">—</option>
-			<option v-for="skill in availableSkills" :key="skill.id" :value="skill.id">{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.systemData.characteristic.capitalize()}`" />)</option>
-		</select>
+			<!-- Skill Selection -->
+			<select name="skill" :value="selectedSkill?.id ?? '-'" @change="onSkillChange">
+				<option value="-">—</option>
+				<option v-for="skill in availableSkills" :key="skill.id" :value="skill.id">{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.systemData.characteristic.capitalize()}`" />)</option>
+			</select>
+		</div>
+		<!-- -------------------------------------CHANGE STYLING -->
+		<div v-else-if="USE_SUPER_CHARACTERISTICS" class="super-characteristic-row">
+			<input type="checkbox" v-model="useSuperCharacteristic" />
+			<label><Localized label="Genesys.DicePrompt.UseSuperCharacteristic" /></label>
+		</div>
 
-		<div v-if="USE_CHANCE_TO_SUCCEED" class="approximation">
+		<div v-if="USE_CHANCE_TO_SUCCEED" class="chance-to-succeed">
 			<label>
 				<i class="fas fa-circle-info" :data-tooltip="`Genesys.DicePrompt.ChanceToSucceedBy${USE_CHANCE_TO_SUCCEED_BY_PERMUTATION ? 'Permutation' : 'Simulation'}Disclaimer`"></i>
 				<Localized label="Genesys.DicePrompt.ChanceToSucceed" />
 			</label>
 
-			<i v-if="successApproximation === ''" class="fas fa-spinner fa-spin"></i>
-			<span v-else>{{ successApproximation }}%</span>
+			<i v-if="!probabilityOfSuccess" class="fas fa-spinner fa-spin"></i>
+			<span v-else>{{ probabilityOfSuccess }}%</span>
 		</div>
 
 		<!-- Roll Button -->
@@ -520,6 +547,10 @@ async function approximateProbability() {
 		grid-row: 2 / span 1;
 	}
 
+	.characteristic-skill-row {
+		display: contents;
+	}
+
 	[name='characteristic'],
 	[name='skill'] {
 		grid-row: 3 / span 1;
@@ -533,7 +564,16 @@ async function approximateProbability() {
 		grid-column: 2 / span 2;
 	}
 
-	.approximation {
+	.super-characteristic-row {
+		grid-row: 3 / span 1;
+		grid-column: 1 / span all;
+
+		& > * {
+			vertical-align: middle;
+		}
+	}
+
+	.chance-to-succeed {
 		grid-column: 1 / span 2;
 		grid-row: 4 / span 1;
 
@@ -614,19 +654,19 @@ async function approximateProbability() {
 				align-items: flex-start;
 				font-family: 'Genesys Symbols', sans-serif;
 
-				&[data-die='A'] {
+				&[data-die='Ability'] {
 					color: colors.$die-ability;
 				}
 
-				&[data-die='P'] {
+				&[data-die='Proficiency'] {
 					color: colors.$die-proficiency;
 				}
 
-				&[data-die='B'] {
+				&[data-die='Boost'] {
 					color: colors.$die-boost;
 				}
 
-				&[data-die='D'] {
+				&[data-die='Difficulty'] {
 					-webkit-text-stroke: 0.5px white;
 					text-stroke: 0.5px white;
 					color: colors.$die-difficulty;
@@ -637,7 +677,7 @@ async function approximateProbability() {
 					}
 				}
 
-				&[data-die='C'] {
+				&[data-die='Challenge'] {
 					-webkit-text-stroke: 0.5px white;
 					text-stroke: 0.5px white;
 					color: colors.$die-challenge;
@@ -648,7 +688,7 @@ async function approximateProbability() {
 					}
 				}
 
-				&[data-die='S'] {
+				&[data-die='Setback'] {
 					-webkit-text-stroke: 0.5px white;
 					text-stroke: 0.5px white;
 					color: colors.$die-setback;
@@ -690,29 +730,29 @@ async function approximateProbability() {
 			font-size: 2.5rem;
 
 			// Ability & Difficulty Die
-			&.die-A {
+			&.die-Ability {
 				color: colors.$die-ability;
 			}
 
-			&.die-D {
+			&.die-Difficulty {
 				color: colors.$die-difficulty;
 			}
 
 			// Proficiency Die
-			&.die-P {
+			&.die-Proficiency {
 				color: colors.$die-proficiency;
 			}
 
-			&.die-C {
+			&.die-Challenge {
 				color: colors.$die-challenge;
 			}
 
 			// Boost Die
-			&.die-B {
+			&.die-Boost {
 				color: colors.$die-boost;
 			}
 
-			&.die-S {
+			&.die-Setback {
 				color: colors.$die-setback;
 			}
 		}

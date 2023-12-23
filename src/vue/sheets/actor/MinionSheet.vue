@@ -22,7 +22,7 @@ const editLabel = game.i18n.localize('Genesys.Labels.Edit');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 
 async function rollSkill(skill: GenesysItem<SkillDataModel>) {
-	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.id);
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), skill.name);
 }
 
 async function editItem(item: GenesysItem) {
