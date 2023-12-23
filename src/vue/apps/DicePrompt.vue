@@ -89,7 +89,7 @@ const positiveSymbols = ref<SymbolName[]>([]);
 const negativeSymbols = ref<SymbolName[]>([]);
 const availableSkills = ref<GenesysItem<SkillDataModel>[]>([]);
 const selectedSkill = ref<AlsoNone<GenesysItem<SkillDataModel>>>();
-const selectedCharacteristic = ref<AlsoNone<Characteristic>>(); /// Might need to change this to not use undefined
+const selectedCharacteristic = ref<AlsoNone<Characteristic>>();
 const probabilityOfSuccess = ref<AlsoNone<string>>();
 
 const useSuperCharacteristic = ref(false);
@@ -179,7 +179,7 @@ function recalculateDicePool() {
 
 	const actor = context.actor as GenesysActor<NonVehicleActorDataModel>;
 
-	const characteristicValue = actor.systemData.characteristics[selectedCharacteristic.value!];
+	const characteristicValue = selectedCharacteristic.value ? actor.systemData.characteristics[selectedCharacteristic.value] : 0;
 	let skillValue = selectedSkill.value?.systemData.rank ?? 0;
 
 	if (actor.type === 'minion' && selectedSkill.value) {
@@ -237,6 +237,7 @@ function upgradeDie(dieCategory: DieCategory) {
 	let upgradedDie: DieName = 'Challenge';
 
 	if (dieCategory === 'positive') {
+		// eslint-disable-next-line vue/no-ref-as-operand
 		dice = positiveDice;
 		baseDie = 'Ability';
 		upgradedDie = 'Proficiency';
@@ -259,6 +260,7 @@ function downgradeDie(dieCategory: DieCategory) {
 	let downgradedDie: DieName = 'Difficulty';
 
 	if (dieCategory === 'positive') {
+		//eslint-disable-next-line vue/no-ref-as-operand
 		dice = positiveDice;
 		baseDie = 'Proficiency';
 		downgradedDie = 'Ability';
@@ -277,20 +279,19 @@ function compileDicePool() {
 	const dice: PartialRecord<DieName, number> = positiveDice.value.concat(negativeDice.value).reduce(reducePool, {});
 	const symbols: PartialRecord<SymbolName, number> = positiveSymbols.value.concat(negativeSymbols.value).reduce(reducePool, {});
 
-	let poolHasSuperCharacteristic = false;
+	let poolHasSuperCharacteristic = useSuperCharacteristic.value;
 	if (USE_SUPER_CHARACTERISTICS) {
 		if (context.actor) {
 			const actor = context.actor as GenesysActor<NonVehicleActorDataModel>;
 			poolHasSuperCharacteristic = !!selectedCharacteristic.value && actor.systemData.superCharacteristics.has(selectedCharacteristic.value);
-		} else {
-			poolHasSuperCharacteristic = useSuperCharacteristic.value;
 		}
 	}
 
 	const formula = Object.keys(dice)
 		.map((dieKey) => {
 			const dieName = dieKey as DieName;
-			return `${dice[dieName]}${DieType[dieName].FORMULA}${dieName == 'Proficiency' && poolHasSuperCharacteristic ? 'X' : ''}`;
+			const explodeDice = dieName === 'Proficiency' && poolHasSuperCharacteristic ? 'X' : '';
+			return `${dice[dieName]}${DieType[dieName].FORMULA}${explodeDice}`;
 		})
 		.join('+');
 
@@ -472,7 +473,6 @@ async function approximateProbability() {
 			</div>
 		</div>
 
-		<!-- -------------------------- Add class behavior -->
 		<div v-if="context.actor" class="characteristic-skill-row">
 			<!-- Characteristic Selection -->
 			<select name="characteristic" :value="selectedCharacteristic ?? '-'" :disabled="selectedSkill && !USE_UNCOUPLED_SKILLS" @change="onCharacteristicChange">
@@ -486,7 +486,7 @@ async function approximateProbability() {
 				<option v-for="skill in availableSkills" :key="skill.id" :value="skill.id">{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.systemData.characteristic.capitalize()}`" />)</option>
 			</select>
 		</div>
-		<!-- -------------------------------------CHANGE STYLING -->
+
 		<div v-else-if="USE_SUPER_CHARACTERISTICS" class="super-characteristic-row">
 			<input type="checkbox" v-model="useSuperCharacteristic" />
 			<label><Localized label="Genesys.DicePrompt.UseSuperCharacteristic" /></label>
