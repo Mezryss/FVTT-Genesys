@@ -15,8 +15,6 @@ import SkillDataModel from '@/item/data/SkillDataModel';
 import MinionDataModel from '@/actor/data/MinionDataModel';
 import { Characteristic } from '@/data/Characteristics';
 import GenesysRoller from '@/dice/GenesysRoller';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_SUPER_CHARACTERISTICS } from '@/settings/campaign';
 
 export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysActor> {
 	initiativeSkill?: InitiativeSkill;
@@ -59,8 +57,7 @@ export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysAc
 		const yellow = Math.min(characteristicValue, skillValue);
 		const green = Math.max(characteristicValue, skillValue) - yellow;
 
-		const allowSuperCharacteristics = game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS) as boolean;
-		const useSuperCharacteristic = allowSuperCharacteristics && system.superCharacteristics.has(characteristic);
+		const useSuperCharacteristic = CONFIG.genesys.useSuperCharacteristics && system.superCharacteristics.has(characteristic);
 
 		return new Roll(`${yellow}dP${useSuperCharacteristic ? 'X' : ''}+${green}dA`);
 	}

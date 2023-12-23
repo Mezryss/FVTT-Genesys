@@ -9,8 +9,6 @@
 import GenesysCombat, { InitiativeSkill } from '@/combat/GenesysCombat';
 import GenesysCombatant from '@/combat/GenesysCombatant';
 import SkillDataModel from '@/item/data/SkillDataModel';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_SKILLS_COMPENDIUM } from '@/settings/campaign';
 import GenesysItem from '@/item/GenesysItem';
 import { Characteristic } from '@/data/Characteristics';
 
@@ -23,8 +21,7 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 
 	async initiativeSkills() {
 		if (!this.#initiativeSkills || this.#initiativeSkills.length === 0) {
-			const compendiumId = game.settings.get(SETTINGS_NAMESPACE, KEY_SKILLS_COMPENDIUM) as string;
-			const compendium = game.packs.get(compendiumId);
+			const compendium = game.packs.get(CONFIG.genesys.skillsCompendium);
 
 			if (!compendium) {
 				return [{ skillName: 'Unskilled', skillChar: Characteristic.Brawn }];

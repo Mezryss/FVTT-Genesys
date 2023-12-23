@@ -12,8 +12,6 @@ import { Characteristic } from '@/data/Characteristics';
 import GenesysItem from '@/item/GenesysItem';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
 import VehicleWeaponDataModel from '@/item/data/VehicleWeaponDataModel';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_SHOW_DAMAGE_ON_FAILURE } from '@/settings/campaign';
 
 export type GenesysRollResults = {
 	/**
@@ -90,6 +88,8 @@ export default class GenesysRoller {
 				description = game.i18n.format('Genesys.Rolls.Description.Characteristic', {
 					characteristic: game.i18n.localize(`Genesys.Characteristics.${characteristic.capitalize()}`),
 				});
+			} else if (!actor) {
+				description = game.i18n.localize('Genesys.Rolls.Description.Simple');
 			}
 		} else if (actor) {
 			if (characteristic) {
@@ -113,7 +113,6 @@ export default class GenesysRoller {
 		const chatData = {
 			user: game.user.id,
 			speaker: { actor: actor?.id },
-			rollMode: game.settings.get('core', 'rollMode'),
 			content: html,
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			roll,
@@ -192,7 +191,7 @@ export default class GenesysRoller {
 			critical: weapon.systemData.critical,
 			// tbh I can't be assed to implement another Handlebars helper for array length so let's just do undefined. <.<
 			qualities: weapon.systemData.qualities.length === 0 ? undefined : attackQualities,
-			showDamageOnFailure: game.settings.get(SETTINGS_NAMESPACE, KEY_SHOW_DAMAGE_ON_FAILURE) as boolean,
+			showDamageOnFailure: CONFIG.genesys.showAttackDetailsOnFailure,
 		};
 		const html = await renderTemplate('systems/genesys/templates/chat/rolls/attack.hbs', rollData);
 

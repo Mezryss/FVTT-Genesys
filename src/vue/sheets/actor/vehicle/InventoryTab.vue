@@ -7,14 +7,12 @@ import GenesysItem from '@/item/GenesysItem';
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import GenesysEffect from '@/effects/GenesysEffect';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_MONEY_NAME } from '@/settings/campaign';
 
 import Localized from '@/vue/components/Localized.vue';
 import InventorySortSlot from '@/vue/components/inventory/InventorySortSlot.vue';
 import InventoryItem from '@/vue/components/inventory/InventoryItem.vue';
 
-const CURRENCY_LABEL = game.settings.get(SETTINGS_NAMESPACE, KEY_MONEY_NAME);
+const CURRENCY_LABEL = CONFIG.genesys.currencyName;
 
 const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 const system = computed(() => toRaw(context.data.actor).systemData);

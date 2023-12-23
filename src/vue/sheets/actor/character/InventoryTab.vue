@@ -2,8 +2,6 @@
 import { computed, inject, ref, toRaw } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_MONEY_NAME } from '@/settings/campaign';
 import Localized from '@/vue/components/Localized.vue';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import GenesysItem from '@/item/GenesysItem';
@@ -24,7 +22,7 @@ const droppedItems = computed(() => inventory.value.filter((i) => i.systemData.s
 
 const draggingItem = ref(false);
 
-const CURRENCY_LABEL = game.settings.get(SETTINGS_NAMESPACE, KEY_MONEY_NAME);
+const CURRENCY_LABEL = CONFIG.genesys.currencyName;
 
 function sortItems(left: GenesysItem, right: GenesysItem) {
 	return left.sort - right.sort;

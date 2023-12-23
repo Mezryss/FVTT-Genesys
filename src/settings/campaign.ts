@@ -6,6 +6,8 @@
  * @file System settings data related to campaign setting customization.
  */
 
+import { GENESYS_CONFIG } from '@/config';
+
 /**
  * The Skills Compendium to use for default skill data.
  */
@@ -37,11 +39,6 @@ export const KEY_CAREER_SKILL_RANKS = 'careerSkillRanks';
 export const KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS = 'uncoupleSkills';
 
 /**
- * Default skills compendium to use if the setting is misconfigured.
- */
-export const DEFAULT_SKILLS_COMPENDIUM = 'genesys.crb-skills';
-
-/**
  * Whether to show Damage, Critical, and Qualities on attack roll chat cards even when the roll was a failure.
  */
 export const KEY_SHOW_DAMAGE_ON_FAILURE = 'showDamageOnFailure';
@@ -61,8 +58,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SkillsCompendiumHint'),
 		scope: 'world',
 		config: true,
-		default: DEFAULT_SKILLS_COMPENDIUM,
+		default: GENESYS_CONFIG.skillsCompendium,
 		type: String,
+		onChange: (value) => {
+			CONFIG.genesys.skillsCompendium = value ?? '';
+		},
 	});
 
 	game.settings.register(namespace, KEY_SKILL_FOR_INJURIES, {
@@ -70,8 +70,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SkillForInjuriesHint'),
 		scope: 'world',
 		config: true,
-		default: 'Resilience',
+		default: GENESYS_CONFIG.skillForHealingInjury,
 		type: String,
+		onChange: (value) => {
+			CONFIG.genesys.skillForHealingInjury = value ?? '';
+		},
 	});
 
 	game.settings.register(namespace, KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS, {
@@ -79,8 +82,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SkillForRepairingVehicleHitsHint'),
 		scope: 'world',
 		config: true,
-		default: 'Mechanics',
+		default: GENESYS_CONFIG.skillForRepairingHit,
 		type: String,
+		onChange: (value) => {
+			CONFIG.genesys.skillForRepairingHit = value ?? '';
+		},
 	});
 
 	game.settings.register(namespace, KEY_MONEY_NAME, {
@@ -88,8 +94,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.MoneyHint'),
 		scope: 'world',
 		config: true,
-		default: 'Money',
+		default: GENESYS_CONFIG.currencyName,
 		type: String,
+		onChange: (value) => {
+			CONFIG.genesys.currencyName = value ?? '';
+		},
 	});
 
 	game.settings.register(namespace, KEY_CAREER_SKILL_RANKS, {
@@ -97,8 +106,12 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.CareerSkillRanksHint'),
 		scope: 'world',
 		config: true,
-		default: 4,
+		default: GENESYS_CONFIG.freeCareerSkillRanks,
 		type: Number,
+		onChange: (value) => {
+			const valueAsInt = Math.floor(Math.abs((value as unknown as number) ?? 0));
+			CONFIG.genesys.freeCareerSkillRanks = valueAsInt;
+		},
 	});
 
 	game.settings.register(namespace, KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS, {
@@ -106,8 +119,12 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.UncoupleSkillsAlternateRuleHint'),
 		scope: 'world',
 		config: true,
-		default: false,
+		default: GENESYS_CONFIG.uncoupleSkillsFromCharacteristics,
 		type: Boolean,
+		onChange: (value) => {
+			const valueAsBool = (value as unknown as boolean) ?? false;
+			CONFIG.genesys.uncoupleSkillsFromCharacteristics = valueAsBool;
+		},
 	});
 
 	game.settings.register(namespace, KEY_SHOW_DAMAGE_ON_FAILURE, {
@@ -115,8 +132,12 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.ShowDamageOnFailureHint'),
 		scope: 'world',
 		config: true,
-		default: false,
+		default: GENESYS_CONFIG.showAttackDetailsOnFailure,
 		type: Boolean,
+		onChange: (value) => {
+			const valueAsBool = (value as unknown as boolean) ?? false;
+			CONFIG.genesys.showAttackDetailsOnFailure = valueAsBool;
+		},
 	});
 
 	game.settings.register(namespace, KEY_SUPER_CHARACTERISTICS, {
@@ -124,7 +145,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SuperCharacteristicsHint'),
 		scope: 'world',
 		config: true,
-		default: false,
+		default: GENESYS_CONFIG.useSuperCharacteristics,
 		type: Boolean,
+		onChange: (value) => {
+			const valueAsBool = (value as unknown as boolean) ?? false;
+			CONFIG.genesys.useSuperCharacteristics = valueAsBool;
+		},
 	});
 }

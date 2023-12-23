@@ -2,8 +2,6 @@
 import ContextMenu from '@/vue/components/ContextMenu.vue';
 import Localized from '@/vue/components/Localized.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_SUPER_CHARACTERISTICS } from '@/settings/campaign';
 
 withDefaults(
 	defineProps<{
@@ -62,7 +60,7 @@ const emit = defineEmits<{
 	(e: 'toggleSuper'): void;
 }>();
 
-const allowSuperCharacteristics = game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS) as boolean;
+const allowSuperCharacteristics = CONFIG.genesys.useSuperCharacteristics;
 const markSuperCharacteristicLabel = game.i18n.localize('Genesys.Labels.MarkSuperCharacteristic');
 const unmarkSuperCharacteristicLabel = game.i18n.localize('Genesys.Labels.UnmarkSuperCharacteristic');
 </script>
