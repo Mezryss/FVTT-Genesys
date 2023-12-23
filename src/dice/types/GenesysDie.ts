@@ -6,10 +6,27 @@
  * @file Root type of all the custom Die types in the Genesys system.
  */
 
+export type DieCategory = 'positive' | 'negative';
+
 /**
  * Base type of all custom Genesys dice.
  */
 export default abstract class GenesysDie extends Die {
+	/**
+	 * The text glyph used to symbolize this die.
+	 */
+	static readonly GLYPH: string = '';
+
+	/**
+	 * The format used when adding this die to a roll.
+	 */
+	static readonly FORMULA: string = '';
+
+	/**
+	 * The category to which the die belongs.
+	 */
+	static readonly CATEGORY: DieCategory;
+
 	/**
 	 * Faces of this die type.
 	 */
