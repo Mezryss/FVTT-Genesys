@@ -20,7 +20,9 @@ import { register as registerActors, AdversaryTypes } from '@/actor';
 import { register as registerEffects } from '@/effects';
 import { register as registerItems, CharacterCreationItemTypes, EquipmentItemTypes } from '@/item';
 import { register as registerVehiclesRerender } from '@/actor/data/VehicleDataModel';
-import { registerWorker } from '@/app/DicePrompt';
+import DicePrompt, { registerWorker } from '@/app/DicePrompt';
+
+import GenesysActor from '@/actor/GenesysActor';
 
 import './scss/index.scss';
 
@@ -147,4 +149,30 @@ Hooks.on('renderDialog', (_dialog: Dialog, html: JQuery<HTMLElement>, _data: obj
 			select.querySelector('option')!.selected = true;
 		}
 	}
+});
+
+Hooks.on('renderSidebarTab', (sidebar: SidebarTab, html: JQuery<HTMLElement>, _data: object) => {
+	if (sidebar.tabName !== 'chat') {
+		return;
+	}
+
+	const diceIcon = html.find('#chat-controls > .chat-control-icon');
+	diceIcon.on('click', async (_event) => {
+		const controlledTokens = canvas.tokens.controlled;
+
+		let targetActor;
+		if (controlledTokens.length > 1) {
+			ui.notifications.error(game.i18n.localize('Genesys.Notifications.SelectNoneOrOneTokenForAction'));
+			return;
+		} else if (controlledTokens.length === 1) {
+			if (controlledTokens[0].actor?.type === 'vehicle') {
+				ui.notifications.error(game.i18n.localize('Genesys.Notifications.InvalidTokenTypeForAction'));
+				return;
+			} else {
+				targetActor = (controlledTokens[0].actor ?? undefined) as GenesysActor | undefined;
+			}
+		}
+
+		await DicePrompt.promptForRoll(targetActor, '');
+	});
 });
