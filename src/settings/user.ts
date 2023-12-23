@@ -6,6 +6,8 @@
  * @file User-specific config options.
  */
 
+import { GENESYS_CONFIG } from '@/config';
+
 /**
  * Whether the user wishes to use the Magical Girl symbols.
  */
@@ -27,7 +29,7 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.UseMagicalGirlSymbolsHint'),
 		scope: 'client',
 		config: true,
-		default: false,
+		default: GENESYS_CONFIG.useMagicalGirlSymbols,
 		type: Boolean,
 		requiresReload: true,
 	});
@@ -40,7 +42,7 @@ export function register(namespace: string) {
 			hint: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutationHint'),
 			scope: 'client',
 			config: true,
-			default: false,
+			default: GENESYS_CONFIG.showChanceToSucceedFromPermutations,
 			type: Boolean,
 			requiresReload: true,
 		});
@@ -51,7 +53,12 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedBySimulationHint'),
 		scope: 'client',
 		config: true,
-		default: 0,
+		default: GENESYS_CONFIG.showChanceToSucceedFromSimulations.amountOfRolls,
 		type: Number,
+		onChange: (value) => {
+			const valueAsInt = Math.floor(Math.abs((value as unknown as number) ?? 0));
+			CONFIG.genesys.showChanceToSucceedFromSimulations.enabled = valueAsInt > 0;
+			CONFIG.genesys.showChanceToSucceedFromSimulations.amountOfRolls = valueAsInt;
+		},
 	});
 }

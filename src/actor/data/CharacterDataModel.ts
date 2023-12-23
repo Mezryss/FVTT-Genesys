@@ -12,10 +12,9 @@ import IHasPreCreate from '@/data/IHasPreCreate';
 import GenesysItem from '@/item/GenesysItem';
 import ArmorDataModel from '@/item/data/ArmorDataModel';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_SKILLS_COMPENDIUM, DEFAULT_SKILLS_COMPENDIUM } from '@/settings/campaign';
 import { Characteristic, CharacteristicsContainer } from '@/data/Characteristics';
 import { CombatPool, Defense } from '@/data/Actors';
+import { DEFAULT_SKILLS_COMPENDIUM } from '@/config';
 
 export const EQUIPMENT_TYPES = ['armor', 'consumable', 'container', 'gear', 'weapon'];
 
@@ -220,7 +219,7 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 			return;
 		}
 
-		let skillsCompendiumName = <string>game.settings.get(SETTINGS_NAMESPACE, KEY_SKILLS_COMPENDIUM);
+		let skillsCompendiumName = CONFIG.genesys.skillsCompendium;
 
 		// Validate the setting is actually set.
 		if (skillsCompendiumName.length === 0) {

@@ -2,8 +2,6 @@
 import { computed, inject, ref } from 'vue';
 
 import { CareerSkillPromptContext } from '@/app/CareerSkillPrompt';
-import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
-import { KEY_CAREER_SKILL_RANKS } from '@/settings/campaign';
 import { RootContext } from '@/vue/SheetContext';
 import Localized from '@/vue/components/Localized.vue';
 import SkillDataModel from '@/item/data/SkillDataModel';
@@ -12,7 +10,7 @@ import GenesysItem from '@/item/GenesysItem';
 const context = inject<CareerSkillPromptContext>(RootContext)!;
 
 const selectedSkillIDs = ref<string[]>([]);
-const remaining = computed(() => (game.settings.get(SETTINGS_NAMESPACE, KEY_CAREER_SKILL_RANKS) as number) - selectedSkillIDs.value.length);
+const remaining = computed(() => CONFIG.genesys.freeCareerSkillRanks - selectedSkillIDs.value.length);
 
 function selectSkill(event: Event, skill: GenesysItem<SkillDataModel>) {
 	event.preventDefault();
