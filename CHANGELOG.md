@@ -1,3 +1,14 @@
+## Alpha 0.2.3
+
+### Features
+-	[PR #111](https://github.com/Mezryss/FVTT-Genesys/pull/111): Access the dice prompt directly from the chat
+
+### Bug Fixes/Misc
+-	[PR #108](https://github.com/Mezryss/FVTT-Genesys/pull/108): Scope the character and vehicle style sheets
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.2
 
 ### Features
@@ -11,9 +22,6 @@
 	-	Open a character sheet when clicking on their name in the "Skills" tab.
 	-	When selecting a skill from the "Character Skill Selection" prompt it now throws a warning when selecting an actor that you don't own (previously it was letting you roll for anyone).
 	-	Adds the option to modify a vehicle's passenger quantity and capacity using after effects
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.0
 
