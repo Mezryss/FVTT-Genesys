@@ -123,13 +123,13 @@ async function sendItemToChat() {
 		weapon = {
 			skill: weaponData.value.charWeapon.skills[0] ?? '-',
 			damage:
-				weaponData.value.charWeapon.baseDamage.toString() +
+				(weaponData.value.charWeapon.baseDamage ?? 0).toString() +
 				(weaponData.value.charWeapon.damageCharacteristic !== '-' ? ' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${weaponData.value.charWeapon.damageCharacteristic.capitalize()}`) : ''),
 		};
 	} else if (props.item.type === 'vehicleWeapon') {
 		weapon = {
 			skill: weaponData.value.vehWeapon.skills[0] ?? '-',
-			damage: weaponData.value.vehWeapon.baseDamage.toString(),
+			damage: (weaponData.value.vehWeapon.baseDamage ?? 0).toString(),
 			firingArc: getFiringArcLabels(weaponData.value.vehWeapon).join(', '),
 		};
 	}
