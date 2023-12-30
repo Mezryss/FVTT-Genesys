@@ -311,7 +311,12 @@ async function rollPool() {
 		characteristic: selectedCharacteristic.value,
 		skillId: selectedSkill.value?.id ?? '-',
 		formula,
-		symbols: symbols,
+		// Convert the symbols object into the old format to make the GenesysRoller understand it.
+		// A refactor of said class should get rid of this conversion.
+		symbols: Object.entries(symbols).reduce((accum, [symbolName, symbolAmount]) => {
+			accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
+			return accum;
+		}, {} as Record<string, number>),
 	};
 
 	switch (context.rollType) {
@@ -402,9 +407,15 @@ async function approximateProbability() {
 			criteriaType: 'SUCCESS',
 		});
 	} else {
+		// Convert the symbols object into the old format to make the GenesysRoller understand it.
+		// A refactor of said class should get rid of this conversion.
+		const oldFormatSymbols = Object.entries(symbols).reduce((accum, [symbolName, symbolAmount]) => {
+			accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
+			return accum;
+		}, {} as Record<string, number>);
 		const simulation = await Promise.all(
 			[...Array(CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS)].map(async () => {
-				const roll = new Roll(formula, { symbols });
+				const roll = new Roll(formula, { symbols: oldFormatSymbols });
 				const result = await roll.evaluate({ async: true });
 				return GenesysRoller.parseRollResults(result);
 			}),

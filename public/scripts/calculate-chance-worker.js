@@ -511,7 +511,7 @@ const cacheForPool = {};
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars -- This is used by the Dice Prompt.
 async function calculateChanceForDicePool({ dicePool, extraSymbols, criteriaType }) {
 	const processedDicePool = Object.entries(dicePool ?? {}).reduce((accum, [denomination, amount]) => {
-		const targetDice = DiceFromDenomination.get(denomination);
+		const targetDice = Dice[denomination];
 		const targetDiceAmount = parseInt(amount, 10);
 
 		if (targetDice && targetDiceAmount > 0) {
@@ -522,7 +522,7 @@ async function calculateChanceForDicePool({ dicePool, extraSymbols, criteriaType
 	const dicePoolAsString = constructKeyFromMixedPool(processedDicePool);
 
 	const processedExtraSymbols = Object.entries(extraSymbols ?? {}).reduce((accum, [denomination, amount]) => {
-		const targetSymbol = SymbolFromDenomination.get(denomination);
+		const targetSymbol = Symbols[denomination];
 		const targetSymbolAmount = parseInt(amount, 10);
 
 		if (targetSymbol && targetSymbolAmount > 0) {
