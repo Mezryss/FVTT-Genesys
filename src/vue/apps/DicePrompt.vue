@@ -23,7 +23,7 @@ const SymbolType = {
 		GLYPH: 's',
 		CATEGORY: 'positive',
 	},
-	Advantagge: {
+	Advantage: {
 		GLYPH: 'a',
 		CATEGORY: 'positive',
 	},
@@ -64,7 +64,7 @@ const SORT_ORDER: Record<PoolEntity, number> = {
 
 	Success: 3,
 	Triumph: 4,
-	Advantagge: 5,
+	Advantage: 5,
 
 	Challenge: 0,
 	Difficulty: 1,
@@ -473,7 +473,7 @@ async function approximateProbability() {
 				<span />
 
 				<!-- Add Positive Symbols -->
-				<a @click="addSymbol('Advantagge')">a<i class="fas fa-plus"></i></a>
+				<a @click="addSymbol('Advantage')">a<i class="fas fa-plus"></i></a>
 				<a @click="addSymbol('Success')">s<i class="fas fa-plus"></i></a>
 				<a @click="addSymbol('Triumph')">t<i class="fas fa-plus"></i></a>
 
