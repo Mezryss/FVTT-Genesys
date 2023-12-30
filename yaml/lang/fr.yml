@@ -33,7 +33,7 @@ Genesys:
   Settings:
     SkillsCompendium: Compendium des Compétences
     SkillsCompendiumHint: "Un compenduim d'item contenant l'ensemble des compétences qui peut être ajouter à un nouveau personnage. Changer cette valeur n'a pas d'effet rétroactif sur les anciens personnages."
-    Money: Monaie
+    Money: Monnaie
     MoneyHint: "Le nom de la monaie (comme l'or, les crédits, le Cash, les Doublons, etc) utiliser pour l'argent du système."
     CareerSkillRanks: Nombre de Compétence de Carrière
     CareerSkillRanksHint: Nombre de compétences que vous pouvez sélectionné dans la liste des compétences pendant la création du personnage
@@ -41,7 +41,7 @@ Genesys:
     UncoupleSkillsAlternateRuleHint: "Autorise la sélection d'une caractéristique pour une compétence au moment du dialogue des dés, pour permettre la règle optionnelle 'Désolidariser compétence-caractéristique' (livre de base p 205)."
     ShowDamageOnFailure: "Montrer les dommages de l'attaque en cas d'échec"
     ShowDamageOnFailureHint: "Afficher ou non les dégâts, les critiques et les qualités sur les cartes de discussion des jets d'attaque, même en cas d'échec."
-    SkillForInjuries: Compétence du jet de Résistance
+    SkillForInjuries: Compétence du jet de Récupération
     SkillForInjuriesHint: "Nom de la compétence utilisée pour se remettre d'une blessure critique."
     SkillForRepairingVehicleHits: Compétence mécanique utilisée
     SkillForRepairingVehicleHitsHint: Nom de la compétence utilisée pour récupérer des dommages critiques.
@@ -72,6 +72,7 @@ Genesys:
     Dice: Dé
     Results: Résultats
     Description:
+      Simple: Lancé...                  
       Initiative: "Jet d'initiative avec <strong>{skill}</strong>..."
       Characteristic: Jet de <strong>{characteristic}</strong>...
       Skill: Jet de <strong>{skill} ({characteristic})</strong>...
@@ -98,12 +99,12 @@ Genesys:
     Header: Compétence de Carrière
     Hint: 'Choissisez une compétence de Carrière pour gagner un rang:'
     RemainingChoices: Autres choix
-    Confirm: Confirmer
+    Confirm: Réalisé
 
   # Dice So Nice strings
   DiceCat:
     Normal: Dés Genesys
-    MagicalGirl: Magical Girl by MilkMyth
+    MagicalGirl: Magical Girl par MilkMyth
     Custom: Genesys Dés (Customisable)
   DiceColors:
     Boost: Dé de fortune
@@ -148,10 +149,11 @@ Genesys:
     Title: Réserve de Dés
     Roll: Jet!
     Hint: Utilisez la boîte à dés sur la droite pour ajouter, améliorer et rétrograder. Cliquez sur les dés dans la réserve pour les retirer!
+    UseSuperCharacteristic: Utiliser comme une super-Caractérisique
     ChanceToSucceed: 'Chance de réussite:'
     ChanceToSucceedByPermutationDisclaimer: "Affiche la probabilité exacte à moins qu'un dé dans le pool soit une super-caractéristique."
     ChanceToSucceedBySimulationDisclaimer: La probabilité affiché est une approximation caculé à partir de la méthode de Monte Carlo.
-    
+
   # Experience Journal Labels
   XPJournal:
     Award: '<strong>XP attribué par le MJ</strong>: {reason}'
@@ -168,19 +170,21 @@ Genesys:
     NoSkillsCompendium: Le paramètre du compendium de compétences est vide ! Tentative d'utilisation du recueil de compétences par défaut.
     MissingCompendium: "Impossible de charger le compendium de compétences '{name}'. L'Objet 'acteur' a été créé sans données de compétences initiales. Reconfigurez le compendium de compétences dans la 'configuration des options' -> Genesys."
     WrongCompendiumType: "Le compendium de compétences configuré '{name}' est un compendium de {type} Compendium, pas un Compendium d'objet ! L'acteur a été créé sans données de compétences initiales. Reconfigurez le recueil de compétences dans la 'configuration des options' -> Genesys."
-    NoSkillsInCompendium: "Le compendium de compétences configuré '{name}' ne contient aucune compétence. L'acteur a été créé sans listes de compétences initiales. Reconfigurez le recueil de compétences dans la configuration des options -> Genesys."
-    CannotDeleteCharacteristic: "Impossible de supprimer l'entrée de journal XP pour la caractéristique '{characteristic}' - vous devez d'abord supprimer l'avancement au rang suppérieur !"
-    CannotDeleteSkill: Impossible de supprimer l'entrée du journal d'XP pour la compétence '{name}' - vous devez d'abord supprimer l'entréer passage au rang suivant.!"
+    NoSkillsInCompendium: Le compendium de compétences configuré '{name}' ne contient aucune compétence. L'acteur a été créé sans listes de compétences initiales. Reconfigurez le recueil de compétences dans la configuration des options -> Genesys.
+    CannotDeleteCharacteristic: Impossible de supprimer l'entrée de journal XP pour la caractéristique '{characteristic}' - vous devez d'abord supprimer l'avancement au rang suppérieur !
+    CannotDeleteSkill: Impossible de supprimer l'entrée du journal d'XP pour la compétence '{name}' - vous devez d'abord supprimer l'entrée du passage au rang suivant.!"
     CannotAffordTalent: "Impossible d'augmenter le talent '{name}' ({cost}xp)."
     CannotAffordRankedTalent: "Impossible d'augmenter le talent '{name}' au rang {newRank} ({cost}xp)."
-    CannotDeleteNewTalent: Impossible de supprimer l'entrée du journal d'XP pour le nouveau talent '{name}' - tu dois d'abord supprimer les augmentations de rang du talent !
+    CannotDeleteNewTalent: Impossible de supprimer l'entrée du journal d'XP pour le nouveau talent '{name}' - Vous devez d'abord supprimer les augmentations de rang du talent !
     CannotDeleteExistingTalent: "Impossible de supprimer l'entrée du journal de XP pour l'augmentation du talent '{name}' au rang {rank} - Vous devez d'abord supprimer les augmentations de rang supérieur !"
-    CannotPurchaseTalentTier: "Vous ne pouvez prendre des talents à la catégorie {tier} - vous devez avoir au moins {minimum} talents à la catégorie {lowerTier} d'abord"
+    CannotPurchaseTalentTier: "Vous ne pouvez prendre des talents de la catégorie {tier} - vous devez avoir au moins {minimum} talents à la catégorie {lowerTier} d'abord"
     NotEnoughStoryPoints: Vous ne pouvez pas dépenser de Point Narratif que vous ne possédez pas!
     SelectOneTokenForAction: Vous devez selectionner un unique token pour réaliser cette action.
+    SelectNoneOrOneTokenForAction: Vous devez selectionner aucun token, ou juste un, pour faire cette action.
     TokenIsNotCombatant: Le token selectionné n'est pas dans le combat actuel.
     CannotClaimOppositeSlot: Vous ne pouvez par réclamer ce slot d'intiative avec {name} - il est du mauvais coté!
     CannotSelectActor: Vous n'avez pas assez de droit pour choisir cet Acteur.
+    InvalidTokenTypeForAction: Le token selectionné est d'un type invalide pour réaliser cette action.
 
   # Story Points
   StoryPoints:
@@ -188,7 +192,7 @@ Genesys:
     GM: Points Narratifs du MJ
     Reset: Réinitialise les Points Narratifs
     Spend: Dépense de point
-    ChatMessage: Dépense un point Narratif!!
+    ChatMessage: Dépense un point Narratif!
 
   # Localized strings used in TextEditor enrichers.
   Enrichers:
