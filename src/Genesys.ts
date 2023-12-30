@@ -50,8 +50,8 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/111">PR #111</a>: Feature - Access the dice prompt directly from the chat</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/108">PR #108</a>: Bugfix - Scope the character and vehicle style sheets</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/112">PR #112</a>: Bugfix - Sending weapons with no damage to chat</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/115">PR #115</a>: Bugfix - Rolls with extra symbols not working</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">

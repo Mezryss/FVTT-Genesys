@@ -1,3 +1,12 @@
+## Alpha 0.2.4
+
+### Bug Fixes/Misc
+-	[PR #112](https://github.com/Mezryss/FVTT-Genesys/pull/112): Fix sending items to chat with no damage
+-	[PR #115](https://github.com/Mezryss/FVTT-Genesys/pull/115): Fix rolls with extra symbols
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.3
 
 ### Features
@@ -5,9 +14,6 @@
 
 ### Bug Fixes/Misc
 -	[PR #108](https://github.com/Mezryss/FVTT-Genesys/pull/108): Scope the character and vehicle style sheets
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.2
 
