@@ -503,9 +503,10 @@ const cacheForPool = {};
 /**
  * This function proccessed the input and relays the data to the functions that calculate the chance of
  * meeting the specified criteria.
- * @param {Record<string, number>} dicePool - A pool of dice with their types and amount.
- * @param {Record<string, number>} extraSymbols - A collection of extra symbols to add to the result.
- * @param {string} criteriaType - The type of criteria to use when calculating the chance of achieving it.
+ * @param {Object} poolData - The object that has all the pool information.
+ * @param {Record<string, number>} poolData.dicePool - A pool of dice with their types and amount.
+ * @param {Record<string, number>} poolData.extraSymbols - A collection of extra symbols to add to the result.
+ * @param {string} poolData.criteriaType - The type of criteria to use when calculating the chance of achieving it.
  * @returns {Promise<number>} The chance (as a ratio) of a dice pool to meet the specified criteria.
  */
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars -- This is used by the Dice Prompt.
