@@ -1,0 +1,430 @@
+ACTOR:
+  TypeCharacter: Personnage
+  TypeMinion: Sbire
+  TypeRival: Rival
+  TypeNemesis: Némésis
+  TypeVehicle : Vehicule
+
+ITEM:
+  # Character Creation Items
+  TypeAbility: Aptitude Speciale
+  TypeArchetype: Archétype
+  TypeCareer: Carrière
+  TypeInjury: Bléssure Critique
+  TypeSkill: Compétence
+  TypeTalent: Talent
+
+  # Equipment Items
+  TypeArmor: Armure
+  TypeConsumable: Consommable
+  TypeContainer: Conteneur
+  TypeGear: Equipement
+  TypeQuality: Attribut d'item
+  TypeWeapon: Arme
+  TypeVehicleweapon: Arme sur véhicule
+
+# Genesys
+Genesys:
+  # System Strings
+  System:
+    Name: Genesys
+
+  # System Settings
+  Settings:
+    SkillsCompendium: Compendium des Compétences
+    SkillsCompendiumHint: "Un compenduim d'item contenant l'ensemble des compétences qui peut être ajouter à un nouveau personnage. Changer cette valeur n'a pas d'effet rétroactif sur les anciens personnages."
+    Money: Monnaie
+    MoneyHint: "Le nom de la monaie (comme l'or, les crédits, le Cash, les Doublons, etc) utiliser pour l'argent du système."
+    CareerSkillRanks: Nombre de Compétence de Carrière
+    CareerSkillRanksHint: Nombre de compétences que vous pouvez sélectionné dans la liste des compétences pendant la création du personnage
+    UncoupleSkillsAlternateRule: Désolidariser les compétences des caractéristiques
+    UncoupleSkillsAlternateRuleHint: "Autorise la sélection d'une caractéristique pour une compétence au moment du dialogue des dés, pour permettre la règle optionnelle 'Désolidariser compétence-caractéristique' (livre de base p 205)."
+    ShowDamageOnFailure: "Montrer les dommages de l'attaque en cas d'échec"
+    ShowDamageOnFailureHint: "Afficher ou non les dégâts, les critiques et les qualités sur les cartes de discussion des jets d'attaque, même en cas d'échec."
+    SkillForInjuries: Compétence du jet de Récupération
+    SkillForInjuriesHint: "Nom de la compétence utilisée pour se remettre d'une blessure critique."
+    SkillForRepairingVehicleHits: Compétence mécanique utilisée
+    SkillForRepairingVehicleHitsHint: Nom de la compétence utilisée pour récupérer des dommages critiques.
+    UseMagicalGirlSymbols: Utilise le symbole Magical Girls pour MilkMyth (Utilisateur seulement)
+    UseMagicalGirlSymbolsHint: "Remplacer le jeu de symboles Genesys par le jeu de symboles Magical Girls de MilkMyth. Cela n'affectera pas les autres utilisateurs."
+    DicePoolChanceToSucceedByPermutation: Calcul les chances de succès pour ce pool.
+    DicePoolChanceToSucceedByPermutationHint: >-
+      Si cette option est activée, elle génère un Web Worker qui calcule les chances exactes de réussite.
+      Toutefois, si le jeu de dés utilise une supercaractéristique, la valeur calculée est inférieure à la valeur réelle car elle suppose que le jeu n'explose pas.
+      Pour les pools de dés qui utilisent des super caractéristiques, vous pouvez obtenir une valeur plus précise en utilisant des simulations.
+    DicePoolChanceToSucceedBySimulation: Chance de succès approximative du Pool de dés
+    DicePoolChanceToSucceedBySimulationHint: >-
+      Le nombre de jets simulés à effectuer afin d'approximer les chances de réussite.
+      Soyez prudent lorsque vous augmentez ce nombre car il aura un impact direct sur les performances de Foundry ; une bonne valeur de départ est 100. Si une valeur de 0 est fournie, cette fonctionnalité est désactivée.
+      Ce paramètre est ignoré si les chances sont déjà calculées d'une autre manière.
+    SuperCharacteristics: Super-Characteristiques
+    SuperCharacteristicsHint: Permet de marquer des caractéristiques comme étant "super" lors de la création du personnage, selon la règle optionnelle des super-caractéristiques (Core Rulebook, p.251).
+
+  # Tooltips
+  Tooltips:
+    NoDescription: Aucune description disponible
+    IsInitiative: Si la compétence est utilisée pour l'Initiative ou non. En mettant cette valeur à true, elle apparaîtra comme une option dans le traqueur de combat pour les jets de masse.
+    CycleInitiativeSkill: Cycle de la compétence d'initiative utilisée par le combattant.
+    AddExtraInitiativeSlot: Ajoute un slot supplémentaire pour l'initiative.
+
+  # Dice Rolls
+  Rolls:
+    Dice: Dé
+    Results: Résultats
+    Description:
+      Simple: Lancé...                  
+      Initiative: "Jet d'initiative avec <strong>{skill}</strong>..."
+      Characteristic: Jet de <strong>{characteristic}</strong>...
+      Skill: Jet de <strong>{skill} ({characteristic})</strong>...
+      SkillWithoutCharacteristic: Jet direct <strong>{skill}</strong>...
+      AttackCharacteristic: Attaque de <strong>{name}</strong> en utilisant <strong>{characteristic}</strong>!
+      AttackSkill: Attaque de <strong>{name}</strong> en utilisant <strong>{skill} ({characteristic})</strong>!
+      AttackSkillWithoutCharacteristic: Attaque de <strong>{name}</strong> en utilisant <strong>{skill}</strong>!
+    Attack:
+      Critical: Critique
+      Label: "Résultats de l'attaque"
+      Damage: Dommage
+      Qualities: "Qualité de l'attaque"
+    Summary:
+      Label: Résumé
+      Successes: Succès
+      Failures: Echec
+      Advantage: Avantage
+      Threat: Menace
+      Triumph: Triomphe
+      Despair: Désastre
+
+  # Career Skill Prompt
+  CareerSkillPrompt:
+    Header: Compétence de Carrière
+    Hint: 'Choissisez une compétence de Carrière pour gagner un rang:'
+    RemainingChoices: Autres choix
+    Confirm: Réalisé
+
+  # Dice So Nice strings
+  DiceCat:
+    Normal: Dés Genesys
+    MagicalGirl: Magical Girl par MilkMyth
+    Custom: Genesys Dés (Customisable)
+  DiceColors:
+    Boost: Dé de fortune
+    Ability: "Dé d'aptitude"
+    Proficiency: Dé de maîtrise
+    Setback: "Dé d'Infortune"
+    Difficulty: Dés de difficulté
+    Challenge: Dé de défi
+
+  # Difficulty Ranks
+  Difficulty:
+    Simple: Simple
+    Easy: Facile
+    Average: Moyen
+    Hard: Difficile
+    Daunting: Intimidant
+    Impossible: Impossible
+
+  Inventory:
+    Sections:
+      Armor: Armure
+      Consumable: Consommable
+      Container: Containeur
+      Gear: Equipement
+      Weapon: Armes
+
+  # ActiveEffects System Strings
+  ActiveEffects:
+    Passive: Effets Passifs
+    Temporary: Effets Temporaires
+    Suppressed: Effets Désactivés
+    Source: Source
+    Duration: Durée
+    Types:
+      ModifyCharacteristic: Modifier la Caractérisitique
+      ModifyStat: Modifier la Stat
+      ModifySkill: Modifier La compétence
+      ModifyDicePool: Modifier la Réserve de Dés
+
+  # Dice Prompt Labels
+  DicePrompt:
+    Title: Réserve de Dés
+    Roll: Jet!
+    Hint: Utilisez la boîte à dés sur la droite pour ajouter, améliorer et rétrograder. Cliquez sur les dés dans la réserve pour les retirer!
+    UseSuperCharacteristic: Utiliser comme une super-Caractérisique
+    ChanceToSucceed: 'Chance de réussite:'
+    ChanceToSucceedByPermutationDisclaimer: "Affiche la probabilité exacte à moins qu'un dé dans le pool soit une super-caractéristique."
+    ChanceToSucceedBySimulationDisclaimer: La probabilité affiché est une approximation caculé à partir de la méthode de Monte Carlo.
+
+  # Experience Journal Labels
+  XPJournal:
+    Award: '<strong>XP attribué par le MJ</strong>: {reason}'
+    Starting: "<strong>XP de départ de l'Archétype</strong>"
+    Characteristic: Augmentation de la  <strong>{characteristic}</strong> à {rank}.
+    Skill: Augmente <strong>{name}</strong> à {rank}.
+    NewTalent: 'Talent acheté: <strong>{name}</strong> (Niveau {tier}).'
+    TalentRank: Augmentation de <strong>{name}</strong> au Rang {rank} (Niveau Effectif {tier}).
+
+  # Notification Prompts
+  Notifications:
+    AlreadyHaveSpecialAbility: "Impossible d'ajouter {abilityName} ; les aptitudes spéciales n'ont pas de rang, et vous l'avez déjà !"
+    TalentNotRanked: "Impossible d'ajouter {talentName} : c'est un talent sans rang, et vous le possédez déjà !"
+    NoSkillsCompendium: Le paramètre du compendium de compétences est vide ! Tentative d'utilisation du recueil de compétences par défaut.
+    MissingCompendium: "Impossible de charger le compendium de compétences '{name}'. L'Objet 'acteur' a été créé sans données de compétences initiales. Reconfigurez le compendium de compétences dans la 'configuration des options' -> Genesys."
+    WrongCompendiumType: "Le compendium de compétences configuré '{name}' est un compendium de {type} Compendium, pas un Compendium d'objet ! L'acteur a été créé sans données de compétences initiales. Reconfigurez le recueil de compétences dans la 'configuration des options' -> Genesys."
+    NoSkillsInCompendium: Le compendium de compétences configuré '{name}' ne contient aucune compétence. L'acteur a été créé sans listes de compétences initiales. Reconfigurez le recueil de compétences dans la configuration des options -> Genesys.
+    CannotDeleteCharacteristic: Impossible de supprimer l'entrée de journal XP pour la caractéristique '{characteristic}' - vous devez d'abord supprimer l'avancement au rang suppérieur !
+    CannotDeleteSkill: Impossible de supprimer l'entrée du journal d'XP pour la compétence '{name}' - vous devez d'abord supprimer l'entrée du passage au rang suivant.!"
+    CannotAffordTalent: "Impossible d'augmenter le talent '{name}' ({cost}xp)."
+    CannotAffordRankedTalent: "Impossible d'augmenter le talent '{name}' au rang {newRank} ({cost}xp)."
+    CannotDeleteNewTalent: Impossible de supprimer l'entrée du journal d'XP pour le nouveau talent '{name}' - Vous devez d'abord supprimer les augmentations de rang du talent !
+    CannotDeleteExistingTalent: "Impossible de supprimer l'entrée du journal de XP pour l'augmentation du talent '{name}' au rang {rank} - Vous devez d'abord supprimer les augmentations de rang supérieur !"
+    CannotPurchaseTalentTier: "Vous ne pouvez prendre des talents de la catégorie {tier} - vous devez avoir au moins {minimum} talents à la catégorie {lowerTier} d'abord"
+    NotEnoughStoryPoints: Vous ne pouvez pas dépenser de Point Narratif que vous ne possédez pas!
+    SelectOneTokenForAction: Vous devez selectionner un unique token pour réaliser cette action.
+    SelectNoneOrOneTokenForAction: Vous devez selectionner aucun token, ou juste un, pour faire cette action.
+    TokenIsNotCombatant: Le token selectionné n'est pas dans le combat actuel.
+    CannotClaimOppositeSlot: Vous ne pouvez par réclamer ce slot d'intiative avec {name} - il est du mauvais coté!
+    CannotSelectActor: Vous n'avez pas assez de droit pour choisir cet Acteur.
+    InvalidTokenTypeForAction: Le token selectionné est d'un type invalide pour réaliser cette action.
+
+  # Story Points
+  StoryPoints:
+    Player: Points Narratifs des Joueurs
+    GM: Points Narratifs du MJ
+    Reset: Réinitialise les Points Narratifs
+    Spend: Dépense de point
+    ChatMessage: Dépense un point Narratif!
+
+  # Localized strings used in TextEditor enrichers.
+  Enrichers:
+    Difficulty: 'Test de {skill} contre {difficulty} [{symbols}]'  # e.g. Average [♦♦] Coercion Check
+
+  # Combat Tracker
+  CombatTracker:
+    RevokeInitiativeClaim: Revoquer l'initiative
+
+  # Sheet Tab names
+  Tabs:
+    Skills: Compétence
+    Combat: Combat
+    Talents: Talents
+    Magic: Magie
+    Inventory: Inventaire
+    Effects: Effets
+    Journal: Journal
+    Description: Description
+    Data: Données
+    Details: Détails
+    Duration: Durée
+    Miscellaneous: Divers
+    Crew: Equipage
+    Attachments: Attaches
+
+  # Characteristics
+  Characteristics:
+    Brawn: Vigueur
+    Agility: Agilité
+    Intellect: Intellect
+    Cunning: Ruse
+    Willpower: Volonté
+    Presence: Présence
+
+  # Characteristic Abbreviations
+  CharacteristicAbbr:
+    Brawn: Vig
+    Agility: Ag
+    Intellect: Int
+    Cunning: Rus
+    Willpower: Vol
+    Presence: Pr
+
+  # Skill Categories
+  SkillCategory:
+    General: Genéral
+    Magic: Magique
+    Combat: Combat
+    Social: Social
+    Knowledge: Connaissance
+
+  # Archetype Data
+  Archetype:
+    Abilities: Aptitudes d'Archétype
+    StartingWounds: Seuil de blessure initial
+    StartingStrain: Seuil de stress initial
+    StartingXP: Expérience initiale
+    GrantedItems: Objet autorisé
+
+  # Adversary Labels
+  Adversary:
+    MinionSkills: Compétences (de groupe)
+    Skills: Compétences
+    Talents: Talents
+    Abilities: Aptitudes
+    Equipment: Equipement
+    None: Rien.
+    Base: Base
+    Remaining: Reste
+
+  # Career Data
+  Career:
+    Skills: Compétences de Carrière
+
+  # Range Values
+  Range:
+    Engaged: au contact
+    Short: Courte
+    Medium: Moyenne
+    Long: Longue
+    Extreme: Extrême
+    Strategic: Startégique
+
+  # Firing Arc
+  FiringArc:
+    Fore: Avant
+    Aft: Arrière
+    Port: Bâbord
+    Starboard: Tribord
+    All: Toutes
+    None: Aucune
+
+  # Dialog Groups
+  DialogGroups:
+    Item:
+      CharacterCreation: Création de Personnage
+      Equipment: Equipement
+      Other: Autre
+    Actor:
+      Adversary: Adversaire
+      Other: Autre
+
+  # Equipment Data
+  Equipment:
+    DamageState:
+      Undamaged: Bon état
+      Minor: Dommage Mineur
+      Moderate: Dommmage Modérée
+      Major: Dommage majeur
+
+  # Misc. Unsorted Labels (to be cleaned up later)
+  Labels:
+    Name: Nom
+    CharacterName: Nom du Personnage
+    SpeciesArchetype: Espèce/Archétype
+    Career: Carrière
+    Soak: Encaissement
+    SoakValue: Valeur d'Encaissement
+    Wounds: Blessures
+    WoundThreshold: Seuil de blessure
+    Strain: Stress
+    StrainThreshold: Seuil de Stress
+    Defense: Défense
+    Threshold: Seuil
+    Current: Actuel
+    DefenseMelee: Mélée
+    MeleeDefense: Défense de mélée
+    DefenseRanged: Distance
+    RangedDefense: Défense à distance
+    TotalXP: XP Total
+    AvailableXP: XP disponible
+    Characteristic: Caractéristique
+    IsMagicSkill: Est une Compétence Magique
+    Source: Source
+    GeneralSkills: Compétences générales
+    MagicSkills: Compétences Magiques
+    CombatSkills: Compétences de combat
+    SocialSkills: Compétence Sociales
+    KnowledgeSkills: Compétences de Connaissances
+    Category: Catégorie
+    Skills: Compétences
+    Delete: Suprimer
+    Edit: Editer
+    NoCareer: Aucune carrière sélectionnée - glissez en une !
+    NoArchetype: Aucun archetype sélectionné - glissez en un !
+    MarkCareerSkill: Cochée comme une Compétence de Carrière
+    UnmarkCareerSkill: Non cochée comme une Compétence de Carrière
+    MarkSuperCharacteristic: Cochée comme une Super -Caractérisique
+    UnmarkSuperCharacteristic: Non Cochée comme une Super-Caracteristique
+    Motivations: Motivations
+    Strength: Forces
+    Flaw: Défaut
+    Desire: Désire
+    Fear: Peur
+    CharacterIllustration: Illustration du Personnage
+    CharacterDescription: Description du Personnage
+    Pronouns: Pronoms
+    Age: Age
+    Height: Hauteur
+    Build: Carrure
+    Hair: Cheveux
+    Eyes: Yeux
+    NotableFeatures: Caractéristiques notables
+    Notes: Notes
+    XPJournal: Journal des XP
+    Tier: Catégorie
+    Activation: Activation
+    Rank: Rang
+    Ranked: A rang
+    Active: Actif
+    Passive: Passif
+    Yes: Oui
+    No: Non
+    Talents: Talents
+    SpecialAbilities: Aptitudes Speciales
+    TierCount: Catégorie {tier}
+    DeletedItemData: 'ERR: Item Supprimé {name}'
+    Add: Ajouter
+    Encumbrance: Encombrement
+    Price: Prix
+    Rarity: Rareté
+    Damage: Dommage
+    DamageCharacteristic: Dommage lié à la Caractérisitique
+    Critical: Critique
+    Range: Distance
+    Quantity: Quantité
+    EncumbranceThreshold: Seuil de charge
+    Encumbered: Ecombré!
+    RankUp: Rang Supérieur
+    RankDown: Rang Inférieur
+    FreeRankUp: Rang Supérieur (Gratuit)
+    FreeRankDown: Rang Inférieur (Gratuit)
+    AwardXP: XP obtenus
+    Amount: Valeur
+    Reason: Raison
+    IsRated: Est-il mesuré?
+    Qualities: Qualitées
+    Severity: Sévérité
+    Attacks: Attaques
+    Armor: Armure
+    CriticalInjuries: Blessures Critiques
+    CriticalHits: Toucher Critiques
+    Injury: Blessure
+    Hit: Touche
+    Skill: Compétences
+    Crit: Crit
+    Special: Spécial
+    GroupSize: Taille du groupe
+    SkillNotFound: Compétence non trouvée
+    IsInitiative: Est une Compétence d'initiative?
+    Equipped: Equipé
+    Carried: Porté
+    Dropped: Jetté
+    NotApplicable: N/A
+    EffectiveTier: Catégorie courante
+    Silhouette: Silhouette
+    Speed: Vitesse
+    Handling: Tenu en main
+    HullTrauma: Dommage de la coque
+    HullTraumaThreshold: Seuil du dommage de la coque
+    SystemStrain: Contrainte système
+    SystemStrainThreshold: Seuil de contrainte système
+    Illustration: Illustration
+    Complement: Complément
+    Consumables: Consommable
+    PassengerCapacity: Nombre de passagers
+    EncumbranceCapacity: Valeur d'emcombrement
+    Information: Information
+    Passengers: Passagers
+    Roles: Rôles
+    OverCapacity: Hors capacité!
+    RoleSkills: Compétence lié au rôle
+    FiringArc: Arc de tir
+    Select: Sélection
