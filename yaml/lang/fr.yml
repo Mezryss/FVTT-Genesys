@@ -333,7 +333,7 @@ Genesys:
     CombatSkills: Compétences de combat
     SocialSkills: Compétence Sociales
     KnowledgeSkills: Compétences de Connaissances
-    Category: Categorie
+    Category: Catégorie
     Skills: Compétences
     Delete: Suprimer
     Edit: Editer
@@ -359,7 +359,7 @@ Genesys:
     NotableFeatures: Caractéristiques notables
     Notes: Notes
     XPJournal: Journal des XP
-    Tier: Categorie
+    Tier: Catégorie
     Activation: Activation
     Rank: Rang
     Ranked: A rang
