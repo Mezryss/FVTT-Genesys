@@ -2,15 +2,15 @@ ACTOR:
   TypeCharacter: Personnage
   TypeMinion: Sbire
   TypeRival: Rival
-  TypeNemesis: Nemesis
+  TypeNemesis: Némésis
   TypeVehicle : Vehicule
 
 ITEM:
   # Character Creation Items
-  TypeAbility: Special Ability
-  TypeArchetype: Archetype
-  TypeCareer: Career
-  TypeInjury: Critical Injury/Hit
+  TypeAbility: Aptitude Speciale
+  TypeArchetype: Archétype
+  TypeCareer: Carrière
+  TypeInjury: Bléssure Critique
   TypeSkill: Compétence
   TypeTalent: Talent
 
@@ -133,9 +133,9 @@ Genesys:
 
   # ActiveEffects System Strings
   ActiveEffects:
-    Passive: Effects Passifs
-    Temporary: Effets Temporaire
-    Suppressed: Effets inactifs
+    Passive: Effets Passifs
+    Temporary: Effets Temporaires
+    Suppressed: Effets Désactivés
     Source: Source
     Duration: Durée
     Types:
@@ -165,7 +165,7 @@ Genesys:
 
   # Notification Prompts
   Notifications:
-    AlreadyHaveSpecialAbility: "Impossible d'ajouter {abilityName} ; les capacités spéciales n'ont pas de rang, et vous l'avez déjà !"
+    AlreadyHaveSpecialAbility: "Impossible d'ajouter {abilityName} ; les aptitudes spéciales n'ont pas de rang, et vous l'avez déjà !"
     TalentNotRanked: "Impossible d'ajouter {talentName} : c'est un talent sans rang, et vous le possédez déjà !"
     NoSkillsCompendium: Le paramètre du compendium de compétences est vide ! Tentative d'utilisation du recueil de compétences par défaut.
     MissingCompendium: "Impossible de charger le compendium de compétences '{name}'. L'Objet 'acteur' a été créé sans données de compétences initiales. Reconfigurez le compendium de compétences dans la 'configuration des options' -> Genesys."
@@ -217,7 +217,7 @@ Genesys:
     Duration: Durée
     Miscellaneous: Divers
     Crew: Equipage
-    Attachments: attaches
+    Attachments: Attaches
 
   # Characteristics
   Characteristics:
@@ -247,7 +247,7 @@ Genesys:
 
   # Archetype Data
   Archetype:
-    Abilities: Capacités d'Archétype
+    Abilities: Aptitudes d'Archétype
     StartingWounds: Seuil de blessure initial
     StartingStrain: Seuil de stress initial
     StartingXP: Expérience initiale
@@ -283,7 +283,7 @@ Genesys:
     Aft: Arrière
     Port: Bâbord
     Starboard: Tribord
-    All: toutes
+    All: Toutes
     None: Aucune
 
   # Dialog Groups
@@ -299,7 +299,7 @@ Genesys:
   # Equipment Data
   Equipment:
     DamageState:
-      Undamaged: bon état
+      Undamaged: Bon état
       Minor: Dommage Mineur
       Moderate: Dommmage Modérée
       Major: Dommage majeur
@@ -362,13 +362,13 @@ Genesys:
     Tier: Categorie
     Activation: Activation
     Rank: Rang
-    Ranked: à rang
-    Active: actif
+    Ranked: A rang
+    Active: Actif
     Passive: Passif
     Yes: Oui
     No: Non
     Talents: Talents
-    SpecialAbilities: Capacités Speciales
+    SpecialAbilities: Aptitudes Speciales
     TierCount: Catégorie {tier}
     DeletedItemData: 'ERR: Item Supprimé {name}'
     Add: Ajouter
@@ -385,9 +385,9 @@ Genesys:
     RankUp: Rang Supérieur
     RankDown: Rang Inférieur
     FreeRankUp: Rang Supérieur (Gratuit)
-    FreeRankDown: Rang Inférieur (gratuit)
+    FreeRankDown: Rang Inférieur (Gratuit)
     AwardXP: XP obtenus
-    Amount: Vazleur
+    Amount: Valeur
     Reason: Raison
     IsRated: Est-il mesuré?
     Qualities: Qualitées
@@ -410,8 +410,8 @@ Genesys:
     NotApplicable: N/A
     EffectiveTier: Catégorie courante
     Silhouette: Silhouette
-    Speed: vitesse
-    Handling: tenu en main
+    Speed: Vitesse
+    Handling: Tenu en main
     HullTrauma: Dommage de la coque
     HullTraumaThreshold: Seuil du dommage de la coque
     SystemStrain: Contrainte système
@@ -420,7 +420,7 @@ Genesys:
     Complement: Complément
     Consumables: Consommable
     PassengerCapacity: Nombre de passagers
-    EncumbranceCapacity: valeur d'emcombrement
+    EncumbranceCapacity: Valeur d'emcombrement
     Information: Information
     Passengers: Passagers
     Roles: Rôles
