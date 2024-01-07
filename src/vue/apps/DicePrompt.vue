@@ -401,11 +401,16 @@ async function approximateProbability() {
 	let chanceToSucceed = 0;
 	if (USE_CHANCE_TO_SUCCEED_BY_PERMUTATION) {
 		const worker = game.workers.get(CALCULATE_CHANCE_WORKER_NAME);
-		chanceToSucceed = await worker.executeFunction('calculateChanceForDicePool', {
+		if (!worker) {
+			probabilityOfSuccess.value = undefined;
+			return;
+		}
+
+		chanceToSucceed = (await worker.executeFunction('calculateChanceForDicePool', {
 			dicePool: dice,
 			extraSymbols: symbols,
 			criteriaType: 'SUCCESS',
-		});
+		})) as number;
 	} else {
 		// Convert the symbols object into the old format to make the GenesysRoller understand it.
 		// A refactor of said class should get rid of this conversion.

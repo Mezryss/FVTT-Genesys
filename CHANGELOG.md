@@ -1,11 +1,19 @@
+## Alpha 0.2.5
+
+### Features
+-	[PR #117](https://github.com/Mezryss/FVTT-Genesys/pull/117): French translations thanks to @ZolOnTheNet
+
+### Bug Fixes/Misc
+-	[PR #116](https://github.com/Mezryss/FVTT-Genesys/pull/116): Fixes a harmless bug on the chance to succeed Web Worker
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.4
 
 ### Bug Fixes/Misc
 -	[PR #112](https://github.com/Mezryss/FVTT-Genesys/pull/112): Fix sending items to chat with no damage
 -	[PR #115](https://github.com/Mezryss/FVTT-Genesys/pull/115): Fix rolls with extra symbols
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.3
 
