@@ -185,6 +185,7 @@ Genesys:
     CannotClaimOppositeSlot: You can't claim this initiative slot with {name} - it's on the wrong side!
     CannotSelectActor: You do not have sufficient permission to select this Actor.
     InvalidTokenTypeForAction: The selected token is of an invalid type to perform this action.
+    EffectsWereNotUpdatedAfterTransfer: There was an error updating the effects for the transfered '{name}' with the latest values.
 
   # Story Points
   StoryPoints:

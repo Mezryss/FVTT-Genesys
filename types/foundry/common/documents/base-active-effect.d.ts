@@ -17,6 +17,7 @@ declare module foundry {
 
 		interface BaseActiveEffect {
 			readonly data: data.ActiveEffectData<this>;
+			readonly changes: data.EffectChangeData<this>[];
 
 			readonly parent: BaseActor | BaseItem;
 
