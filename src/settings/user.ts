@@ -36,7 +36,7 @@ export function register(namespace: string) {
 
 	// This setting is only available for FVTT v11+ because it depends on the changes made to the workers API
 	// introduced in that version.
-	if (game.workers.get) {
+	if (!!game.workers.get) {
 		game.settings.register(namespace, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, {
 			name: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutation'),
 			hint: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutationHint'),
