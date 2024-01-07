@@ -104,7 +104,29 @@ async function handleEffectsSuppresion(_desiredState: EquipmentState, items: Gen
 	await Promise.all(allUpdates);
 }
 
-async function drop(event: DragEvent) {
+// TODO: The following two functions are almost exactly the same as the ones on the character sheet so find a way to consolidate them.
+async function mimicEffectsDetails(sourceActor: GenesysActor, sourceItemId: string, targetActor: GenesysActor, targetItemId: string) {
+	const sourceActorEffects = sourceActor.effects.filter((effect) => (effect as GenesysEffect).originItem?.id === sourceItemId);
+	const targetActorEffects = targetActor.effects.filter((effect) => (effect as GenesysEffect).originItem?.id === targetItemId);
+
+	if (sourceActorEffects.length !== targetActorEffects.length) {
+		ui.notifications.warn(game.i18n.localize('Genesys.Notifications.EffectsWereNotUpdatedAfterTransfer'));
+		return;
+	}
+
+	for (let k = 0; k < sourceActorEffects.length; k++) {
+		const sourceEffect = sourceActorEffects[k];
+		await targetActorEffects[k].update({
+			// TODO: Migrate away of using `label`.
+			label: sourceEffect.label,
+			icon: sourceEffect.icon,
+			changes: sourceEffect.changes,
+		});
+	}
+}
+
+// TODO: Comment the contents of this function.
+async function dropInventoryBetweenActors(event: DragEvent) {
 	const actor = toRaw(context.data.actor);
 
 	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
@@ -142,21 +164,20 @@ async function drop(event: DragEvent) {
 	const allCreatedItems = await actor.createEmbeddedDocuments('Item', [clonedItem]);
 	const itemInSelf = allCreatedItems[0];
 
-	if (containedItems.length > 0) {
-		allCreatedItems.push(
-			...(await actor.createEmbeddedDocuments(
-				'Item',
-				containedItems.map((item) => {
-					const itemAsObject = item.toObject();
-					const itemAsObjectSystem = itemAsObject.system as EquipmentDataModel;
-					itemAsObjectSystem.state = EquipmentState.Carried;
-					itemAsObjectSystem.container = itemInSelf.id;
-					return itemAsObject;
-				}),
-			)),
-		);
+	await mimicEffectsDetails(sourceActor, droppedItem.id, actor, itemInSelf.id);
 
-		containedItems.forEach((item) => item.delete());
+	for (const containedItem of containedItems) {
+		const itemAsObject = containedItem.toObject();
+		const itemAsObjectSystem = itemAsObject.system as EquipmentDataModel;
+		itemAsObjectSystem.state = EquipmentState.Carried;
+		itemAsObjectSystem.container = itemInSelf.id;
+
+		const [currentClonedItem] = await actor.createEmbeddedDocuments('Item', [itemAsObject]);
+
+		await mimicEffectsDetails(sourceActor, containedItem.id, actor, currentClonedItem.id);
+
+		await containedItem.delete();
+		allCreatedItems.push(currentClonedItem);
 	}
 
 	await droppedItem.delete();
@@ -166,7 +187,7 @@ async function drop(event: DragEvent) {
 </script>
 
 <template>
-	<section class="tab-inventory" @drop="drop">
+	<section class="tab-inventory" @drop="dropInventoryBetweenActors">
 		<div class="encumbrance-currency-row">
 			<div class="currency-row">
 				<label><i class="fas fa-coins"></i> {{ CURRENCY_LABEL }}:</label>
