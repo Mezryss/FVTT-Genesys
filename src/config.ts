@@ -94,6 +94,7 @@ export function ready() {
 
 	CONFIG.genesys.useMagicalGirlSymbols = (game.settings.get(SETTINGS_NAMESPACE, KEY_USE_MAGICAL_GIRL_SYMBOLS) as boolean) ?? false;
 
+	// eslint-disable-next-line
 	if (!!game.workers.get) {
 		CONFIG.genesys.showChanceToSucceedFromPermutations = (game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) as boolean) ?? false;
 	}

@@ -122,6 +122,7 @@ export default class DicePrompt extends VueSheet(Application) {
 export const CALCULATE_CHANCE_WORKER_NAME = 'CalculateChance';
 
 export function registerWorker() {
+	// eslint-disable-next-line
 	if (!!game.workers.get) {
 		if (CONFIG.genesys.showChanceToSucceedFromPermutations) {
 			game.workers.createWorker(CALCULATE_CHANCE_WORKER_NAME, {
