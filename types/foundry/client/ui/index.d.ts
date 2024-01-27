@@ -8,10 +8,10 @@ import './tooltip';
 import './tour';
 
 declare global {
-	interface FoundryUI<TActor extends Actor = Actor, TActorDirectory extends ActorDirectory<TActor> = ActorDirectory<TActor>, TItem extends Item = Item, TChatLog extends ChatLog = ChatLog, TCompendiumDirectory extends CompendiumDirectory = CompendiumDirectory> {
+	interface FoundryUI<TActor extends Actor = Actor, TActorDirectory extends ActorDirectory<TActor> = ActorDirectory<TActor>, TItem extends Item<TActor> = Item<TActor>, TChatMessage extends ChatMessage<TActor> = ChatMessage<TActor>, TChatLog extends ChatLog<TChatMessage> = ChatLog<TChatMessage>, TCompendiumDirectory extends CompendiumDirectory = CompendiumDirectory, TCombat extends Combat = Combat, TCombatTracker extends CombatTracker<TCombat> = CombatTracker<TCombat>> {
 		actors: TActorDirectory;
 		chat: TChatLog;
-		combat: CombatTracker<Combat>;
+		combat: TCombatTracker;
 		compendium: TCompendiumDirectory;
 		controls: SceneControls;
 		items: ItemDirectory<TItem>;
