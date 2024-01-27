@@ -23,7 +23,7 @@ export enum RollType {
 
 export interface DicePromptContext extends ContextBase {
 	actor?: GenesysActor;
-	skill?: string;
+	skillName?: string;
 	rollType: RollType;
 	difficulty: number;
 	rollUnskilled?: Characteristic;
@@ -81,17 +81,17 @@ export default class DicePrompt extends VueSheet(Application) {
 	}
 
 	actor?: GenesysActor;
-	skill?: string;
+	skillName?: string;
 	rollType: RollType;
 	difficulty: number;
 	rollUnskilled?: Characteristic;
 	rollData?: { [key: string]: any };
 
-	constructor(actor?: GenesysActor, skill?: string, { rollType, difficulty, rollUnskilled, rollData }: DicePromptOptions = {}) {
+	constructor(actor?: GenesysActor, skillName?: string, { rollType, difficulty, rollUnskilled, rollData }: DicePromptOptions = {}) {
 		super();
 
 		this.actor = actor;
-		this.skill = skill;
+		this.skillName = skillName;
 		this.rollType = rollType ?? RollType.Skill;
 		this.difficulty = difficulty ?? 2;
 		this.rollUnskilled = rollUnskilled;
@@ -109,7 +109,7 @@ export default class DicePrompt extends VueSheet(Application) {
 	override async getVueContext(): Promise<DicePromptContext> {
 		return {
 			actor: this.actor,
-			skill: this.skill,
+			skillName: this.skillName,
 			rollType: this.rollType,
 			difficulty: this.difficulty,
 			rollUnskilled: this.rollUnskilled,
