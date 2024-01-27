@@ -102,7 +102,7 @@ declare global {
 		get(module: 'core', key: 'compendiumConfiguration'): Record<string, { private: boolean; locked: boolean }>;
 		get(module: 'core', key: 'defaultToken'): Partial<foundry.data.PrototypeTokenSource>;
 		get(module: 'core', key: 'rollMode'): RollMode;
-		get(module: string, key: string): unknown;
+		get<S>(module: string, key: string): S | undefined;
 
 		/**
 		 * Get the value of a game setting for a certain module and setting key
@@ -122,6 +122,7 @@ declare global {
 		get(key: 'core.chatBubblesPan'): SettingConfig & { default: boolean };
 		get(key: 'core.defaultToken'): SettingConfig & { default: PreCreate<foundry.data.PrototypeTokenSource> };
 		get(key: 'core.notesDisplayToggle'): SettingConfig & { default: boolean };
+        get<S>(key: string): Omit<SettingConfig, 'onChange'> & { default: S, onChange: (value: S | undefined) => void | Promise<void> };
 	}
 
 	/** A simple interface for World settings storage which imitates the API provided by localStorage */
