@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
-import { inject, computed, toRaw } from 'vue';
+import { inject, toRaw, ref, watchEffect } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import GenesysActor from '@/actor/GenesysActor';
 import GenesysItem from '@/item/GenesysItem';
@@ -13,50 +13,66 @@ import DicePrompt from '@/app/DicePrompt';
 import Localized from '@/vue/components/Localized.vue';
 import SkillRanks from '@/vue/components/character/SkillRanks.vue';
 
-// The linter believes this is being unused (when in fact it isn't) so we prefix it so it's ignored.
-type _NonVehicleDataModel = CharacterDataModel | AdversaryDataModel;
+type NonVehicleDataModel = CharacterDataModel | AdversaryDataModel;
+type GroupedByMemberData = Map<
+	string,
+	{
+		actor: GenesysActor<NonVehicleDataModel>;
+		roles: string[];
+		skills: Map<string, GenesysItem<SkillDataModel>>;
+	}
+>;
 
 const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 
-const dataGroupedByMember = computed(() =>
-	toRaw(context.data.actor).systemData.roles.reduce((accum, role) => {
+const dataGroupedByMember = ref<GroupedByMemberData>(new Map());
+
+// We want to render only actors that exists, which requires us to asynchronously get their data.
+watchEffect(async () => {
+	const data: GroupedByMemberData = new Map();
+	for (const role of toRaw(context.data.actor).systemData.roles) {
 		for (const member of role.members) {
-			if (!accum.has(member)) {
-				const actor = game.actors.get(member);
-				if (!actor) {
+			if (!data.has(member)) {
+				const targetActor = await fromUuid<GenesysActor<NonVehicleDataModel>>(member);
+				if (!targetActor) {
 					continue;
 				}
 
-				accum.set(member, { actor: actor as GenesysActor, roles: [], skills: new Map() });
+				data.set(member, { actor: targetActor, roles: [], skills: new Map() });
 			}
-			const details = accum.get(member)!;
+			const details = data.get(member)!;
 
 			details.roles.push(role.name);
 
 			for (const skill of role.skills) {
-				const skillName = skill.toLowerCase();
-				if (!details.skills.has(skillName)) {
-					const skillItem = details.actor.items.find((item) => item.type === 'skill' && item.name.toLowerCase() === skillName);
+				if (!details.skills.has(skill)) {
+					const skillItem = details.actor.items.find((item) => item.type === 'skill' && item.name === skill);
 
 					if (skillItem) {
-						details.skills.set(skillName, skillItem as GenesysItem<SkillDataModel>);
+						details.skills.set(skill, skillItem as GenesysItem<SkillDataModel>);
+					} else {
+						const backupSkill = CONFIG.genesys.skills.find((aSkill) => aSkill.name === skill);
+
+						if (backupSkill) {
+							details.skills.set(skill, backupSkill);
+						}
 					}
 				}
 			}
 		}
-
-		return accum;
-	}, new Map<string, { actor: GenesysActor; roles: string[]; skills: Map<string, GenesysItem<SkillDataModel>> }>()),
-);
+	}
+	dataGroupedByMember.value = data;
+});
 
 async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDataModel>) {
 	if (actor.isOwner) {
-		await DicePrompt.promptForRoll(actor, skill.name);
+		const promptOptions = skill.pack ? { rollUnskilled: skill.systemData.characteristic } : {};
+		await DicePrompt.promptForRoll(actor, skill.name, promptOptions);
 	}
 }
 
 async function openActorSheet(actor: GenesysActor) {
-	await actor.sheet.render(true);
+	await toRaw(actor).sheet.render(true);
 }
 </script>
 
@@ -82,7 +98,7 @@ async function openActorSheet(actor: GenesysActor) {
 								</a>
 
 								<span class="skill-rank">{{ skill.systemData.rank }}</span>
-								<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="(details.actor.systemData as _NonVehicleDataModel).characteristics[skill.systemData.characteristic]" />
+								<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="(details.actor.systemData as NonVehicleDataModel).characteristics[skill.systemData.characteristic]" />
 							</div>
 						</div>
 					</div>
