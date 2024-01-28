@@ -2,14 +2,14 @@
 import { inject, computed, toRaw, ref } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 
-import GenesysActor from '@/actor/GenesysActor';
 import GenesysItem from '@/item/GenesysItem';
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
-import GenesysEffect from '@/effects/GenesysEffect';
+import { DragTransferData } from '@/data/DragTransferData';
+import { transferInventoryBetweenActors } from '@/operations/TransferBetweenActors';
 
 import Localized from '@/vue/components/Localized.vue';
-import InventorySortSlot from '@/vue/components/inventory/InventorySortSlot.vue';
+import SortSlot from '@/vue/components/inventory/SortSlot.vue';
 import InventoryItem from '@/vue/components/inventory/InventoryItem.vue';
 
 const CURRENCY_LABEL = CONFIG.genesys.currencyName;
@@ -17,9 +17,13 @@ const CURRENCY_LABEL = CONFIG.genesys.currencyName;
 const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 const system = computed(() => toRaw(context.data.actor).systemData);
 
-const draggingItem = ref(false);
+const isDraggable = ref(toRaw(context.data.actor).isOwner);
+const dragCounters = ref({
+	[EquipmentState.Equipped]: 0,
+	[EquipmentState.Carried]: 0,
+});
 
-const inventory = computed(() => toRaw(context.data.actor).items.filter((item) => VehicleDataModel.RELEVANT_TYPES.INVENTORY.includes(item.type)) as GenesysItem<EquipmentDataModel>[]);
+const inventory = computed(() => toRaw(context.data.actor).items.filter((item) => VehicleDataModel.isRelevantTypeForContext('INVENTORY', item.type)) as GenesysItem<EquipmentDataModel>[]);
 const equippedItems = computed(() => inventory.value.filter((item) => item.systemData.state === EquipmentState.Equipped).sort(sortItems));
 const carriedItems = computed(() => inventory.value.filter((item) => item.systemData.state === EquipmentState.Carried && item.systemData.container === '').sort(sortItems));
 
@@ -27,19 +31,53 @@ function sortItems(left: GenesysItem, right: GenesysItem) {
 	return left.sort - right.sort;
 }
 
-async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, sortIndex: number) {
-	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
-	if (!dragSource.id) {
+function canTypeBeDropped(type: string) {
+	return VehicleDataModel.isRelevantTypeForContext('INVENTORY', type);
+}
+
+function canTypeBeInsideContainer(type: string) {
+	return type !== 'container' && VehicleDataModel.isRelevantTypeForContext('INVENTORY', type);
+}
+
+async function handleEffectsStatus(items: GenesysItem[], desiredState: EquipmentState) {
+	await system.value.handleEffectsStatus(items, { equipmentState: desiredState });
+}
+
+// Maintain consistent with the function with the same name on Character -> InventoryTab.vue
+async function dropInventoryToSortSlot(event: DragEvent, sortCategory: EquipmentState, sortIndex: number) {
+	// Check that we have the UUID of whatever was dropped and that it's permitted to be dropped on this actor.
+	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
+	if (!dragData.uuid || (dragData.genesysType && !VehicleDataModel.isRelevantTypeForContext('INVENTORY', dragData.genesysType))) {
 		return;
 	}
 
+	// Make sure that the item in question exists and can be processed on this component.
+	let droppedItem = await fromUuid<GenesysItem<EquipmentDataModel>>(dragData.uuid);
+	if (!droppedItem || !VehicleDataModel.isRelevantTypeForContext('INVENTORY', droppedItem.type)) {
+		return;
+	}
+	// We are handling the dropped item here so no need to let other components process it.
+	event.stopPropagation();
+
+	// The user must own the actor, and if it's being dropped to the `Equipped` equipment state it must be of the correct type.
 	const actor = toRaw(context.data.actor);
-	const item = actor.items.get(dragSource.id) as GenesysItem<EquipmentDataModel>;
-
-	if (!item || (sortCategory === EquipmentState.Equipped && !VehicleDataModel.RELEVANT_TYPES.EQUIPABLE.includes(item.type))) {
+	if (!actor.isOwner || (sortCategory === EquipmentState.Equipped && !VehicleDataModel.isRelevantTypeForContext('EQUIPABLE', droppedItem.type))) {
 		return;
 	}
 
+	// If the item was dropped from another actor then we try transfering it and save a reference to it.
+	const sourceActor = droppedItem.actor;
+	const isDropFromAnotherActor = sourceActor && sourceActor.uuid !== actor.uuid;
+	if (isDropFromAnotherActor) {
+		const clonedItem = await transferInventoryBetweenActors(dragData, actor, canTypeBeDropped);
+		droppedItem = clonedItem?.[0] ?? null;
+
+		if (!droppedItem) {
+			return;
+		}
+	}
+
+	// Select the proper inventory category to sort the dropped item among them.
 	let sortedInventory;
 	switch (sortCategory) {
 		case EquipmentState.Equipped:
@@ -54,9 +92,10 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 			return;
 	}
 
-	const sortUpdates = SortingHelpers.performIntegerSort(item, {
+	// Calculate the new sort values and update them.
+	const sortUpdates = SortingHelpers.performIntegerSort(droppedItem, {
 		target: sortedInventory.value[sortIndex < 0 ? 0 : sortIndex],
-		siblings: sortedInventory.value.filter((sortedItem) => sortedItem.id !== item.id),
+		siblings: sortedInventory.value.filter((sortedItem) => sortedItem.id !== droppedItem.id),
 		sortBefore: sortIndex < 0,
 	});
 
@@ -69,125 +108,64 @@ async function sortDroppedItem(event: DragEvent, sortCategory: EquipmentState, s
 		}),
 	);
 
-	const updateObject: Record<string, string> = {
-		'system.container': '',
-	};
+	// If the item was moved from the contents of a container make sure we remove it from it.
+	const updateMap = new Map<string, any>();
+	updateMap.set('system.container', '');
 
-	if (item.system.state !== sortCategory) {
-		updateObject['system.state'] = sortCategory;
-		handleEffectsSuppresion(sortCategory, [item as GenesysItem]);
+	// Update the inventory category for which the dropped item now belongs.
+	const mustUpdateEquipmentState = sortCategory !== droppedItem.systemData.state;
+	if (mustUpdateEquipmentState) {
+		updateMap.set('system.state', sortCategory);
 	}
 
-	await item.update(updateObject);
-}
+	await droppedItem.update(Object.fromEntries(updateMap));
 
-async function handleEffectsSuppresion(_desiredState: EquipmentState, items: GenesysItem[]) {
-	const actor = toRaw(context.data.actor);
-
-	const allUpdates = [];
-
-	// TODO: Currently we are disabling every active effect but we should only disable active effects from items unrelated to vehicles.
-	//       Additionally, effects related only to encumbrance should remain enabled.
-	for (const item of items) {
-		allUpdates.push(
-			...actor.effects
-				.filter((effect) => (effect as GenesysEffect).originItem?.id === item.id && !effect.disabled)
-				.map(
-					async (effect) =>
-						await effect.update({
-							disabled: true,
-						}),
-				),
-		);
-	}
-
-	await Promise.all(allUpdates);
-}
-
-// TODO: The following two functions are almost exactly the same as the ones on the character sheet so find a way to consolidate them.
-async function mimicEffectsDetails(sourceActor: GenesysActor, sourceItemId: string, targetActor: GenesysActor, targetItemId: string) {
-	const sourceActorEffects = sourceActor.effects.filter((effect) => (effect as GenesysEffect).originItem?.id === sourceItemId);
-	const targetActorEffects = targetActor.effects.filter((effect) => (effect as GenesysEffect).originItem?.id === targetItemId);
-
-	if (sourceActorEffects.length !== targetActorEffects.length) {
-		ui.notifications.warn(game.i18n.localize('Genesys.Notifications.EffectsWereNotUpdatedAfterTransfer'));
-		return;
-	}
-
-	for (let k = 0; k < sourceActorEffects.length; k++) {
-		const sourceEffect = sourceActorEffects[k];
-		await targetActorEffects[k].update({
-			// TODO: Migrate away of using `label`.
-			label: sourceEffect.label,
-			icon: sourceEffect.icon,
-			changes: sourceEffect.changes,
-		});
+	// Potentially update the effects tied to the dropped item if it changed inventory category of if it was transfered from
+	// another actor.
+	if (mustUpdateEquipmentState || isDropFromAnotherActor) {
+		await actor.systemData.handleEffectsStatus([droppedItem], { equipmentState: sortCategory });
 	}
 }
 
-// TODO: Comment the contents of this function.
-async function dropInventoryBetweenActors(event: DragEvent) {
-	const actor = toRaw(context.data.actor);
+async function resetDragCounters(_event: DragEvent) {
+	dragCounters.value[EquipmentState.Equipped] = 0;
+	dragCounters.value[EquipmentState.Carried] = 0;
+}
 
-	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
-	if (!dragData.source || dragData.source === actor.id || !actor.isOwner) {
-		return;
-	}
-
-	const sourceActor = game.actors.get(dragData.source) as GenesysActor | undefined;
-	if (!sourceActor || !sourceActor.isOwner) {
-		return;
-	}
-
-	if (!VehicleDataModel.RELEVANT_TYPES.DROP_ITEM.includes(dragData.itemType) || !VehicleDataModel.RELEVANT_TYPES.INVENTORY.includes(dragData.itemType)) {
-		return;
-	}
-
-	let containedItems: GenesysItem<EquipmentDataModel>[] = [];
-	if (dragData.itemType === 'container') {
-		containedItems = sourceActor.items.filter((item) => (item as GenesysItem<EquipmentDataModel>).systemData.container === dragData.id) as GenesysItem<EquipmentDataModel>[];
-		if (!containedItems.every((item) => VehicleDataModel.RELEVANT_TYPES.DROP_ITEM.includes(item.type) && VehicleDataModel.RELEVANT_TYPES.INVENTORY.includes(item.type))) {
+function modifyDragCounters(event: DragEvent, direction: number) {
+	let draggedType: string;
+	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
+	if (dragData.genesysType) {
+		draggedType = dragData.genesysType;
+	} else if (dragData.uuid) {
+		const droppedEntity = fromUuidSync(dragData.uuid) as { type: string } | null;
+		if (!droppedEntity) {
 			return;
 		}
-	}
-
-	const droppedItem = sourceActor.items.get(dragData.id) as GenesysItem | undefined;
-	if (!droppedItem) {
+		draggedType = droppedEntity.type;
+	} else {
 		return;
 	}
 
-	const clonedItem = droppedItem.toObject();
-	const clonedItemSystem = clonedItem.system as EquipmentDataModel;
-	clonedItemSystem.state = EquipmentState.Carried;
-	clonedItemSystem.container = '';
-
-	const allCreatedItems = await actor.createEmbeddedDocuments('Item', [clonedItem]);
-	const itemInSelf = allCreatedItems[0];
-
-	await mimicEffectsDetails(sourceActor, droppedItem.id, actor, itemInSelf.id);
-
-	for (const containedItem of containedItems) {
-		const itemAsObject = containedItem.toObject();
-		const itemAsObjectSystem = itemAsObject.system as EquipmentDataModel;
-		itemAsObjectSystem.state = EquipmentState.Carried;
-		itemAsObjectSystem.container = itemInSelf.id;
-
-		const [currentClonedItem] = await actor.createEmbeddedDocuments('Item', [itemAsObject]);
-
-		await mimicEffectsDetails(sourceActor, containedItem.id, actor, currentClonedItem.id);
-
-		await containedItem.delete();
-		allCreatedItems.push(currentClonedItem);
+	if (VehicleDataModel.isRelevantTypeForContext('EQUIPABLE', draggedType)) {
+		dragCounters.value[EquipmentState.Equipped] += direction;
 	}
+	if (VehicleDataModel.isRelevantTypeForContext('INVENTORY', draggedType)) {
+		dragCounters.value[EquipmentState.Carried] += direction;
+	}
+}
 
-	await droppedItem.delete();
+function dragEnter(event: DragEvent) {
+	modifyDragCounters(event, 1);
+}
 
-	handleEffectsSuppresion(EquipmentState.Carried, allCreatedItems as GenesysItem<EquipmentDataModel>[]);
+function dragLeave(event: DragEvent) {
+	modifyDragCounters(event, -1);
 }
 </script>
 
 <template>
-	<section class="tab-inventory" @drop="dropInventoryBetweenActors">
+	<section class="tab-inventory" @drop.capture="resetDragCounters" @dragenter="dragEnter" @dragleave="dragLeave">
 		<div class="encumbrance-currency-row">
 			<div class="currency-row">
 				<label><i class="fas fa-coins"></i> {{ CURRENCY_LABEL }}:</label>
@@ -205,13 +183,22 @@ async function dropInventoryBetweenActors(event: DragEvent) {
 			<span><Localized label="Genesys.Labels.Equipped" /></span>
 		</div>
 
-		<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Equipped, -1)" />
+		<SortSlot :active="dragCounters[EquipmentState.Equipped] > 0" @drop="dropInventoryToSortSlot($event, EquipmentState.Equipped, -1)" />
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in equippedItems" :key="item.id">
-				<InventoryItem :item="item" draggable="true" :allow-dropping="false" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
+				<InventoryItem
+					:item="item"
+					:draggable="isDraggable"
+					:allow-dropped-state="false"
+					:dragging="dragCounters[EquipmentState.Carried] > 0"
+					@equipment-state-change="handleEffectsStatus"
+					:can-type-be-dropped="canTypeBeDropped"
+					:can-type-be-inside-container="canTypeBeInsideContainer"
+					:can-type-be-transfered="canTypeBeDropped"
+				/>
 
-				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Equipped, index)" />
+				<SortSlot :active="dragCounters[EquipmentState.Equipped] > 0" @drop="dropInventoryToSortSlot($event, EquipmentState.Equipped, index)" />
 			</template>
 		</TransitionGroup>
 
@@ -219,13 +206,22 @@ async function dropInventoryBetweenActors(event: DragEvent) {
 			<span><Localized label="Genesys.Labels.Carried" /></span>
 		</div>
 
-		<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Carried, -1)" />
+		<SortSlot :active="dragCounters[EquipmentState.Carried] > 0" @drop="dropInventoryToSortSlot($event, EquipmentState.Carried, -1)" />
 
 		<TransitionGroup name="inv">
 			<template v-for="(item, index) in carriedItems" :key="item.id">
-				<InventoryItem :item="item" draggable="true" :allow-dropping="false" @dragstart="draggingItem = true" @dragend="draggingItem = false" :dragging="draggingItem" @equipment-state-change="handleEffectsSuppresion" />
+				<InventoryItem
+					:item="item"
+					:draggable="isDraggable"
+					:allow-dropped-state="false"
+					:dragging="dragCounters[EquipmentState.Carried] > 0"
+					@equipment-state-change="handleEffectsStatus"
+					:can-type-be-dropped="canTypeBeDropped"
+					:can-type-be-inside-container="canTypeBeInsideContainer"
+					:can-type-be-transfered="canTypeBeDropped"
+				/>
 
-				<InventorySortSlot :active="draggingItem" @drop="sortDroppedItem($event, EquipmentState.Carried, index)" />
+				<SortSlot :active="dragCounters[EquipmentState.Carried] > 0" @drop="dropInventoryToSortSlot($event, EquipmentState.Carried, index)" />
 			</template>
 		</TransitionGroup>
 	</section>

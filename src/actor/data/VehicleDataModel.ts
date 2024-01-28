@@ -105,7 +105,7 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 			(accum, item) => {
 				const equipment = item as GenesysItem<EquipmentDataModel>;
 
-				if (VehicleDataModel.#RELEVANT_TYPES.ENCUMBRANCE.includes(equipment.type) && equipment.systemData.encumbrance !== undefined) {
+				if (VehicleDataModel.isRelevantTypeForContext('ENCUMBRANCE', equipment.type) && equipment.systemData.encumbrance !== undefined) {
 					if (equipment.systemData.encumbrance >= 0) {
 						accum.value += equipment.systemData.encumbrance * equipment.systemData.quantity;
 					} else {

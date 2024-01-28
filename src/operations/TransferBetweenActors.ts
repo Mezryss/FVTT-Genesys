@@ -40,7 +40,7 @@ async function cloneInventoryItemForAnotherActor(sourceItem: GenesysItem<Equipme
 }
 
 export async function transferInventoryBetweenActors(dragData: DragTransferData, actor: GenesysActor, isRelevantType: (type: string) => boolean) {
-	// Check that the we have the UUID of whatever was dropped, that it's permitted to be dropped on this actor, and that the target
+	// Check that we have the UUID of whatever was dropped, that it's permitted to be dropped on this actor, and that the target
 	// actor is owned by the user.
 	if (!actor.isOwner || !dragData.uuid || (dragData.genesysType && !isRelevantType(dragData.genesysType))) {
 		return;
