@@ -19,7 +19,9 @@ import TalentDataModel from '@/item/data/TalentDataModel';
 import VueSheet from '@/vue/VueSheet';
 import GenesysActorSheet from '@/actor/GenesysActorSheet';
 import { ActorSheetContext } from '@/vue/SheetContext';
-import GenesysEffect from '@/effects/GenesysEffect';
+import { DragTransferData } from '@/data/DragTransferData';
+import { transferInventoryBetweenActors } from '@/operations/TransferBetweenActors';
+import { EquipmentState } from '@/item/data/EquipmentDataModel';
 
 /**
  * Actor sheet used for Player Characters
@@ -50,138 +52,173 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 	}
 
 	protected override async _onDropItem(event: DragEvent, data: DropCanvasData<'Item', GenesysItem<BaseItemDataModel>>): Promise<GenesysItem<BaseItemDataModel>[] | boolean> {
-		if (!this.isEditable || !data.uuid) {
+		// Regardless of what was dropped this is the last spot to process it.
+		event.stopPropagation();
+
+		// Check that the we have the UUID of the item that was dropped.
+		const dragData = data as DragTransferData;
+		if (!dragData.uuid) {
 			return false;
 		}
 
-		const droppedItem: GenesysItem | undefined = await (<any>GenesysItem.implementation).fromDropData(data);
-		if (!droppedItem || droppedItem.type === 'vehicleWeapon') {
+		// Make sure that the item in question exists.
+		const droppedItem = await fromUuid<GenesysItem<BaseItemDataModel>>(dragData.uuid);
+		if (!droppedItem) {
 			return false;
 		}
 
-		// If it's an archetype, delete the old one and apply the new one.
-		if (droppedItem.type === 'archetype') {
-			if (!this.canRemoveArchetype()) {
-				return false;
-			}
-
-			const existingArchetype = <GenesysItem<ArchetypeDataModel> | undefined>this.actor.items.find((i) => i.type === 'archetype');
-			if (existingArchetype) {
-				await this.removeArchetype(existingArchetype);
-			}
-
-			await this.applyArchetype(<GenesysItem<ArchetypeDataModel>>droppedItem);
+		// We must be able to edit the actor to proceed.
+		if (!this.isEditable) {
+			return false;
 		}
 
-		// If it's a career, delete the old one and apply the new one.
-		if (droppedItem.type === 'career') {
-			// Don't allow a career change if we've already started making changes to the character!
-			if (this.actor.systemData.experienceJournal.entries.length > 1) {
-				return false;
-			}
+		let clonedDroppedItem: GenesysItem<BaseItemDataModel>[] | undefined | boolean;
+		if (CharacterDataModel.isRelevantTypeForContext('APTITUDE', droppedItem.type)) {
+			if (droppedItem.type === 'archetype') {
+				// If it's an archetype, delete the old one and apply the new one.
 
-			const existingCareer = <GenesysItem<CareerDataModel> | undefined>this.actor.items.find((i) => i.type === 'career');
-			if (existingCareer) {
-				await this.removeCareer(existingCareer);
-			}
-
-			await this.applyCareer(<GenesysItem<CareerDataModel>>droppedItem);
-
-			return false; // applyCareer handles adding the embedded document to the character.
-		}
-
-		if (droppedItem.type === 'talent') {
-			const talent = <GenesysItem<TalentDataModel>>droppedItem;
-			const existingTalent = <GenesysItem<TalentDataModel>>this.actor.items.find((i) => i.type === 'talent' && i.name.toLowerCase() === talent.name.toLowerCase());
-
-			if (existingTalent) {
-				if (existingTalent.systemData.ranked === 'no') {
-					ui.notifications.info(game.i18n.format('Genesys.Notifications.TalentNotRanked', { talentName: existingTalent.name }));
+				if (!this.canRemoveArchetype()) {
 					return false;
 				}
 
-				const newRank = existingTalent.systemData.rank + 1;
-				const newEffectiveTier = existingTalent.systemData.effectiveNextTier;
-				const cost = existingTalent.systemData.advanceCost;
+				const existingArchetype = this.actor.items.find((i) => i.type === 'archetype');
+				if (existingArchetype) {
+					await this.removeArchetype(existingArchetype as GenesysItem<ArchetypeDataModel>);
+				}
 
-				if (this.actor.systemData.availableXP < cost) {
-					ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordRankedTalent', { name: talent.name, newRank, cost }));
+				await this.applyArchetype(droppedItem as GenesysItem<ArchetypeDataModel>);
+
+				// Let `super` handle the rest and save a reference to it.
+				clonedDroppedItem = await super._onDropItem(event, data);
+			} else if (droppedItem.type === 'career') {
+				// If it's a career, delete the old one and apply the new one.
+
+				if (this.actor.systemData.experienceJournal.entries.length > 1) {
 					return false;
 				}
 
-				await existingTalent.update({
-					'system.rank': newRank,
-				});
+				const existingCareer = this.actor.items.find((i) => i.type === 'career');
+				if (existingCareer) {
+					await this.removeCareer(existingCareer as GenesysItem<CareerDataModel>);
+				}
 
-				await this.actor.update({
-					'system.experienceJournal.entries': [
-						...this.actor.systemData.experienceJournal.entries,
-						{
-							amount: -cost,
-							type: EntryType.TalentRank,
-							data: {
-								name: existingTalent.name,
-								id: existingTalent.id,
-								tier: newEffectiveTier,
-								rank: newRank,
-							},
-						},
-					],
-				});
+				const career = await this.applyCareer(droppedItem as GenesysItem<CareerDataModel>);
+
+				clonedDroppedItem = [career];
 			} else {
-				// New talent
-				const cost = talent.systemData.tier * 5;
-
-				if (this.actor.systemData.availableXP < cost) {
-					ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordTalent', { name: talent.name, cost }));
-					return false;
-				}
-
-				const [newTalent] = (await this._onDropItemCreate(talent.toObject())) as GenesysItem<TalentDataModel>[];
-
-				await this.actor.update({
-					'system.experienceJournal.entries': [
-						...this.actor.systemData.experienceJournal.entries,
-						{
-							amount: -cost,
-							type: EntryType.NewTalent,
-							data: {
-								name: newTalent.name,
-								id: newTalent.id,
-								tier: newTalent.systemData.tier,
-								rank: 1,
-							},
-						},
-					],
-				});
+				// Let `super` handle the drop and save a reference to it.
+				clonedDroppedItem = await super._onDropItem(event, data);
+			}
+		} else if (CharacterDataModel.isRelevantTypeForContext('SKILL', droppedItem.type)) {
+			// Prevent adding the same skill multiple times.
+			if (droppedItem.type === 'skill' && this.actor.items.find((item) => item.type === 'skill' && item.name === droppedItem.name)) {
+				return false;
 			}
 
+			// Let `super` handle the drop and save a reference to it.
+			clonedDroppedItem = await super._onDropItem(event, data);
+		} else if (CharacterDataModel.isRelevantTypeForContext('COMBAT', droppedItem.type)) {
+			// Let `super` handle the drop and save a reference to it.
+			clonedDroppedItem = await super._onDropItem(event, data);
+		} else if (CharacterDataModel.isRelevantTypeForContext('TALENT', droppedItem.type)) {
+			if (droppedItem.type === 'ability') {
+				// Let `super` handle the drop and save a reference to it.
+				clonedDroppedItem = await super._onDropItem(event, data);
+			} else if (droppedItem.type === 'talent') {
+				const droppedTalent = droppedItem as GenesysItem<TalentDataModel>;
+				let targetTalent = this.actor.items.find((i) => i.type === 'talent' && i.name === droppedTalent.name) as GenesysItem<TalentDataModel> | undefined;
+
+				if (targetTalent) {
+					if (targetTalent.systemData.ranked === 'no') {
+						ui.notifications.info(game.i18n.format('Genesys.Notifications.TalentNotRanked', { talentName: targetTalent.name }));
+						return false;
+					}
+
+					const newRank = targetTalent.systemData.rank + 1;
+					const newEffectiveTier = targetTalent.systemData.effectiveNextTier;
+					const cost = targetTalent.systemData.advanceCost;
+
+					if (this.actor.systemData.availableXP < cost) {
+						ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordRankedTalent', { name: droppedTalent.name, newRank, cost }));
+						return false;
+					}
+
+					await targetTalent.update({
+						'system.rank': newRank,
+					});
+
+					await this.actor.update({
+						'system.experienceJournal.entries': [
+							...this.actor.systemData.experienceJournal.entries,
+							{
+								amount: -cost,
+								type: EntryType.TalentRank,
+								data: {
+									name: targetTalent.name,
+									id: targetTalent.id,
+									tier: newEffectiveTier,
+									rank: newRank,
+								},
+							},
+						],
+					});
+				} else {
+					// New talent
+					const cost = droppedTalent.systemData.tier * 5;
+
+					if (this.actor.systemData.availableXP < cost) {
+						ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordTalent', { name: droppedTalent.name, cost }));
+						return false;
+					}
+
+					[targetTalent] = (await this._onDropItemCreate(droppedTalent.toObject())) as GenesysItem<TalentDataModel>[];
+
+					await this.actor.update({
+						'system.experienceJournal.entries': [
+							...this.actor.systemData.experienceJournal.entries,
+							{
+								amount: -cost,
+								type: EntryType.NewTalent,
+								data: {
+									name: targetTalent.name,
+									id: targetTalent.id,
+									tier: targetTalent.systemData.tier,
+									rank: 1,
+								},
+							},
+						],
+					});
+				}
+
+				clonedDroppedItem = [targetTalent];
+			} else {
+				// Let `super` handle the drop and save a reference to it.
+				clonedDroppedItem = await super._onDropItem(event, data);
+			}
+		} else if (CharacterDataModel.isRelevantTypeForContext('INVENTORY', droppedItem.type)) {
+			const sourceActor = droppedItem.actor;
+
+			if (sourceActor && sourceActor.uuid !== this.actor.uuid) {
+				// If the item was dropped from another actor then we try transfering it and save a reference to it.
+				clonedDroppedItem = await transferInventoryBetweenActors(dragData, this.actor, (type) => CharacterDataModel.isRelevantTypeForContext('INVENTORY', type));
+			} else if (!sourceActor) {
+				// If the item comes from a folder or compendium then let `super` handle the drop and save a reference to it.
+				clonedDroppedItem = await super._onDropItem(event, data);
+			} else {
+				// Ignore dropped items if they are already on this actor; they should be handled by specific components on the sheet.
+				return false;
+			}
+
+			// If we sucessfully cloned the dropped inventory item then update the state for any associated effect.
+			if (Array.isArray(clonedDroppedItem)) {
+				await this.actor.systemData.handleEffectsStatus(clonedDroppedItem, { equipmentState: EquipmentState.Carried });
+			}
+		} else {
+			// If the dropped item is not of a type that we have a default behavior then end early.
 			return false;
 		}
 
-		// Prevent adding the same skill multiple times.
-		if (droppedItem.type === 'skill' && this.actor.items.find((i) => i.type === 'skill' && i.name.toLowerCase() === droppedItem.name.toLowerCase())) {
-			return false;
-		}
-
-		if (['weapon', 'armor'].includes(droppedItem.type)) {
-			const [equipable] = await this._onDropItemCreate(droppedItem.toObject());
-
-			await Promise.all(
-				this.actor.effects
-					.filter((effect) => (effect as GenesysEffect).originItem?.id === equipable.id && !effect.disabled)
-					.map(
-						async (effect) =>
-							await effect.update({
-								disabled: true,
-							}),
-					),
-			);
-
-			return false;
-		}
-
-		return await super._onDropItem(event, data);
+		return clonedDroppedItem ?? false;
 	}
 
 	async #updateForArchetype(workingData: CharacterDataModel) {
@@ -340,6 +377,8 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 					}),
 			),
 		);
+
+		return career;
 	}
 
 	/**

@@ -244,13 +244,18 @@ function dragEnd(event: DragEvent) {
 }
 
 function dragEnter(event: DragEvent) {
+	// Only containers should be highlighted on hover.
 	if (props.item.type !== 'container') {
 		return;
 	}
 
-	// Only containers should be highlighted on hover, and containers cannot be dragged into other containers.
 	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
-	if (!dragData.genesysType || dragData.genesysType === 'container') {
+	if (!dragData.uuid || (dragData.genesysType && !props.canTypeBeInsideContainer(dragData.genesysType))) {
+		return;
+	}
+
+	const draggedEntity = fromUuidSync(dragData.uuid) as { type: string } | null;
+	if (!draggedEntity || !props.canTypeBeInsideContainer(draggedEntity.type)) {
 		return;
 	}
 
