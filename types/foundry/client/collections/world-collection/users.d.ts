@@ -20,6 +20,8 @@ declare global {
 		/** Get the users with player roles */
 		get players(): TUser[];
 
+        get activeGM(): TUser | null;
+
 		/* -------------------------------------------- */
 		/*  Socket Listeners and Handlers               */
 		/* -------------------------------------------- */
