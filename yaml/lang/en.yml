@@ -171,6 +171,7 @@ Genesys:
     MissingCompendium: Unable to load Skills Compendium '{name}'. Reconfigure the skills compendium in Genesys Settings.
     WrongCompendiumType: Configured Skills Compendium '{name}' is a {type} Compendium, not an Item Compendium! Reconfigure the skills compendium in Genesys Settings.
     NoSkillsInCompendium: Configured Skills Compendium '{name}' does not contain any skills. Reconfigure the skills compendium in Genesys Settings.
+    CharacterWithNoSkills: Character was created with no initial skill data since none were found on the configured Skills Compendium.
     CannotDeleteCharacteristic: Cannot delete XP Journal Entry for characteristic '{characteristic}' - you must delete the advance to the next rank first!
     CannotDeleteSkill: Cannot delete XP Journal Entry for skill '{name}' - you must delete the advance to the next rank first!
     CannotAffordTalent: Cannot afford talent '{name}' ({cost}xp).
