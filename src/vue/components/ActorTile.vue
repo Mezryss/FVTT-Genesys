@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
-import { inject, ref } from 'vue';
+import { inject, ref, toRaw } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import GenesysActor from '@/actor/GenesysActor';
+import { DragTransferData } from '@/data/DragTransferData';
 
 import Localized from '@/vue/components/Localized.vue';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
@@ -10,7 +11,7 @@ import MenuItem from '@/vue/components/MenuItem.vue';
 
 const props = withDefaults(
 	defineProps<{
-		actorId: string;
+		actor: GenesysActor;
 		dragging?: boolean;
 		mini?: boolean;
 	}>(),
@@ -33,13 +34,17 @@ const isBeingDragged = ref(false);
 const editLabel = game.i18n.localize('Genesys.Labels.Edit');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 
-const targetActor = game.actors.get(props.actorId) as GenesysActor;
-const career = targetActor.type === 'character' ? targetActor.items.find((item) => item.type === 'career')?.name : undefined;
+const career = props.actor.type === 'character' ? toRaw(props.actor).items.find((item) => item.type === 'career')?.name : undefined;
 
 function dragStart(event: DragEvent) {
 	isBeingDragged.value = true;
+	const transferData: DragTransferData = {
+		uuid: props.actor.uuid,
+		type: props.actor.documentName,
+		genesysType: props.actor.type,
+	};
 
-	event.dataTransfer?.setData('text/plain', JSON.stringify({ id: props.actorId }));
+	event.dataTransfer?.setData('text/plain', JSON.stringify(transferData));
 
 	emit('dragstart', event);
 }
@@ -51,7 +56,7 @@ function dragEnd(event: DragEvent) {
 }
 
 async function openActorSheet() {
-	await targetActor.sheet?.render(true);
+	await toRaw(props.actor).sheet.render(true);
 }
 </script>
 
@@ -66,11 +71,11 @@ async function openActorSheet() {
 		@dragstart="dragStart"
 		@dragend="dragEnd"
 	>
-		<img :src="targetActor.img" :alt="targetActor.name" draggable="false" />
+		<img :src="actor.img" :alt="actor.name" draggable="false" />
 
 		<div class="details">
 			<span class="name">
-				<a @click="openActorSheet">{{ targetActor.name }}</a>
+				<a @click="openActorSheet">{{ actor.name }}</a>
 			</span>
 
 			<div v-if="career"><Localized label="Genesys.Labels.Career" />: {{ career }}</div>
@@ -100,7 +105,7 @@ async function openActorSheet() {
 			'drag-dim': props.dragging && !isBeingDragged,
 			'drag-source': isBeingDragged,
 		}"
-		:data-tooltip="targetActor.name"
+		:data-tooltip="actor.name"
 		@dragstart="dragStart"
 		@dragend="dragEnd"
 	>
@@ -117,7 +122,7 @@ async function openActorSheet() {
 				</MenuItem>
 			</template>
 
-			<img :src="targetActor.img" :alt="targetActor.name" draggable="false" />
+			<img :src="actor.img" :alt="actor.name" draggable="false" />
 		</ContextMenu>
 	</div>
 </template>

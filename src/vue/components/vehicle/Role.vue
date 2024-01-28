@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 
 import Localized from '@/vue/components/Localized.vue';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
 import MenuItem from '@/vue/components/MenuItem.vue';
 import ActorTile from '@/vue/components/ActorTile.vue';
+import GenesysActor from '@/actor/GenesysActor';
 
 const props = withDefaults(
 	defineProps<{
@@ -22,21 +23,31 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(e: 'delete'): void;
 	(e: 'updateName', newName: string): void;
-	(e: 'removeSkill', skillIndex: number): void;
-	(e: 'removeMember', memberIndex: number): void;
+	(e: 'removeSkill', skillName: string): void;
+	(e: 'removeMember', memberUuid: string): void;
 	(e: 'actorDragStart', event: DragEvent): void;
 	(e: 'actorDragEnd'): void;
-	(e: 'actorDrop', event: DragEvent): void;
+	(e: 'entityDrop', event: DragEvent): void;
 }>();
 
 const dragCounter = ref(0);
+const actorsInRole = ref<GenesysActor[]>([]);
+
+// Make sure to display only actors that exist.
+watchEffect(async () => {
+	const foundActors: GenesysActor[] = [];
+	for (const member of props.members) {
+		const actor = await fromUuid<GenesysActor>(member);
+		if (actor) {
+			foundActors.push(actor);
+		}
+	}
+	actorsInRole.value = foundActors;
+});
 
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 
 function dragEnter() {
-	if (dragCounter.value === undefined) {
-		dragCounter.value = 0;
-	}
 	dragCounter.value += 1;
 }
 
@@ -47,7 +58,7 @@ function dragLeave() {
 function drop(event: DragEvent) {
 	dragCounter.value = 0;
 
-	emit('actorDrop', event);
+	emit('entityDrop', event);
 }
 </script>
 
@@ -55,7 +66,8 @@ function drop(event: DragEvent) {
 	<div
 		:class="{
 			'role-section': true,
-			'drop-target': dragCounter > 0,
+			'drop-target': props.dragging,
+			'drop-hover': props.dragging && dragCounter > 0,
 		}"
 		:data-role-id="props.id"
 		@dragenter="dragEnter"
@@ -73,9 +85,9 @@ function drop(event: DragEvent) {
 			<div class="role-skills">
 				<label><Localized label="Genesys.Labels.Skills" /></label>
 				<div>
-					<ContextMenu v-for="(skill, skillIndex) in skills" :key="skill" class="role-skill">
+					<ContextMenu v-for="skill in skills" :key="skill" class="role-skill">
 						<template v-slot:menu-items>
-							<MenuItem @click="emit('removeSkill', skillIndex)">
+							<MenuItem @click="emit('removeSkill', skill)">
 								<template v-slot:icon><i class="fas fa-trash"></i></template>
 								{{ deleteLabel }}
 							</MenuItem>
@@ -89,8 +101,8 @@ function drop(event: DragEvent) {
 
 			<div class="role-members">
 				<TransitionGroup name="mems">
-					<div v-for="(member, memberIndex) in members" :key="member" class="role-member">
-						<ActorTile :actor-id="member" draggable="true" @dragstart="emit('actorDragStart', $event)" @dragend="emit('actorDragEnd')" :dragging="dragging" @remove-member="emit('removeMember', memberIndex)" />
+					<div v-for="member in actorsInRole" :key="member.uuid" class="role-member">
+						<ActorTile :actor="member as GenesysActor" draggable="true" @dragstart="emit('actorDragStart', $event)" @dragend="emit('actorDragEnd')" :dragging="dragging" @remove-member="emit('removeMember', member.uuid)" />
 					</div>
 				</TransitionGroup>
 			</div>
@@ -104,7 +116,7 @@ function drop(event: DragEvent) {
 
 .role-section {
 	grid-column: auto / span 1;
-	background: transparentize(colors.$light-blue, 0.8);
+	background: transparentize(colors.$light-blue, 0.85);
 	border-radius: 1em;
 	padding: 0.75em;
 
@@ -209,6 +221,10 @@ function drop(event: DragEvent) {
 }
 
 .drop-target {
-	background: transparentize(colors.$light-blue, 0.4) !important;
+	background: transparentize(colors.$light-blue, 0.75);
+
+	&.drop-hover {
+		background: colors.$light-blue;
+	}
 }
 </style>
