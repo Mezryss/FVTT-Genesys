@@ -10,6 +10,8 @@ import AdversarySheet from '@/actor/sheets/AdversarySheet';
 import VueMinionSheet from '@/vue/sheets/actor/MinionSheet.vue';
 import GenesysItem from '@/item/GenesysItem';
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
+import AdversaryDataModel from '@/actor/data/AdversaryDataModel';
+import { DragTransferData } from '@/data/DragTransferData';
 
 /**
  * Actor sheet used for Player Characters
@@ -20,20 +22,34 @@ export default class MinionSheet extends AdversarySheet {
 	}
 
 	protected override async _onDropItem(event: DragEvent, data: DropCanvasData<'Item', GenesysItem<BaseItemDataModel>>) {
-		if (!this.isEditable || !data.uuid) {
+		// Regardless of what was dropped this is the last spot to process it.
+		event.stopPropagation();
+
+		// Check that the we have the UUID of the item that was dropped.
+		const dragData = data as DragTransferData;
+		if (!dragData.uuid) {
 			return false;
 		}
 
-		const droppedItem: GenesysItem | undefined = await (<any>GenesysItem.implementation).fromDropData(data);
+		// Make sure that the item in question exists.
+		const droppedItem = await fromUuid<GenesysItem<BaseItemDataModel>>(dragData.uuid);
 		if (!droppedItem) {
 			return false;
 		}
 
-		// If the dropped item is a Skill, verify we don't already have it on the sheet.
-		if (droppedItem.type === 'skill' && this.actor.items.find((i) => i.type === droppedItem.type && i.name.toLowerCase() === droppedItem.name.toLowerCase())) {
+		// We must be able to edit the actor to proceed.
+		if (!this.isEditable) {
 			return false;
 		}
 
+		// If the dropped item is a skill make sure we don't have it already.
+		if (AdversaryDataModel.isRelevantTypeForContext('SKILL', droppedItem.type)) {
+			if (this.actor.items.find((item) => item.type === droppedItem.type && item.name === droppedItem.name)) {
+				return false;
+			}
+		}
+
+		// Let `super` handle the drop.
 		return super._onDropItem(event, data);
 	}
 }

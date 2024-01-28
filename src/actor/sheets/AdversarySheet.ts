@@ -14,6 +14,7 @@ import TalentDataModel from '@/item/data/TalentDataModel';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import VueSheet from '@/vue/VueSheet';
 import { ActorSheetContext } from '@/vue/SheetContext';
+import { DragTransferData } from '@/data/DragTransferData';
 
 /**
  * Actor sheet used for Player Characters
@@ -41,42 +42,77 @@ export default class AdversarySheet extends VueSheet(GenesysActorSheet<Adversary
 	}
 
 	protected override async _onDropItem(event: DragEvent, data: DropCanvasData<'Item', GenesysItem<BaseItemDataModel>>) {
-		if (!this.isEditable || !data.uuid) {
+		// Regardless of what was dropped this is the last spot to process it.
+		event.stopPropagation();
+
+		// Check that the we have the UUID of the item that was dropped.
+		const dragData = data as DragTransferData;
+		if (!dragData.uuid) {
 			return false;
 		}
 
-		const droppedItem: GenesysItem | undefined = await (<any>GenesysItem.implementation).fromDropData(data);
+		// Make sure that the item in question exists.
+		const droppedItem = await fromUuid<GenesysItem<BaseItemDataModel>>(dragData.uuid);
 		if (!droppedItem) {
 			return false;
 		}
 
-		// If the dropped item is an Ability, verify we don't already have it on the sheet.
-		if (droppedItem.type === 'ability' && this.actor.items.find((i) => i.type === droppedItem.type && i.name.toLowerCase() === droppedItem.name.toLowerCase())) {
+		// We must be able to edit the actor to proceed.
+		if (!this.isEditable) {
 			return false;
 		}
 
-		// If the dropped item is a Talent, rank it up if we already have it instead of adding a new copy.
-		if (['talent', 'skill'].includes(droppedItem.type)) {
-			const existingItem = <GenesysItem<TalentDataModel> | GenesysItem<SkillDataModel> | undefined>this.actor.items.find((i) => i.type === droppedItem.type && i.name.toLowerCase() === droppedItem.name.toLowerCase());
+		let clonedDroppedItem: GenesysItem<BaseItemDataModel>[] | undefined | boolean;
+		if (AdversaryDataModel.isRelevantTypeForContext('SKILL', droppedItem.type)) {
+			const existingItem = this.actor.items.find((item) => item.type === droppedItem.type && item.name === droppedItem.name) as GenesysItem<SkillDataModel> | undefined;
 
 			if (existingItem) {
+				// If the skill already exists just rank it.
 				await existingItem.update({
 					'system.rank': existingItem.systemData.rank + 1,
 				});
+			} else if (this.actor.type !== 'minion') {
+				// If the skill is not on this adversary then add it with 1 rank.
+				clonedDroppedItem = await this._onDropItemCreate(droppedItem.toObject());
 
-				return false;
+				await clonedDroppedItem[0].update({ 'system.rank': 1 });
+			} else {
+				// Let `super` handle the drop and save a reference to it.
+				clonedDroppedItem = await super._onDropItem(event, data);
 			}
-		}
+		} else if (AdversaryDataModel.isRelevantTypeForContext('COMBAT', droppedItem.type)) {
+			// Let `super` handle the drop and save a reference to it.
+			clonedDroppedItem = await super._onDropItem(event, data);
+		} else if (AdversaryDataModel.isRelevantTypeForContext('TALENT', droppedItem.type)) {
+			const existingItem = this.actor.items.find((item) => item.type === droppedItem.type && item.name === droppedItem.name);
 
-		// If it's a skill, and we've reached this point, we need to apply the first rank to it.
-		if (droppedItem.type === 'skill' && this.actor.type !== 'minion') {
-			const [skill] = await this._onDropItemCreate(droppedItem.toObject());
-
-			await skill.update({ 'system.rank': 1 });
-
+			if (droppedItem.type === 'ability') {
+				// If the dropped item is an ability, verify we don't already have it on the sheet.
+				if (existingItem) {
+					return false;
+				} else {
+					// Let `super` handle the drop and save a reference to it.
+					clonedDroppedItem = await super._onDropItem(event, data);
+				}
+			} else if (droppedItem.type === 'talent') {
+				if (existingItem) {
+					// If the talent already exists just rank it.
+					await existingItem.update({
+						'system.rank': (existingItem as GenesysItem<TalentDataModel>).systemData.rank + 1,
+					});
+				} else {
+					// Let `super` handle the drop and save a reference to it.
+					clonedDroppedItem = await super._onDropItem(event, data);
+				}
+			} else {
+				// Let `super` handle the drop and save a reference to it.
+				clonedDroppedItem = await super._onDropItem(event, data);
+			}
+		} else {
+			// If the dropped item is not of a type that we have a default behavior then end early.
 			return false;
 		}
 
-		return super._onDropItem(event, data);
+		return clonedDroppedItem ?? false;
 	}
 }
