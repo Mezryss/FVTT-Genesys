@@ -15,6 +15,11 @@ type ValueWithThreshold = {
 	threshold: number;
 };
 
+type ActorPointer = {
+	uuid: string;
+	sort: number;
+};
+
 /**
  * This type represents a role that can be hold on the vehicle.
  */
@@ -57,7 +62,7 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	abstract price: number;
 	abstract rarity: number;
 	abstract currency: number;
-	abstract passengers: ValueWithThreshold & { list: Array<{ uuid: string; sort: number }> };
+	abstract passengers: ValueWithThreshold & { list: ActorPointer[] };
 	abstract encumbrance: ValueWithThreshold;
 	abstract roles: RoleData[];
 
@@ -86,6 +91,22 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	}
 
 	static readonly _GAME_VEHICLES = new Set<GenesysActor<VehicleDataModel>>();
+
+	static override migrateData(source: any) {
+		const passengers: Array<ActorPointer & { id?: string }> = source.passengers.list;
+		for (const passenger of passengers) {
+			// eslint-disable-next-line no-prototype-builtins
+			if (!passenger.hasOwnProperty('id')) {
+				break;
+			}
+			// We removed the `id` property and added `uuid`. We transfer the data from one to the other to allow the migration
+			// script that runs after to save the proper data. (See "src\migrations\1-use-uuid-for-vehicle.ts")
+			passenger.uuid = passenger.id!;
+			delete passenger.id;
+		}
+
+		return super.migrateData(source);
+	}
 
 	constructor(...args: any[]) {
 		super(...args);

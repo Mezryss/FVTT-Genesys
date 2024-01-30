@@ -35,6 +35,9 @@ export abstract class DataModel<TParent extends DataModel | null = _DataModel | 
 	 */
 	static defineSchema(): fields.DataSchema;
 
+	/** Migrate candidate source data for this DataModel which may require initial cleaning or transformations. */
+	static migrateData(source: any): any;
+
 	/** Define the data schema for documents of this type. */
 	static get schema(): fields.SchemaField;
 
