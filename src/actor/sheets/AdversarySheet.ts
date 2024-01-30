@@ -108,6 +108,9 @@ export default class AdversarySheet extends VueSheet(GenesysActorSheet<Adversary
 				// Let `super` handle the drop and save a reference to it.
 				clonedDroppedItem = await super._onDropItem(event, data);
 			}
+		} else if (AdversaryDataModel.isRelevantTypeForContext('INVENTORY', droppedItem.type)) {
+			// Let `super` handle the drop and save a reference to it.
+			clonedDroppedItem = await super._onDropItem(event, data);
 		} else {
 			// If the dropped item is not of a type that we have a default behavior then end early.
 			return false;

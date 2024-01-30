@@ -19,10 +19,11 @@ import { register as registerStoryPointTracker } from '@/app/StoryPointTracker';
 import { register as registerActors, AdversaryTypes } from '@/actor';
 import { register as registerEffects } from '@/effects';
 import { register as registerItems, CharacterCreationItemTypes, EquipmentItemTypes } from '@/item';
-import { register as registerVehiclesRerender } from '@/actor/data/VehicleDataModel';
+import { register as registerVehicles } from '@/actor/data/VehicleDataModel';
 import DicePrompt, { registerWorker } from '@/app/DicePrompt';
 
 import GenesysActor from '@/actor/GenesysActor';
+import { migrate_UseUuidForVehicles } from '@/migrations/1-use-uuid-for-vehicle';
 
 import './scss/index.scss';
 
@@ -110,7 +111,10 @@ Hooks.once('ready', async () => {
 	await doAlphaNotice();
 
 	readyConfigs();
-	registerVehiclesRerender();
+
+	await migrate_UseUuidForVehicles();
+
+	registerVehicles();
 	registerWorker();
 });
 
