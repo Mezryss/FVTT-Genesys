@@ -51,8 +51,9 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/116">PR #116</a>: Bugfix - Fixes a harmless bug on the chance to succeed Web Worker</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/117">PR #117</a>: Feature - French translations thanks to @ZolOnTheNet!</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/125">PR #125</a>: Feature - Enhance the vehicle sheet and make transfering items more robust</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/126">PR #126</a>: Bugfix - Adds the french translation to the language menu (thanks to @ZolOnTheNet!)</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/124">PR #124</a>: Bugfix - Safely fail if the 'CalculateChance' worker is not found</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
