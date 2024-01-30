@@ -15,7 +15,7 @@ import GenesysCombatTracker from '@/combat/GenesysCombatTracker';
 import { GENESYS_CONFIG } from '@/config';
 
 declare global {
-	const ui: FoundryUI<GenesysActor, ActorDirectory<GenesysActor>, GenesysItem, ChatMessage<GenesysActor>, ChatLog<ChatMessage<GenesysActor>>, CompendiumDirectory, GenesysCombatTracker>;
+	const ui: FoundryUI<GenesysActor, ActorDirectory<GenesysActor>, GenesysItem, ChatMessage<GenesysActor>, ChatLog<ChatMessage<GenesysActor>>, CompendiumDirectory, GenesysCombatTracker<GenesysCombat>>;
 	const canvas: Canvas;
 
 	interface GenesysConfig

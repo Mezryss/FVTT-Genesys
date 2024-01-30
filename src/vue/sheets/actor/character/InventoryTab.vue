@@ -101,7 +101,7 @@ async function dropInventoryToSortSlot(event: DragEvent, sortCategory: Equipment
 	// Calculate the new sort values and update them.
 	const sortUpdates = SortingHelpers.performIntegerSort(droppedItem, {
 		target: sortedInventory.value[sortIndex < 0 ? 0 : sortIndex],
-		siblings: sortedInventory.value.filter((sortedItem) => sortedItem.id !== droppedItem.id),
+		siblings: sortedInventory.value.filter((sortedItem) => sortedItem.id !== droppedItem!.id),
 		sortBefore: sortIndex < 0,
 	});
 
