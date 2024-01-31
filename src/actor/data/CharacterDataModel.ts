@@ -14,9 +14,7 @@ import ArmorDataModel from '@/item/data/ArmorDataModel';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import { Characteristic, CharacteristicsContainer } from '@/data/Characteristics';
 import { CombatPool, Defense } from '@/data/Actors';
-import { DEFAULT_SKILLS_COMPENDIUM } from '@/config';
-
-export const EQUIPMENT_TYPES = ['armor', 'consumable', 'container', 'gear', 'weapon'];
+import GenesysEffect from '@/effects/GenesysEffect';
 
 type Motivation = {
 	name: string;
@@ -49,7 +47,20 @@ type CharacterActor = GenesysActor<CharacterDataModel>;
 type ArmorItem = GenesysItem<ArmorDataModel>;
 type EquipmentItem = GenesysItem<EquipmentDataModel>;
 
-export default abstract class CharacterDataModel extends foundry.abstract.DataModel implements IHasPreCreate<GenesysActor<CharacterDataModel>> {
+// We can get rid of this type when Typescript finally allows getting the keys of private static variables, which will make it so
+// that the first argument type of `isRelevantTypeForContext` is replaced with `keyof typeof VehicleDataModel.#RELEVANT_TYPES`.
+type RelevantTypes = {
+	APTITUDE: string[];
+	SKILL: string[];
+	COMBAT: string[];
+	TALENT: string[];
+	ENCUMBRANCE: string[];
+	INVENTORY: string[];
+	EQUIPABLE: string[];
+	CONSUMABLE: string[];
+};
+
+export default abstract class CharacterDataModel extends foundry.abstract.DataModel implements IHasPreCreate<CharacterActor> {
 	abstract characteristics: CharacteristicsContainer;
 	abstract soak: number;
 	abstract defense: Defense;
@@ -67,12 +78,28 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 	/**
 	 * A list of Document types that a Character actor cares about for different reasons.
 	 */
-	static readonly RELEVANT_TYPES = {
-		// Item types that can be handled when dropped into the sheet.
-		DROP_ITEM: ['weapon', 'armor', 'consumable', 'gear', 'container'],
-		// Item types that are listed on the Inventory tab.
+	static readonly #RELEVANT_TYPES: RelevantTypes = {
+		// Types of items that are used to build a character.
+		APTITUDE: ['archetype', 'career'],
+		// Types that are related to the Skills tab.
+		SKILL: ['skill'],
+		// Types that are related to the Combat tab.
+		COMBAT: ['injury'],
+		// Types that are related to the Talents tab.
+		TALENT: ['ability', 'talent'],
+		// Types that are used to calculate encumbrance values.
+		ENCUMBRANCE: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+		// Types that are listed on the Inventory tab.
 		INVENTORY: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+		// Types that can be equipped.
+		EQUIPABLE: ['weapon', 'armor'],
+		// Types that can be spent.
+		CONSUMABLE: ['consumable'],
 	};
+
+	static isRelevantTypeForContext(context: keyof RelevantTypes, type: string) {
+		return !!type && (CharacterDataModel.#RELEVANT_TYPES[context]?.includes(type) ?? false); // eslint-disable-line
+	}
 
 	/**
 	 * Total value for Soak (base + Brawn + Armor).
@@ -165,7 +192,7 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 	}
 
 	#effectiveEncumbranceForItem(item: EquipmentItem) {
-		if (!EQUIPMENT_TYPES.includes(item.type)) {
+		if (!CharacterDataModel.isRelevantTypeForContext('ENCUMBRANCE', item.type)) {
 			return 0;
 		}
 
@@ -202,7 +229,42 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 		return item.systemData.encumbrance * item.systemData.quantity;
 	}
 
-	async preCreate(actor: GenesysActor<this>, _data: PreDocumentId<any>, _options: DocumentModificationContext<GenesysActor<CharacterDataModel>>, _user: User) {
+	// Maintain consistent with the function of the same name in `VehicleDataModel`.
+	async handleEffectsStatus(items: GenesysItem[], overrides?: { equipmentState: EquipmentState }) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const allUpdates = [];
+		for (const item of items) {
+			let effectDisableStatus = false;
+
+			// If the item is equipment then enable its effects only if it's are on the proper equipment state.
+			if (CharacterDataModel.isRelevantTypeForContext('INVENTORY', item.type)) {
+				const itemEquipmentState = overrides?.equipmentState ? overrides.equipmentState : (item.systemData as EquipmentDataModel).state;
+				if (CharacterDataModel.isRelevantTypeForContext('EQUIPABLE', item.type)) {
+					effectDisableStatus = EquipmentState.Equipped !== itemEquipmentState;
+				} else if (CharacterDataModel.isRelevantTypeForContext('CONSUMABLE', item.type)) {
+					effectDisableStatus = EquipmentState.Used !== itemEquipmentState;
+				} else {
+					effectDisableStatus = EquipmentState.Carried !== itemEquipmentState;
+				}
+			}
+
+			allUpdates.push(
+				...actor.effects
+					.filter((effect) => (effect as GenesysEffect).originItem?.id === item.id && effect.disabled !== effectDisableStatus)
+					.map(
+						async (effect) =>
+							await effect.update({
+								disabled: effectDisableStatus,
+							}),
+					),
+			);
+		}
+
+		await Promise.all(allUpdates);
+	}
+
+	async preCreate(actor: CharacterActor, _data: PreDocumentId<any>, _options: DocumentModificationContext<CharacterActor>, _user: User) {
 		// Player character tokens should default to being Friendly.
 		const prototypeToken = {
 			bar1: { attribute: 'wounds' },
@@ -210,43 +272,22 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 			disposition: CONST.TOKEN_DISPOSITIONS.FRIENDLY,
 			actorLink: true,
 		};
-
 		await actor.updateSource({ prototypeToken });
 
-		// Pre-Populate the Character with skill data.
+		// Already have skills data, so we have no reason to add new ones.
 		if (actor.items.find((i) => i.type === 'skill')) {
-			// Already have skills data, so we have no reason to add new ones.
 			return;
 		}
 
-		let skillsCompendiumName = CONFIG.genesys.skillsCompendium;
+		const skills = CONFIG.genesys.skills;
 
-		// Validate the setting is actually set.
-		if (skillsCompendiumName.length === 0) {
-			ui.notifications.warn(game.i18n.localize('Genesys.Notifications.NoSkillsCompendium'));
-			skillsCompendiumName = DEFAULT_SKILLS_COMPENDIUM;
-		}
-
-		// Attempt to load the pack
-		const pack = game.packs.get(skillsCompendiumName);
-
-		if (!pack) {
-			ui.notifications.error(game.i18n.format('Genesys.Notifications.MissingCompendium', { name: skillsCompendiumName }));
-			return;
-		}
-		if (pack.metadata.type !== 'Item') {
-			ui.notifications.error(game.i18n.format('Genesys.Notifications.WrongCompendiumType', { name: skillsCompendiumName, type: pack.metadata.type }));
-			return;
-		}
-		const skillIds = pack.index.filter((i) => i.type === 'skill');
-		if (skillIds.length === 0) {
-			ui.notifications.warn(game.i18n.format('Genesys.Notifications.NoSkillsInCompendium', { name: skillsCompendiumName }));
+		if (skills.length === 0) {
+			ui.notifications.warn('Genesys.Notifications.CharacterWithNoSkills', { localize: true });
 			return;
 		}
 
-		// Populate the skill items
-		const skillItems = (await pack.getDocuments()).filter((i) => (<GenesysItem>i).type === 'skill').map((i) => i.toObject());
-		actor.updateSource({ items: skillItems });
+		const skillItems = skills.map((i) => i.toObject());
+		await actor.updateSource({ items: skillItems });
 	}
 
 	static override defineSchema() {

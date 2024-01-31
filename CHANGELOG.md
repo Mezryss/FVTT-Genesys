@@ -1,3 +1,16 @@
+## Alpha 0.2.6
+This new version will attempt to perform a data migration for vehicles the first time a GM logins into the world. Make sure the migration is completed before doing anything on the world.
+
+### Features
+-	[PR #125](https://github.com/Mezryss/FVTT-Genesys/pull/125): Enhance the vehicle sheet and make transfering items more robust
+
+### Bug Fixes/Misc
+-	[PR #124](https://github.com/Mezryss/FVTT-Genesys/pull/124): Safely fail if the `CalculateChance` worker is not found
+-	[PR #126](https://github.com/Mezryss/FVTT-Genesys/pull/126): Adds the french translation to the language menu (thanks to @ZolOnTheNet)
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.5
 
 ### Features
@@ -5,9 +18,6 @@
 
 ### Bug Fixes/Misc
 -	[PR #116](https://github.com/Mezryss/FVTT-Genesys/pull/116): Fixes a harmless bug on the chance to succeed Web Worker
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.4
 

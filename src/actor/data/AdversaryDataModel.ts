@@ -20,6 +20,15 @@ type Motivations = {
 	fear: Motivation;
 };
 
+// We can get rid of this type when Typecript finally allows getting the keys of private static variables; this will be replaced
+// by the following syntax: `keyof typeof VehicleDataModel.#RELEVANT_TYPES`
+type RelevantTypes = {
+	SKILL: string[];
+	COMBAT: string[];
+	TALENT: string[];
+	INVENTORY: string[];
+};
+
 export default abstract class AdversaryDataModel extends foundry.abstract.DataModel {
 	abstract characteristics: CharacteristicsContainer;
 	abstract soak: number;
@@ -27,6 +36,24 @@ export default abstract class AdversaryDataModel extends foundry.abstract.DataMo
 	abstract description: string;
 	abstract motivations: Motivations;
 	abstract superCharacteristics: Set<Characteristic>;
+
+	/**
+	 * A list of Document types that an Adversary actor cares about for different reasons.
+	 */
+	static readonly #RELEVANT_TYPES: RelevantTypes = {
+		// Types that are related to the Skills tab.
+		SKILL: ['skill'],
+		// Types that are related to the Combat tab.
+		COMBAT: ['injury'],
+		// Types that are related to the Talents tab.
+		TALENT: ['ability', 'talent'],
+		// Types that are related to the equipment.
+		INVENTORY: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+	};
+
+	static isRelevantTypeForContext(context: keyof RelevantTypes, type: string) {
+		return !!type && (AdversaryDataModel.#RELEVANT_TYPES[context]?.includes(type) ?? false); // eslint-disable-line
+	}
 
 	static override defineSchema() {
 		const fields = foundry.data.fields;

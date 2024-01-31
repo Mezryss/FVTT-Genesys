@@ -7,6 +7,8 @@
  */
 
 import { GENESYS_CONFIG } from '@/config';
+import SkillDataModel from '@/item/data/SkillDataModel';
+import GenesysItem from '@/item/GenesysItem';
 
 /**
  * The Skills Compendium to use for default skill data.
@@ -60,8 +62,31 @@ export function register(namespace: string) {
 		config: true,
 		default: GENESYS_CONFIG.skillsCompendium,
 		type: String,
-		onChange: (value) => {
-			CONFIG.genesys.skillsCompendium = value ?? '';
+		onChange: async (value) => {
+			// We always want a skill compendium so fallback to the default value if it's ever removed.
+			let skillsCompendiumName = GENESYS_CONFIG.skillsCompendium;
+			if (!value) {
+				ui.notifications.warn('Genesys.Notifications.NoSkillsCompendium', { localize: true });
+				CONFIG.genesys.skillsCompendium = skillsCompendiumName;
+			} else {
+				CONFIG.genesys.skillsCompendium = skillsCompendiumName = value;
+			}
+
+			let skills: GenesysItem<SkillDataModel>[] = [];
+
+			// Attempt to load the pack.
+			const pack = game.packs.get(skillsCompendiumName);
+			if (!pack) {
+				ui.notifications.error(game.i18n.format('Genesys.Notifications.MissingCompendium', { name: skillsCompendiumName }));
+			} else if (pack.metadata.type !== 'Item') {
+				ui.notifications.error(game.i18n.format('Genesys.Notifications.WrongCompendiumType', { name: skillsCompendiumName, type: pack.metadata.type }));
+			} else if (!pack.index.some((item) => item.type === 'skill')) {
+				ui.notifications.warn(game.i18n.format('Genesys.Notifications.NoSkillsInCompendium', { name: skillsCompendiumName }));
+			} else {
+				skills = (await pack.getDocuments()).filter((item) => (item as GenesysItem).type === 'skill') as GenesysItem<SkillDataModel>[];
+			}
+
+			CONFIG.genesys.skills = skills;
 		},
 	});
 

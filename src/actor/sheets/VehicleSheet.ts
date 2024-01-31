@@ -5,8 +5,10 @@ import VueVehicleSheet from '@/vue/sheets/actor/VehicleSheet.vue';
 import { ActorSheetContext } from '@/vue/SheetContext';
 import BaseItemDataModel from '@/item/data/BaseItemDataModel';
 import GenesysItem from '@/item/GenesysItem';
-import GenesysEffect from '@/effects/GenesysEffect';
 import GenesysActor from '@/actor/GenesysActor';
+import { CrewDragTransferData, DragTransferData } from '@/data/DragTransferData';
+import { transferInventoryBetweenActors } from '@/operations/TransferBetweenActors';
+import { EquipmentState } from '@/item/data/EquipmentDataModel';
 
 export default class VehicleSheet extends VueSheet(GenesysActorSheet<VehicleDataModel>) {
 	override get vueComponent() {
@@ -34,106 +36,103 @@ export default class VehicleSheet extends VueSheet(GenesysActorSheet<VehicleData
 	}
 
 	protected override async _onDropItem(event: DragEvent, data: DropCanvasData<'Item', GenesysItem<BaseItemDataModel>>) {
-		if (!this.isEditable || !data.uuid) {
+		// Regardless of what was dropped this is the last spot to process it.
+		event.stopPropagation();
+
+		// Check that the we have the UUID of the item that was dropped.
+		const dragData = data as DragTransferData;
+		if (!dragData.uuid) {
 			return false;
 		}
 
-		const droppedItem: GenesysItem | undefined = await (<any>GenesysItem.implementation).fromDropData(data);
-		if (!droppedItem || !VehicleDataModel.RELEVANT_TYPES.DROP_ITEM.includes(droppedItem.type)) {
+		// Make sure that the item in question exists.
+		const droppedItem = await fromUuid<GenesysItem<BaseItemDataModel>>(dragData.uuid);
+		if (!droppedItem) {
 			return false;
 		}
 
-		// A vehicle doesn't own any skills but we allow dropping them only when they are being dropped into a role. This associates
-		// the skill name to the target role.
-		if (droppedItem.type === 'skill' && this._tabs[0].active === 'crew') {
-			const targetRoleId = ((event.target as HTMLElement)?.closest('.role-section') as HTMLElement)?.dataset.roleId;
-			const roles = [...this.actor.systemData.roles];
+		// We must be able to edit the actor to proceed.
+		if (!this.isEditable) {
+			return false;
+		}
 
-			const targetRole = roles.find((role) => role.id === targetRoleId);
+		let clonedDroppedItem: GenesysItem<BaseItemDataModel>[] | undefined | boolean;
+		if (VehicleDataModel.isRelevantTypeForContext('INVENTORY', droppedItem.type)) {
+			const sourceActor = droppedItem.actor;
 
-			if (targetRole && !targetRole.skills.includes(droppedItem.name)) {
-				targetRole.skills = [...targetRole.skills, droppedItem.name];
-
-				await this.actor.update({
-					'system.roles': roles,
-				});
+			if (sourceActor && sourceActor.uuid !== this.actor.uuid) {
+				// If the item was dropped from another actor then we try transfering it and save a reference to it.
+				clonedDroppedItem = await transferInventoryBetweenActors(dragData, this.actor, (type) => VehicleDataModel.isRelevantTypeForContext('INVENTORY', type));
+			} else if (!sourceActor) {
+				// If the item comes from a folder or compendium then let `super` handle the drop and save a reference to it.
+				clonedDroppedItem = await super._onDropItem(event, data);
+			} else {
+				// Ignore dropped items if they are already on this actor; they should be handled by specific components on the sheet.
+				return false;
 			}
 
+			// If we sucessfully cloned the dropped inventory item then update the state for any associated effect.
+			if (Array.isArray(clonedDroppedItem)) {
+				await this.actor.systemData.handleEffectsStatus(clonedDroppedItem, { equipmentState: EquipmentState.Carried });
+			}
+		} else if (VehicleDataModel.isRelevantTypeForContext('COMBAT', droppedItem.type)) {
+			// Let `super` handle the drop and save a reference to it.
+			clonedDroppedItem = await super._onDropItem(event, data);
+		} else {
+			// If the dropped item is not of a type that we have a default behavior then end early.
 			return false;
 		}
 
-		const newItems = await super._onDropItemCreate(droppedItem.toObject());
-
-		// TODO: Currently we are disabling every active effect but we should only disable active effects from items unrelated to vehicles.
-		//       Additionally, effects related only to encumbrance should remain enabled.
-		await Promise.all(
-			this.actor.effects
-				.filter((effect) => (effect as GenesysEffect).originItem?.id === newItems[0].id && !effect.disabled)
-				.map(
-					async (effect) =>
-						await effect.update({
-							disabled: true,
-						}),
-				),
-		);
-
-		return newItems;
+		return clonedDroppedItem ?? false;
 	}
 
 	protected override async _onDropActor(event: DragEvent, data: DropCanvasData<'Actor', GenesysActor<VehicleDataModel>>): Promise<false | void> {
-		if (!this.isEditable || !data.uuid) {
+		// Regardless of what was dropped this is the last spot to process it.
+		event.stopPropagation();
+
+		// Check that we have the UUID of the passenger that was dropped and that it can be processed by this method.
+		const dragData = data as CrewDragTransferData;
+		if (!dragData.uuid || (dragData.genesysType && !VehicleDataModel.isRelevantTypeForContext('PASSENGER', dragData.genesysType))) {
 			return false;
 		}
 
-		const actor = (await fromUuid(data.uuid)) as GenesysActor;
-		if (!actor || !VehicleDataModel.RELEVANT_TYPES.DROP_ACTOR.includes(actor.type) || !actor.isOwner) {
+		// Make sure that the passenger in question exists and can be processed by this method.
+		const crewUuid = dragData.uuid;
+		const droppedEntity = fromUuidSync(crewUuid) as { type: string } | null;
+		if (!droppedEntity || !VehicleDataModel.isRelevantTypeForContext('PASSENGER', droppedEntity.type)) {
 			return false;
 		}
-		const actorId = actor.id;
 
-		// If the actor is being dropped specifically into one of the roles then we add the actor to the role instead of to the passengers
-		// list. Note that this is the only way for an actor to be part of more than one role.
-		if (this._tabs[0].active === 'crew') {
-			const targetRoleId = ((event.target as HTMLElement)?.closest('.role-section') as HTMLElement)?.dataset.roleId;
-			const roles = [...this.actor.systemData.roles];
+		// We must be able to edit the actor to proceed.
+		if (!this.isEditable) {
+			return false;
+		}
 
-			const targetRole = roles.find((role) => role.id === targetRoleId);
-
-			if (targetRole && !targetRole.members.includes(actorId)) {
-				targetRole.members = [...targetRole.members, actorId];
-
-				const updates: Record<string, any> = {
-					'system.roles': roles,
-				};
-
-				// If the dropped actor is already a passenger then remove it from that list.
-				const passengersList = this.actor.systemData.passengers.list;
-				const passengerIndex = passengersList.findIndex((passenger) => passenger.id === actorId);
-
-				if (passengerIndex >= 0) {
-					const updatedList = [...passengersList];
-					updatedList.splice(passengerIndex, 1);
-					updates['system.passengers.list'] = updatedList;
-				}
-
-				await this.actor.update(updates);
+		const isDropFromAnotherActor = dragData.sourceVehicleUuid && dragData.sourceVehicleUuid !== this.actor.uuid;
+		if (isDropFromAnotherActor) {
+			// If the passenger was dropped from another actor then check it's not already on our list and then remove it from the source.
+			if (this.actor.systemData.hasCrew(crewUuid)) {
 				return false;
 			}
+
+			const aVehicle = await fromUuid<GenesysActor<VehicleDataModel>>(dragData.sourceVehicleUuid!);
+			if (!aVehicle || aVehicle.type !== 'vehicle' || !aVehicle.isOwner) {
+				return false;
+			}
+
+			await aVehicle.systemData.removeCrew(crewUuid);
+		} else if (!dragData.sourceVehicleUuid) {
+			// If the item comes from a folder or compendium then check it's not already on our list.
+			if (this.actor.systemData.hasCrew(crewUuid)) {
+				return false;
+			}
+		} else {
+			// Ignore dropped passengers if they are already on this actor; they should be handled by specific components on the sheet.
+			return false;
 		}
 
-		const passengersList = this.actor.systemData.passengers.list;
-		const isPresent = passengersList.some((passenger) => passenger.id === actorId) || this.actor.systemData.roles.some((role) => role.members.includes(actorId));
+		await this.actor.systemData.addPassenger(crewUuid);
 
-		// If the dropped actor is not part of the passenggers nor is it in any role then add it as a passenger.
-		if (!isPresent) {
-			const updatedList = [...passengersList].sort((left, right) => left.sort - right.sort);
-			const lastPassengerSort = updatedList[updatedList.length - 1]?.sort ?? 0;
-			updatedList.push({ id: actorId, sort: lastPassengerSort + CONST.SORT_INTEGER_DENSITY });
-			await this.actor.update({
-				'system.passengers.list': updatedList,
-			});
-		}
-
-		return false;
+		return;
 	}
 }

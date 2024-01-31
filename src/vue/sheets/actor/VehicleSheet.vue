@@ -119,6 +119,8 @@ onBeforeUpdate(updateEffects);
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
+	width: 100%;
+	height: 100%;
 
 	header {
 		display: grid;

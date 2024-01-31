@@ -12,6 +12,7 @@ export enum EquipmentState {
 	Carried = 'carried',
 	Dropped = 'dropped',
 	Equipped = 'equipped',
+	Used = 'used',
 }
 
 export enum EquipmentDamageState {
@@ -53,7 +54,7 @@ export default abstract class EquipmentDataModel extends BaseItemDataModel {
 	abstract container: string;
 
 	/**
-	 * (Owned Only) State of the item (carried, dropped, or equipped)
+	 * (Owned Only) State of the item (carried, dropped, equipped, or used)
 	 */
 	abstract state: EquipmentState;
 
@@ -73,7 +74,7 @@ export default abstract class EquipmentDataModel extends BaseItemDataModel {
 			quantity: new fields.NumberField({ integer: true, initial: 1 }),
 			state: new fields.StringField({
 				initial: EquipmentState.Carried,
-				choices: [EquipmentState.Carried, EquipmentState.Dropped, EquipmentState.Equipped],
+				choices: [EquipmentState.Carried, EquipmentState.Dropped, EquipmentState.Equipped, EquipmentState.Used],
 			}),
 		};
 	}

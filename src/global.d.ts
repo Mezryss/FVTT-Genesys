@@ -15,7 +15,7 @@ import GenesysCombatTracker from '@/combat/GenesysCombatTracker';
 import { GENESYS_CONFIG } from '@/config';
 
 declare global {
-	const ui: FoundryUI;
+	const ui: FoundryUI<GenesysActor, ActorDirectory<GenesysActor>, GenesysItem, ChatMessage<GenesysActor>, ChatLog<ChatMessage<GenesysActor>>, CompendiumDirectory, GenesysCombatTracker<GenesysCombat>>;
 	const canvas: Canvas;
 
 	interface GenesysConfig
@@ -46,5 +46,5 @@ declare global {
 	// Override the typings for various CONFIG values in order to provide strongly-typed config within the system.
 	const CONFIG: GenesysConfig;
 
-	const game: Game<GenesysActor, Actors, ChatMessage, GenesysCombat, GenesysItem, Macro, Scene, User>;
+	const game: Game<GenesysActor, Actors<GenesysActor>, ChatMessage<GenesysActor>, GenesysCombat, GenesysItem, Macro, Scene, User<GenesysActor>>;
 }

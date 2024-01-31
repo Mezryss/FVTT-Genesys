@@ -5,7 +5,6 @@
  * @author Mezryss
  * @file
  */
-
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import {
 	KEY_CAREER_SKILL_RANKS,
@@ -18,6 +17,8 @@ import {
 	KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS,
 } from '@/settings/campaign';
 import { KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION, KEY_USE_MAGICAL_GIRL_SYMBOLS } from '@/settings/user';
+import SkillDataModel from '@/item/data/SkillDataModel';
+import GenesysItem from '@/item/GenesysItem';
 
 /**
  * Default skills compendium to use if the setting is misconfigured.
@@ -66,6 +67,9 @@ export const GENESYS_CONFIG = {
 		// Number of simulated rolls to do to calculate the dice pool success chance.
 		amountOfRolls: 0,
 	},
+
+	/** Miscellaneous **/
+	skills: [] as GenesysItem<SkillDataModel>[],
 };
 
 /**
@@ -81,24 +85,23 @@ export function register() {
 export function ready() {
 	/** World Settings **/
 
-	CONFIG.genesys.skillsCompendium = (game.settings.get(SETTINGS_NAMESPACE, KEY_SKILLS_COMPENDIUM) as string) ?? '';
-	CONFIG.genesys.skillForHealingInjury = (game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_INJURIES) as string) ?? '';
-	CONFIG.genesys.skillForRepairingHit = (game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS) as string) ?? '';
-	CONFIG.genesys.currencyName = (game.settings.get(SETTINGS_NAMESPACE, KEY_MONEY_NAME) as string) ?? '';
-	CONFIG.genesys.freeCareerSkillRanks = Math.floor(Math.abs((game.settings.get(SETTINGS_NAMESPACE, KEY_CAREER_SKILL_RANKS) as number) ?? 0));
-	CONFIG.genesys.uncoupleSkillsFromCharacteristics = (game.settings.get(SETTINGS_NAMESPACE, KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS) as boolean) ?? false;
-	CONFIG.genesys.showAttackDetailsOnFailure = (game.settings.get(SETTINGS_NAMESPACE, KEY_SHOW_DAMAGE_ON_FAILURE) as boolean) ?? false;
-	CONFIG.genesys.useSuperCharacteristics = (game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS) as boolean) ?? false;
+	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_SKILLS_COMPENDIUM}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SKILLS_COMPENDIUM));
+	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_SKILL_FOR_INJURIES}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_INJURIES));
+	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS));
+	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_MONEY_NAME}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_MONEY_NAME));
+	game.settings.settings.get<number>(`${SETTINGS_NAMESPACE}.${KEY_CAREER_SKILL_RANKS}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_CAREER_SKILL_RANKS));
+	game.settings.settings.get<boolean>(`${SETTINGS_NAMESPACE}.${KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS));
+	game.settings.settings.get<boolean>(`${SETTINGS_NAMESPACE}.${KEY_SHOW_DAMAGE_ON_FAILURE}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SHOW_DAMAGE_ON_FAILURE));
+	game.settings.settings.get<boolean>(`${SETTINGS_NAMESPACE}.${KEY_SUPER_CHARACTERISTICS}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS));
 
 	/** User Settings **/
 
-	CONFIG.genesys.useMagicalGirlSymbols = (game.settings.get(SETTINGS_NAMESPACE, KEY_USE_MAGICAL_GIRL_SYMBOLS) as boolean) ?? false;
+	CONFIG.genesys.useMagicalGirlSymbols = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_USE_MAGICAL_GIRL_SYMBOLS) ?? false;
 
+	// eslint-disable-next-line
 	if (!!game.workers.get) {
-		CONFIG.genesys.showChanceToSucceedFromPermutations = (game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) as boolean) ?? false;
+		CONFIG.genesys.showChanceToSucceedFromPermutations = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) ?? false;
 	}
 
-	const amountOfRolls = Math.floor(Math.abs((game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION) as number) ?? 0));
-	CONFIG.genesys.showChanceToSucceedFromSimulations.enabled = amountOfRolls > 0;
-	CONFIG.genesys.showChanceToSucceedFromSimulations.amountOfRolls = amountOfRolls;
+	game.settings.settings.get<number>(`${SETTINGS_NAMESPACE}.${KEY_CHANCE_TO_SUCCEED_BY_SIMULATION}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION));
 }

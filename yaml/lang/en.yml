@@ -168,9 +168,10 @@ Genesys:
     AlreadyHaveSpecialAbility: Unable to add {abilityName}; Special Abilities are not ranked, and you already have it!
     TalentNotRanked: Unable to add {talentName}; It is not a ranked talent, and you already have it!
     NoSkillsCompendium: Skills compendium setting is empty! Attempting to use default skills compendium.
-    MissingCompendium: Unable to load Skills Compendium '{name}'. Actor was created with no initial skill data. Reconfigure the skills compendium in Genesys Settings.
-    WrongCompendiumType: Configured Skills Compendium '{name}' is a {type} Compendium, not an Item Compendium! Actor was created with no initial skill data. Reconfigure the skills compendium in Genesys Settings.
-    NoSkillsInCompendium: Configured Skills Compendium '{name}' does not contain any skills. Actor was created with no initial skill data. Reconfigure the skills compendium in Genesys Settings.
+    MissingCompendium: Unable to load Skills Compendium '{name}'. Reconfigure the skills compendium in Genesys Settings.
+    WrongCompendiumType: Configured Skills Compendium '{name}' is a {type} Compendium, not an Item Compendium! Reconfigure the skills compendium in Genesys Settings.
+    NoSkillsInCompendium: Configured Skills Compendium '{name}' does not contain any skills. Reconfigure the skills compendium in Genesys Settings.
+    CharacterWithNoSkills: Character was created with no initial skill data since none were found on the configured Skills Compendium.
     CannotDeleteCharacteristic: Cannot delete XP Journal Entry for characteristic '{characteristic}' - you must delete the advance to the next rank first!
     CannotDeleteSkill: Cannot delete XP Journal Entry for skill '{name}' - you must delete the advance to the next rank first!
     CannotAffordTalent: Cannot afford talent '{name}' ({cost}xp).
@@ -185,6 +186,8 @@ Genesys:
     CannotClaimOppositeSlot: You can't claim this initiative slot with {name} - it's on the wrong side!
     CannotSelectActor: You do not have sufficient permission to select this Actor.
     InvalidTokenTypeForAction: The selected token is of an invalid type to perform this action.
+    EffectsWereNotUpdatedAfterTransfer: There was an error updating the effects with the latest values for the transfered '{name}'.
+    NoRoleMembersWithAppropriateSkills: There are no role members that have the appropriate skills to perform this action.
 
   # Story Points
   StoryPoints:

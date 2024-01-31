@@ -11,7 +11,6 @@ import SkillDataModel from '@/item/data/SkillDataModel';
 import TalentDataModel from '@/item/data/TalentDataModel';
 import AbilityDataModel from '@/item/data/AbilityDataModel';
 import EquipmentDataModel from '@/item/data/EquipmentDataModel';
-import { EQUIPMENT_TYPES } from '@/actor/data/CharacterDataModel';
 import SkillRanks from '@/vue/components/character/SkillRanks.vue';
 import DicePrompt, { RollType } from '@/app/DicePrompt';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
@@ -28,7 +27,7 @@ const system = computed(() => toRaw(context.data.actor).systemData);
 const skills = computed(() => actor.value.items.filter((i) => i.type === 'skill') as GenesysItem<SkillDataModel>[]);
 const talents = computed(() => actor.value.items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[]);
 const abilities = computed(() => actor.value.items.filter((i) => i.type === 'ability') as GenesysItem<AbilityDataModel>[]);
-const equipment = computed(() => actor.value.items.filter((i) => EQUIPMENT_TYPES.includes(i.type)) as GenesysItem<EquipmentDataModel>[]);
+const equipment = computed(() => actor.value.items.filter((i) => AdversaryDataModel.isRelevantTypeForContext('INVENTORY', i.type)) as GenesysItem<EquipmentDataModel>[]);
 const injuries = computed(() => actor.value.items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
 
 const effects = ref<any>([]);

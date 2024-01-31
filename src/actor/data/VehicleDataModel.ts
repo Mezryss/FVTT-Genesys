@@ -1,6 +1,8 @@
 import GenesysActor from '@/actor/GenesysActor';
+import IHasOnDelete from '@/data/IHasOnDelete';
 import IHasPreCreate from '@/data/IHasPreCreate';
-import EquipmentDataModel from '@/item/data/EquipmentDataModel';
+import GenesysEffect from '@/effects/GenesysEffect';
+import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import GenesysItem from '@/item/GenesysItem';
 
 type ValueWithMax = {
@@ -11,6 +13,11 @@ type ValueWithMax = {
 type ValueWithThreshold = {
 	value: number;
 	threshold: number;
+};
+
+type ActorPointer = {
+	uuid: string;
+	sort: number;
 };
 
 /**
@@ -27,7 +34,19 @@ type RoleData = {
 	members: string[];
 };
 
-export default abstract class VehicleDataModel extends foundry.abstract.DataModel implements IHasPreCreate<GenesysActor<VehicleDataModel>> {
+// We can get rid of this type when Typescript finally allows getting the keys of private static variables, which will make it so
+// that the first argument type of `isRelevantTypeForContext` is replaced with `keyof typeof VehicleDataModel.#RELEVANT_TYPES`.
+type RelevantTypes = {
+	COMBAT: string[];
+	ROLE: string[];
+	PASSENGER: string[];
+	ENCUMBRANCE: string[];
+	INVENTORY: string[];
+	EQUIPABLE: string[];
+	CONSUMABLE: string[];
+};
+
+export default abstract class VehicleDataModel extends foundry.abstract.DataModel implements IHasPreCreate<GenesysActor<VehicleDataModel>>, IHasOnDelete<GenesysActor<VehicleDataModel>> {
 	abstract silhouette: number;
 	abstract speed: number;
 	abstract handling: number;
@@ -43,32 +62,56 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	abstract price: number;
 	abstract rarity: number;
 	abstract currency: number;
-	abstract passengers: ValueWithThreshold & { list: Array<{ id: string; sort: number }> };
+	abstract passengers: ValueWithThreshold & { list: ActorPointer[] };
 	abstract encumbrance: ValueWithThreshold;
 	abstract roles: RoleData[];
 
 	/**
 	 * A list of Document types that a Vehicle actor cares about for different reasons.
 	 */
-	static readonly RELEVANT_TYPES = {
-		// Item types that can be handled when dropped into the sheet.
-		DROP_ITEM: ['vehicleWeapon', 'weapon', 'armor', 'consumable', 'gear', 'container', 'skill', 'injury'],
-		// Actor types that can be handled when dropped into the sheet.
-		DROP_ACTOR: ['character', 'minion', 'rival', 'nemesis'],
-		// Item types that are used to calculate encumbrance values.
+	static readonly #RELEVANT_TYPES: RelevantTypes = {
+		// Types that are related to the Combat tab.
+		COMBAT: ['injury'],
+		// Types that are allowed to be dropped on a role.
+		ROLE: ['character', 'minion', 'rival', 'nemesis', 'skill'],
+		// Types that are allowed to be a added as passengers.
+		PASSENGER: ['character', 'minion', 'rival', 'nemesis'],
+		// Types that are used to calculate encumbrance values.
 		ENCUMBRANCE: ['vehicleWeapon', 'weapon', 'armor', 'consumable', 'gear', 'container'],
-		// Item types that are listed on the Inventory tab.
+		// Types that are listed on the Inventory tab.
 		INVENTORY: ['vehicleWeapon', 'weapon', 'armor', 'consumable', 'gear', 'container'],
-		// Item types that can be equipped.
+		// Types that can be equipped.
 		EQUIPABLE: ['vehicleWeapon'],
+		// Types that can be spent.
+		CONSUMABLE: ['consumable'],
 	};
 
+	static isRelevantTypeForContext(context: keyof RelevantTypes, type: string) {
+		return !!type && (VehicleDataModel.#RELEVANT_TYPES[context]?.includes(type) ?? false); // eslint-disable-line
+	}
+
 	static readonly _GAME_VEHICLES = new Set<GenesysActor<VehicleDataModel>>();
+
+	static override migrateData(source: any) {
+		const passengers: Array<ActorPointer & { id?: string }> = source.passengers.list;
+		for (const passenger of passengers) {
+			// eslint-disable-next-line no-prototype-builtins
+			if (!passenger.hasOwnProperty('id')) {
+				break;
+			}
+			// We removed the `id` property and added `uuid`. We transfer the data from one to the other to allow the migration
+			// script that runs after to save the proper data. (See "src\migrations\1-use-uuid-for-vehicle.ts")
+			passenger.uuid = passenger.id!;
+			delete passenger.id;
+		}
+
+		return super.migrateData(source);
+	}
 
 	constructor(...args: any[]) {
 		super(...args);
 
-		const actor = this.parent as unknown as GenesysActor<VehicleDataModel>;
+		const actor = this.parent as unknown as GenesysActor<this>;
 		if (actor.id) {
 			VehicleDataModel._GAME_VEHICLES.add(actor);
 		}
@@ -78,12 +121,12 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	 * Gets the current encumbrance value and threshold after taking into account item's quantities and containers.
 	 */
 	get currentEncumbrance() {
-		const actor = this.parent as unknown as GenesysActor<VehicleDataModel>;
+		const actor = this.parent as unknown as GenesysActor<this>;
 		const cargoEncumbrance = actor.items.reduce(
 			(accum, item) => {
 				const equipment = item as GenesysItem<EquipmentDataModel>;
 
-				if (VehicleDataModel.RELEVANT_TYPES.ENCUMBRANCE.includes(equipment.type) && equipment.systemData.encumbrance !== undefined) {
+				if (VehicleDataModel.isRelevantTypeForContext('ENCUMBRANCE', equipment.type) && equipment.systemData.encumbrance !== undefined) {
 					if (equipment.systemData.encumbrance >= 0) {
 						accum.value += equipment.systemData.encumbrance * equipment.systemData.quantity;
 					} else {
@@ -120,6 +163,201 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	get isOverCapacity() {
 		const currentPassengers = this.currentPassengers;
 		return currentPassengers.value > currentPassengers.threshold;
+	}
+
+	async addRole() {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const roleId = randomID();
+		const roles = [
+			...this.roles,
+			{
+				id: roleId,
+				name: '',
+				skills: [],
+				members: [],
+			},
+		];
+
+		await actor.update({
+			'system.roles': roles,
+		});
+
+		return roleId;
+	}
+
+	async deleteRole(roleId: string) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const roles = [...this.roles];
+		const roleIndex = roles.findIndex((role) => role.id === roleId);
+
+		if (roleIndex !== -1) {
+			roles.splice(roleIndex, 1);
+			await actor.update({
+				'system.roles': roles,
+			});
+		}
+	}
+
+	async updateRoleName(roleId: string, newName: string) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const roles = [...this.roles];
+		const roleIndex = roles.findIndex((role) => role.id === roleId);
+
+		if (roleIndex !== -1) {
+			roles[roleIndex].name = newName;
+			await actor.update({
+				'system.roles': roles,
+			});
+		}
+	}
+
+	async addSkillToRole(roleId: string, skillName: string) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const roles = [...this.roles];
+		const role = roles.find((role) => role.id === roleId);
+
+		if (role && !role.skills.includes(skillName)) {
+			role.skills.push(skillName);
+			await actor.update({
+				'system.roles': roles,
+			});
+		}
+	}
+
+	async removeSkillFromRole(roleId: string, skillName: string) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const roles = [...this.roles];
+		const role = roles.find((role) => role.id === roleId);
+
+		if (role) {
+			const skillIndex = role.skills.findIndex((skill) => skill === skillName);
+
+			if (skillIndex !== -1) {
+				role.skills.splice(skillIndex, 1);
+				await actor.update({
+					'system.roles': roles,
+				});
+			}
+		}
+	}
+
+	async removeMemberFromRole(roleId: string, memberUuid: string) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const roles = [...this.roles];
+		const role = roles.find((role) => role.id === roleId);
+
+		if (role) {
+			const memberIndex = role.members.findIndex((member) => member === memberUuid);
+
+			if (memberIndex !== -1) {
+				role.members.splice(memberIndex, 1);
+				await actor.update({
+					'system.roles': roles,
+				});
+			}
+		}
+	}
+
+	async addPassenger(passengerUuid: string) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const passengers = [...this.passengers.list];
+
+		if (!passengers.some((passenger) => passenger.uuid === passengerUuid)) {
+			const lastPassengerSort = passengers[passengers.length - 1]?.sort ?? 0;
+			passengers.push({ uuid: passengerUuid, sort: lastPassengerSort + CONST.SORT_INTEGER_DENSITY });
+			await actor.update({
+				'system.passengers.list': passengers,
+			});
+		}
+	}
+
+	async removePassenger(passengerUuid: string) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const passengers = [...this.passengers.list];
+		const passengerIndex = passengers.findIndex((passenger) => passenger.uuid === passengerUuid);
+		if (passengerIndex !== -1) {
+			passengers.splice(passengerIndex, 1);
+			await actor.update({
+				'system.passengers.list': passengers,
+			});
+		}
+	}
+
+	hasCrew(crewUuid: string) {
+		return this.passengers.list.some((passenger) => passenger.uuid === crewUuid) || this.roles.some((role) => role.members.includes(crewUuid));
+	}
+
+	async removeCrew(crewUuid: string) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+		const updateMap = new Map<string, any>();
+
+		const passengers = [...this.passengers.list];
+		const passengerIndex = passengers.findIndex((passenger) => passenger.uuid === crewUuid);
+		if (passengerIndex !== -1) {
+			passengers.splice(passengerIndex, 1);
+			updateMap.set('system.passengers.list', passengers);
+		}
+
+		const roles = [...this.roles];
+		let hasRoleUpdates = false;
+		for (const role of roles) {
+			const memberIndex = role.members.findIndex((member) => member === crewUuid);
+			if (memberIndex !== -1) {
+				role.members.splice(memberIndex, 1);
+				hasRoleUpdates = true;
+			}
+		}
+
+		if (hasRoleUpdates) {
+			updateMap.set('system.roles', roles);
+		}
+
+		if (updateMap.size > 0) {
+			await actor.update(Object.fromEntries(updateMap));
+		}
+	}
+
+	// Maintain consistent with the function of the same name in `CharacterDataModel`.
+	async handleEffectsStatus(items: GenesysItem[], overrides?: { equipmentState: EquipmentState }) {
+		const actor = this.parent as unknown as GenesysActor<this>;
+
+		const allUpdates = [];
+		for (const item of items) {
+			let effectDisableStatus = false;
+
+			// If the item is equipment then enable its effects only if it's are on the proper equipment state.
+			if (VehicleDataModel.isRelevantTypeForContext('INVENTORY', item.type)) {
+				const itemEquipmentState = overrides?.equipmentState ? overrides.equipmentState : (item.systemData as EquipmentDataModel).state;
+				if (VehicleDataModel.isRelevantTypeForContext('EQUIPABLE', item.type)) {
+					effectDisableStatus = EquipmentState.Equipped !== itemEquipmentState;
+				} else if (VehicleDataModel.isRelevantTypeForContext('CONSUMABLE', item.type)) {
+					effectDisableStatus = EquipmentState.Used !== itemEquipmentState;
+				} else {
+					effectDisableStatus = EquipmentState.Carried !== itemEquipmentState;
+				}
+			}
+
+			allUpdates.push(
+				...actor.effects
+					.filter((effect) => (effect as GenesysEffect).originItem?.id === item.id && effect.disabled !== effectDisableStatus)
+					.map(
+						async (effect) =>
+							await effect.update({
+								disabled: effectDisableStatus,
+							}),
+					),
+			);
+		}
+
+		await Promise.all(allUpdates);
 	}
 
 	async preCreate(actor: GenesysActor<VehicleDataModel>, _data: PreDocumentId<any>, _options: DocumentModificationContext<GenesysActor<VehicleDataModel>>, _user: User) {
@@ -166,7 +404,7 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 				threshold: new fields.NumberField({ integer: true, initial: 0 }),
 				list: new fields.ArrayField(
 					new fields.SchemaField({
-						id: new fields.StringField(),
+						uuid: new fields.StringField(),
 						sort: new fields.NumberField({ integer: true, initial: 0 }),
 					}),
 				),
@@ -190,10 +428,33 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 export function register() {
 	// Whenever an actor that is on a vehicle is updated we make sure to re-render the vehicle sheet.
 	Hooks.on('updateActor', (actor) => {
-		const genesysActor = actor as GenesysActor;
+		const targetActor = actor as GenesysActor;
+		if (targetActor.type === 'vehicle') {
+			return;
+		}
+
+		const genesysActorUuid = targetActor.uuid;
 		for (const vehicle of VehicleDataModel._GAME_VEHICLES) {
-			if (vehicle.sheet.rendered && (vehicle.systemData.roles.some((role) => role.members.includes(genesysActor.id)) || vehicle.systemData.passengers.list.some((passenger) => passenger.id === genesysActor.id))) {
+			if (vehicle.sheet.rendered && vehicle.systemData.hasCrew(genesysActorUuid)) {
 				vehicle.sheet.render(true);
+			}
+		}
+	});
+
+	Hooks.on('deleteActor', (actor) => {
+		const targetActor = actor as GenesysActor;
+
+		if (targetActor.type === 'vehicle') {
+			// Whenever a vehicle is deleted remove it from the updates array.
+			VehicleDataModel._GAME_VEHICLES.delete(targetActor as GenesysActor<VehicleDataModel>);
+		} else {
+			// Whenever a non-vehicle actor is deleted let the primary GM remove it from all the vehicles in the world.
+			const isGmHub = game.users.activeGM?.isSelf ?? (game.user.isGM && game.users.filter((user) => user.isGM && user.active).every((candidate) => candidate.id >= game.user.id));
+			if (isGmHub) {
+				const genesysActorUuid = targetActor.uuid;
+				for (const vehicle of VehicleDataModel._GAME_VEHICLES) {
+					vehicle.systemData.removeCrew(genesysActorUuid);
+				}
 			}
 		}
 	});

@@ -10,6 +10,8 @@ import WeaponDataModel from '@/item/data/WeaponDataModel';
 import VehicleWeaponDataModel from '@/item/data/VehicleWeaponDataModel';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
+import { DragTransferData } from '@/data/DragTransferData';
+import { transferInventoryBetweenActors } from '@/operations/TransferBetweenActors';
 
 import Localized from '@/vue/components/Localized.vue';
 import Tooltip from '@/vue/components/Tooltip.vue';
@@ -22,21 +24,27 @@ const props = withDefaults(
 		item: GenesysItem<EquipmentDataModel>;
 		dragging?: boolean;
 		mini?: boolean;
-		allowEquipping?: boolean;
-		allowDropping?: boolean;
+		allowEquippedState?: boolean;
+		allowDroppedState?: boolean;
+		canTypeBeDropped?: (type: string) => boolean;
+		canTypeBeInsideContainer?: (type: string) => boolean;
+		canTypeBeTransfered?: (type: string) => boolean;
 	}>(),
 	{
 		dragging: false,
 		mini: false,
-		allowEquipping: true,
-		allowDropping: true,
+		allowEquippedState: true,
+		allowDroppedState: true,
+		canTypeBeDropped: () => false,
+		canTypeBeInsideContainer: () => false,
+		canTypeBeTransfered: () => false,
 	},
 );
 
 const emit = defineEmits<{
 	(e: 'dragstart', event: DragEvent): void;
 	(e: 'dragend', event: DragEvent): void;
-	(e: 'equipmentStateChange', desiredState: EquipmentState, items: GenesysItem[]): void;
+	(e: 'equipmentStateChange', items: GenesysItem[], desiredState: EquipmentState): void;
 }>();
 
 const damageStateToIcon = new Map([
@@ -50,7 +58,7 @@ const damageStateProgression = Array.from(damageStateToIcon.keys());
 const dragCounter = ref(0);
 const isBeingDragged = ref(false);
 
-const rootContext = inject<ActorSheetContext<CharacterDataModel | VehicleDataModel>>(RootContext)!;
+const context = inject<ActorSheetContext<CharacterDataModel | VehicleDataModel>>(RootContext)!;
 
 const isBasicItem = computed(() => ['consumable', 'gear'].includes(props.item.type));
 const system = computed(() => props.item.systemData);
@@ -61,10 +69,10 @@ const weaponData = computed(() => ({ baseWeapon: system.value as BaseWeaponDataM
 const dimForDrag = computed(() => props.dragging && props.item.type !== 'container');
 
 const displayContainerContents = ref(false);
-const containedItems = computed(() => toRaw(rootContext.data.actor).items.filter((i) => (i as GenesysItem<EquipmentDataModel>).systemData.container === props.item.id) as GenesysItem<EquipmentDataModel>[]);
+const containedItems = computed(() => toRaw(context.data.actor).items.filter((i) => (i as GenesysItem<EquipmentDataModel>).systemData.container === props.item.id) as GenesysItem<EquipmentDataModel>[]);
 
 const weaponDamage = computed(() => {
-	const characterActor = rootContext.data.actor.systemData as CharacterDataModel;
+	const characterActor = context.data.actor.systemData as CharacterDataModel;
 	if (weaponData.value.charWeapon.damageCharacteristic && weaponData.value.charWeapon.damageCharacteristic !== '-' && characterActor.characteristics) {
 		return characterActor.characteristics[weaponData.value.charWeapon.damageCharacteristic] + weaponData.value.baseWeapon.baseDamage;
 	}
@@ -74,7 +82,7 @@ const weaponDamage = computed(() => {
 
 async function rollAttack() {
 	const [skillName] = skillForWeapon();
-	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), skillName, {
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), skillName, {
 		rollType: RollType.Attack,
 		rollData: {
 			weapon: props.item,
@@ -92,7 +100,7 @@ async function deleteItem() {
 	if (props.item.type === 'container') {
 		// Delete all items in the container.
 		await Promise.all(
-			toRaw(rootContext.data.actor)
+			toRaw(context.data.actor)
 				.items.filter((i) => (i as GenesysItem<EquipmentDataModel>).systemData.container === itemId)
 				.map((i) => i.delete()),
 		);
@@ -154,9 +162,9 @@ async function sendItemToChat() {
 }
 
 async function setItemState(state: EquipmentState) {
-	// The 'emit' must happen before the state is updated, otherwise the component will be unmounted and the callback set on the
+	// The 'emit' must happen before the state is updated, otherwise the component will be unmounted and the callback set by the
 	// parent won't fire.
-	emit('equipmentStateChange', state, [...containedItems.value, props.item]);
+	emit('equipmentStateChange', [...containedItems.value, props.item], state);
 
 	await Promise.all(
 		containedItems.value.map((i) =>
@@ -175,7 +183,7 @@ function skillForWeapon(): [name: string, id: string] {
 	const validSkillNames = weaponData.value.baseWeapon.skills.map((s) => s.toLowerCase());
 
 	// Does the Adversary have one of these skills?
-	const possessedSkill = toRaw(rootContext.data.actor).items.find((i) => i.type === 'skill' && validSkillNames.includes(i.name.toLowerCase()));
+	const possessedSkill = toRaw(context.data.actor).items.find((i) => i.type === 'skill' && validSkillNames.includes(i.name.toLowerCase()));
 
 	if (possessedSkill) {
 		return [possessedSkill.name, possessedSkill.id];
@@ -198,63 +206,34 @@ function getFiringArcLabels(weapon: VehicleWeaponDataModel) {
 }
 
 function isEquipableItem(item: GenesysItem<EquipmentDataModel>) {
-	if (rootContext.data.actor.type === 'character') {
-		return ['weapon', 'armor'].includes(item.type);
-	} else if (rootContext.data.actor.type === 'vehicle') {
-		return ['vehicleWeapon'].includes(item.type);
-	}
-
-	return false;
+	return (context.data.actor.systemData.constructor as typeof VehicleDataModel | typeof CharacterDataModel).isRelevantTypeForContext('EQUIPABLE', item.type);
 }
 
 function canEquipItem(item: GenesysItem<EquipmentDataModel>) {
-	if (rootContext.data.actor.type === 'character') {
-		return ['weapon', 'armor'].includes(item.type) && item.systemData.state !== EquipmentState.Equipped;
-	} else if (rootContext.data.actor.type === 'vehicle') {
-		return ['vehicleWeapon'].includes(item.type) && item.systemData.state !== EquipmentState.Equipped;
-	}
-
-	return false;
+	return isEquipableItem(item) && item.systemData.state !== EquipmentState.Equipped;
 }
 
 function canUnequipItem(item: GenesysItem<EquipmentDataModel>) {
-	if (rootContext.data.actor.type === 'character') {
-		return ['weapon', 'armor'].includes(item.type) && item.systemData.state === EquipmentState.Equipped;
-	} else if (rootContext.data.actor.type === 'vehicle') {
-		return ['vehicleWeapon'].includes(item.type) && item.systemData.state === EquipmentState.Equipped;
-	}
-
-	return false;
+	return isEquipableItem(item) && item.systemData.state === EquipmentState.Equipped;
 }
 
 function canDropItem(item: GenesysItem<EquipmentDataModel>) {
-	if (rootContext.data.actor.type === 'character') {
-		return [EquipmentState.Carried, EquipmentState.Equipped].includes(item.systemData.state);
-	}
-
-	return false;
+	return context.data.actor.type === 'character' && [EquipmentState.Carried, EquipmentState.Equipped].includes(item.systemData.state);
 }
 
 function canPickupItem(item: GenesysItem<EquipmentDataModel>) {
-	if (rootContext.data.actor.type === 'character') {
-		return item.systemData.state === EquipmentState.Dropped;
-	}
-
-	return false;
+	return context.data.actor.type === 'character' && item.systemData.state === EquipmentState.Dropped;
 }
 
 function dragStart(event: DragEvent) {
 	isBeingDragged.value = true;
+	const transferData: DragTransferData = {
+		uuid: props.item.uuid,
+		type: props.item.documentName,
+		genesysType: props.item.type,
+	};
 
-	event.dataTransfer?.setData(
-		'text/plain',
-		JSON.stringify({
-			id: props.item.id,
-			itemType: props.item.type,
-			source: toRaw(rootContext.data.actor).id,
-		}),
-	);
-
+	event.dataTransfer?.setData('text/plain', JSON.stringify(transferData));
 	emit('dragstart', event);
 }
 
@@ -265,15 +244,18 @@ function dragEnd(event: DragEvent) {
 }
 
 function dragEnter(event: DragEvent) {
+	// Only containers should be highlighted on hover.
 	if (props.item.type !== 'container') {
 		return;
 	}
 
-	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
+	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
+	if (!dragData.uuid || (dragData.genesysType && !props.canTypeBeInsideContainer(dragData.genesysType))) {
+		return;
+	}
 
-	// Only containers should be highlighted on hover, and containers cannot be dragged into other containers.
-	// Additionally, if itemType isn't specified in the drag data, don't allow dropping directly into a container.
-	if (dragSource.itemType === undefined || dragSource.itemType === 'container') {
+	const draggedEntity = fromUuidSync(dragData.uuid) as { type: string } | null;
+	if (!draggedEntity || !props.canTypeBeInsideContainer(draggedEntity.type)) {
 		return;
 	}
 
@@ -307,33 +289,58 @@ async function changeDamageState(item: GenesysItem, currentState: EquipmentDamag
 	}
 }
 
-async function drop(event: DragEvent) {
+async function dropInventoryIntoContainer(event: DragEvent) {
 	dragCounter.value = 0;
 
-	if (props.item.type !== 'container') {
+	// Make sure we have the UUID from the dropped entity, and if possible check if they can be processed on this component.
+	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
+	if (!dragData.uuid || (dragData.genesysType && !props.canTypeBeDropped(dragData.genesysType))) {
 		return;
 	}
 
-	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
-	if (!dragSource.id) {
+	// Make sure that the item in question exists and can be processed on this component.
+	let droppedItem = await fromUuid<GenesysItem<EquipmentDataModel>>(dragData.uuid);
+	if (!droppedItem || !props.canTypeBeDropped(droppedItem.type)) {
+		return;
+	}
+	// We are handling the dropped item here so no need to let other components process it.
+	event.stopPropagation();
+
+	// The user must own the actor, the current item must be a container, and the dropped item can be inside the container.
+	const actor = toRaw(context.data.actor);
+	if (!actor.isOwner || props.item.type !== 'container' || !props.canTypeBeInsideContainer(droppedItem.type)) {
 		return;
 	}
 
-	const item = toRaw(rootContext.data.actor).items.get(dragSource.id) as GenesysItem<EquipmentDataModel>;
-	if (!item || item.type === 'container') {
-		return;
+	// If the item was dropped from another actor then we try transfering it and save a reference to it.
+	const sourceActor = droppedItem.actor;
+	const isDropFromAnotherActor = sourceActor && sourceActor.uuid !== actor.uuid;
+	if (isDropFromAnotherActor) {
+		const clonedItem = await transferInventoryBetweenActors(dragData, actor, props.canTypeBeTransfered);
+		droppedItem = clonedItem?.[0] ?? null;
+
+		if (!droppedItem) {
+			return;
+		}
 	}
 
-	const updateObject: Record<string, string> = {
-		'system.container': props.item.id,
-	};
+	// Mark the items as being inside the dropped container.
+	const updateMap = new Map<string, any>();
+	updateMap.set('system.container', props.item.id);
 
-	if (props.item.systemData.state !== item.systemData.state) {
-		emit('equipmentStateChange', props.item.systemData.state, [item as GenesysItem]);
-		updateObject['system.state'] = props.item.systemData.state;
+	// Update the item equipment state to match the state of the container.
+	const mustUpdateEquipmentState = props.item.systemData.state !== droppedItem.systemData.state;
+	if (mustUpdateEquipmentState) {
+		updateMap.set('system.state', props.item.systemData.state);
 	}
 
-	await item.update(updateObject);
+	// Notify the parent that the drropped item has changed equipment state either because it's new or because it was moved to a container
+	// with a different equipment state.
+	if (mustUpdateEquipmentState || isDropFromAnotherActor) {
+		emit('equipmentStateChange', [droppedItem], props.item.systemData.state);
+	}
+
+	await droppedItem.update(Object.fromEntries(updateMap));
 }
 </script>
 
@@ -351,7 +358,7 @@ async function drop(event: DragEvent) {
 		@dragleave="dragLeave"
 		@dragstart="dragStart"
 		@dragend="dragEnd"
-		@drop="drop"
+		@drop="dropInventoryIntoContainer"
 	>
 		<img :src="item.img" :alt="item.name" />
 
@@ -442,34 +449,34 @@ async function drop(event: DragEvent) {
 			<i :class="{'fas': true, [damageStateToIcon.get(item.systemData.damage)!]: true}"></i>
 		</a>
 
-		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!rootContext.data.editable || mini">
+		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!context.data.editable || mini">
 			<template v-slot:menu-items>
-				<MenuItem v-if="allowEquipping && ['weapon', 'vehicleWeapon'].includes(item.type) && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
+				<MenuItem v-if="allowEquippedState && ['weapon', 'vehicleWeapon'].includes(item.type) && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-sword"></i></template>
 					Equip
 				</MenuItem>
 
-				<MenuItem v-if="allowEquipping && item.type === 'armor' && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
+				<MenuItem v-if="allowEquippedState && item.type === 'armor' && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-shield"></i></template>
 					Equip
 				</MenuItem>
 
-				<MenuItem v-if="allowEquipping && canUnequipItem(item)" @click="setItemState(EquipmentState.Carried)">
+				<MenuItem v-if="allowEquippedState && canUnequipItem(item)" @click="setItemState(EquipmentState.Carried)">
 					<template v-slot:icon><i class="fas fa-backpack"></i></template>
 					Unequip
 				</MenuItem>
 
-				<MenuItem v-if="allowDropping && canDropItem(item)" @click="setItemState(EquipmentState.Dropped)">
+				<MenuItem v-if="allowDroppedState && canDropItem(item)" @click="setItemState(EquipmentState.Dropped)">
 					<template v-slot:icon><i class="fas fa-shelves"></i></template>
 					Drop
 				</MenuItem>
 
-				<MenuItem v-if="allowDropping && canPickupItem(item)" @click="setItemState(EquipmentState.Carried)">
+				<MenuItem v-if="allowDroppedState && canPickupItem(item)" @click="setItemState(EquipmentState.Carried)">
 					<template v-slot:icon><i class="fas fa-backpack"></i></template>
 					Pick Up
 				</MenuItem>
 
-				<hr v-if="(allowEquipping && isEquipableItem(item)) || allowDropping" />
+				<hr v-if="(allowEquippedState && isEquipableItem(item)) || allowDroppedState" />
 
 				<MenuItem @click="sendItemToChat">
 					<template v-slot:icon><i class="fas fa-comment"></i></template>
@@ -500,8 +507,8 @@ async function drop(event: DragEvent) {
 					:key="item.id"
 					mini
 					draggable="true"
-					:allow-equipping="allowEquipping"
-					:allow-dropping="allowDropping"
+					:allow-equipped-state="allowEquippedState"
+					:allow-dropped-state="allowDroppedState"
 					@dragstart="
 						$event.stopPropagation();
 						emit('dragstart', $event);
