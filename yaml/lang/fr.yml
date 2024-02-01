@@ -139,10 +139,10 @@ Genesys:
     Source: Source
     Duration: Durée
     Types:
-      ModifyCharacteristic: Modifier la Caractérisitique
-      ModifyStat: Modifier la Stat
-      ModifySkill: Modifier La compétence
-      ModifyDicePool: Modifier la Réserve de Dés
+      ModifyCharacteristic: Caractérisitique à Modifier
+      ModifyStat: Statistique à Modifier
+      ModifySkill: Compétence à Modifier
+      ModifyDicePool: Réserve de Dés à Modifier
 
   # Dice Prompt Labels
   DicePrompt:
@@ -185,6 +185,8 @@ Genesys:
     CannotClaimOppositeSlot: Vous ne pouvez par réclamer ce slot d'intiative avec {name} - il est du mauvais coté!
     CannotSelectActor: Vous n'avez pas assez de droit pour choisir cet Acteur.
     InvalidTokenTypeForAction: Le token selectionné est d'un type invalide pour réaliser cette action.
+    EffectsWereNotUpdatedAfterTransfer: Une erreur s'est produite lors de la mise à jour des effets avec les dernières données disponibles durant le transfert de '{name}'.
+    NoRoleMembersWithAppropriateSkills: Aucun membre du groupe pour ce rôle ne possède les compétences appropriées pour faire cette action.
 
   # Story Points
   StoryPoints:
