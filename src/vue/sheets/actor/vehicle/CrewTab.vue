@@ -9,7 +9,7 @@ import SortSlot from '@/vue/components/inventory/SortSlot.vue';
 import ActorTile from '@/vue/components/ActorTile.vue';
 
 import GenesysActor from '@/actor/GenesysActor';
-import { CrewDragTransferData, CrewExtraDragTransferData } from '@/data/DragTransferData';
+import { CrewDragTransferData, CrewExtraDragTransferData, extractDataFromDragTransferTypes } from '@/data/DragTransferData';
 
 type FromUuidSimpleReturnData = null | {
 	name: string;
@@ -237,24 +237,15 @@ async function resetDragCounters(_event: DragEvent) {
 }
 
 function modifyDragCounters(event: DragEvent, direction: number) {
-	let draggedType: string;
-	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as CrewDragTransferData;
-	if (dragData.genesysType) {
-		draggedType = dragData.genesysType;
-	} else if (dragData.uuid) {
-		const droppedEntity = fromUuidSync(dragData.uuid) as FromUuidSimpleReturnData;
-		if (!droppedEntity) {
-			return;
-		}
-		draggedType = droppedEntity.type;
-	} else {
+	const dragDataFromType = extractDataFromDragTransferTypes(event.dataTransfer?.types);
+	if (!dragDataFromType) {
 		return;
 	}
 
-	if (VehicleDataModel.isRelevantTypeForContext('ROLE', draggedType)) {
+	if (VehicleDataModel.isRelevantTypeForContext('ROLE', dragDataFromType.genesysType)) {
 		dragCounters.value.role += direction;
 	}
-	if (VehicleDataModel.isRelevantTypeForContext('PASSENGER', draggedType)) {
+	if (VehicleDataModel.isRelevantTypeForContext('PASSENGER', dragDataFromType.genesysType)) {
 		dragCounters.value.passenger += direction;
 	}
 }
