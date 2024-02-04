@@ -12,7 +12,7 @@ import Localized from '@/vue/components/Localized.vue';
 import InventoryItem from '@/vue/components/inventory/InventoryItem.vue';
 import SortSlot from '@/vue/components/inventory/SortSlot.vue';
 
-const CURRENCY_LABEL = CONFIG.genesys.currencyName;
+const CURRENCY_LABEL = CONFIG.genesys.settings.currencyName;
 
 const context = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 const system = computed(() => toRaw(context.data.actor).systemData);

@@ -191,7 +191,7 @@ export default class GenesysRoller {
 			critical: weapon.systemData.critical,
 			// tbh I can't be assed to implement another Handlebars helper for array length so let's just do undefined. <.<
 			qualities: weapon.systemData.qualities.length === 0 ? undefined : attackQualities,
-			showDamageOnFailure: CONFIG.genesys.showAttackDetailsOnFailure,
+			showDamageOnFailure: CONFIG.genesys.settings.showAttackDetailsOnFailure,
 		};
 		const html = await renderTemplate('systems/genesys/templates/chat/rolls/attack.hbs', rollData);
 

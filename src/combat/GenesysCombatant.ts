@@ -57,7 +57,7 @@ export default class GenesysCombatant extends Combatant<GenesysCombat, GenesysAc
 		const yellow = Math.min(characteristicValue, skillValue);
 		const green = Math.max(characteristicValue, skillValue) - yellow;
 
-		const useSuperCharacteristic = CONFIG.genesys.useSuperCharacteristics && system.superCharacteristics.has(characteristic);
+		const useSuperCharacteristic = CONFIG.genesys.settings.useSuperCharacteristics && system.superCharacteristics.has(characteristic);
 
 		return new Roll(`${yellow}dP${useSuperCharacteristic ? 'X' : ''}+${green}dA`);
 	}
