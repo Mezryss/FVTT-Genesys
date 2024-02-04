@@ -75,11 +75,11 @@ const SORT_ORDER: Record<PoolEntity, number> = {
 	Threat: 5,
 };
 
-const USE_UNCOUPLED_SKILLS = CONFIG.genesys.uncoupleSkillsFromCharacteristics;
-const USE_SUPER_CHARACTERISTICS = CONFIG.genesys.useSuperCharacteristics;
-const CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS = CONFIG.genesys.showChanceToSucceedFromSimulations.amountOfRolls;
-const USE_CHANCE_TO_SUCCEED_BY_PERMUTATION = !!game.workers.get && CONFIG.genesys.showChanceToSucceedFromPermutations; // eslint-disable-line
-const USE_CHANCE_TO_SUCCEED = USE_CHANCE_TO_SUCCEED_BY_PERMUTATION || CONFIG.genesys.showChanceToSucceedFromSimulations.enabled;
+const USE_UNCOUPLED_SKILLS = CONFIG.genesys.settings.uncoupleSkillsFromCharacteristics;
+const USE_SUPER_CHARACTERISTICS = CONFIG.genesys.settings.useSuperCharacteristics;
+const CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS = CONFIG.genesys.settings.showChanceToSucceedFromSimulations.amountOfRolls;
+const USE_CHANCE_TO_SUCCEED_BY_PERMUTATION = !!game.workers.get && CONFIG.genesys.settings.showChanceToSucceedFromPermutations; // eslint-disable-line
+const USE_CHANCE_TO_SUCCEED = USE_CHANCE_TO_SUCCEED_BY_PERMUTATION || CONFIG.genesys.settings.showChanceToSucceedFromSimulations.enabled;
 
 const context = inject<DicePromptContext>(RootContext)!;
 

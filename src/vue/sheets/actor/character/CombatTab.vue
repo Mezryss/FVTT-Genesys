@@ -47,7 +47,7 @@ async function rollAttack(weapon: GenesysItem<WeaponDataModel>) {
 }
 
 async function healInjury(injury: GenesysItem<InjuryDataModel>) {
-	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), CONFIG.genesys.skillForHealingInjury, {
+	await DicePrompt.promptForRoll(toRaw(rootContext.data.actor), CONFIG.genesys.settings.skillForHealingInjury, {
 		difficulty: SEVERITY_TO_DIFFICULTY[injury.systemData.severity],
 	});
 }

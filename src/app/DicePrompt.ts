@@ -124,7 +124,7 @@ export const CALCULATE_CHANCE_WORKER_NAME = 'CalculateChance';
 export function registerWorker() {
 	// eslint-disable-next-line
 	if (!!game.workers.get) {
-		if (CONFIG.genesys.showChanceToSucceedFromPermutations) {
+		if (CONFIG.genesys.settings.showChanceToSucceedFromPermutations) {
 			game.workers.createWorker(CALCULATE_CHANCE_WORKER_NAME, {
 				scripts: ['../systems/genesys/scripts/calculate-chance-worker.js'],
 			});

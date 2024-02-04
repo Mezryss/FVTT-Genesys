@@ -27,45 +27,46 @@ export const DEFAULT_SKILLS_COMPENDIUM = 'genesys.crb-skills';
 
 export const GENESYS_CONFIG = {
 	/** World Settings **/
+	settings: {
+		// Default skills compendium to use if the setting is misconfigured.
+		skillsCompendium: DEFAULT_SKILLS_COMPENDIUM,
 
-	// Default skills compendium to use if the setting is misconfigured.
-	skillsCompendium: DEFAULT_SKILLS_COMPENDIUM,
+		// The name of the skill to use for healing Critical Injuries.
+		skillForHealingInjury: 'Resilience',
 
-	// The name of the skill to use for healing Critical Injuries.
-	skillForHealingInjury: 'Resilience',
+		// The name of the skill to use for repairing Critical Hits.
+		skillForRepairingHit: 'Mechanics',
 
-	// The name of the skill to use for repairing Critical Hits.
-	skillForRepairingHit: 'Mechanics',
+		// Name of the currency used for the setting.
+		currencyName: 'Money',
 
-	// Name of the currency used for the setting.
-	currencyName: 'Money',
+		// Number of free skill ranks characters gain from careers.
+		freeCareerSkillRanks: 4,
 
-	// Number of free skill ranks characters gain from careers.
-	freeCareerSkillRanks: 4,
+		// Whether to allow use of the Uncoupling Skills from Characteristics alternate rule.
+		uncoupleSkillsFromCharacteristics: false,
 
-	// Whether to allow use of the Uncoupling Skills from Characteristics alternate rule.
-	uncoupleSkillsFromCharacteristics: false,
+		// Whether to show Damage, Critical, and Qualities on attack roll chat cards even when the roll was a failure.
+		showAttackDetailsOnFailure: false,
 
-	// Whether to show Damage, Critical, and Qualities on attack roll chat cards even when the roll was a failure.
-	showAttackDetailsOnFailure: false,
+		// Whether to use the optional rule for super-characteristics.
+		useSuperCharacteristics: false,
 
-	// Whether to use the optional rule for super-characteristics.
-	useSuperCharacteristics: false,
+		/** User Settings **/
 
-	/** User Settings **/
+		// Whether to use the Magical Girl symbols where possible in the system.
+		useMagicalGirlSymbols: false,
 
-	// Whether to use the Magical Girl symbols where possible in the system.
-	useMagicalGirlSymbols: false,
+		// Wheter to show the chance to succeed of a dice pool by constructing permutations.
+		showChanceToSucceedFromPermutations: false,
 
-	// Wheter to show the chance to succeed of a dice pool by constructing permutations.
-	showChanceToSucceedFromPermutations: false,
+		showChanceToSucceedFromSimulations: {
+			// Wheter to show the chance to succeed of a dice pool by performing simulations.
+			enabled: false,
 
-	showChanceToSucceedFromSimulations: {
-		// Wheter to show the chance to succeed of a dice pool by performing simulations.
-		enabled: false,
-
-		// Number of simulated rolls to do to calculate the dice pool success chance.
-		amountOfRolls: 0,
+			// Number of simulated rolls to do to calculate the dice pool success chance.
+			amountOfRolls: 0,
+		},
 	},
 
 	/** Miscellaneous **/
@@ -96,11 +97,11 @@ export function ready() {
 
 	/** User Settings **/
 
-	CONFIG.genesys.useMagicalGirlSymbols = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_USE_MAGICAL_GIRL_SYMBOLS) ?? false;
+	CONFIG.genesys.settings.useMagicalGirlSymbols = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_USE_MAGICAL_GIRL_SYMBOLS) ?? false;
 
 	// eslint-disable-next-line
 	if (!!game.workers.get) {
-		CONFIG.genesys.showChanceToSucceedFromPermutations = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) ?? false;
+		CONFIG.genesys.settings.showChanceToSucceedFromPermutations = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) ?? false;
 	}
 
 	game.settings.settings.get<number>(`${SETTINGS_NAMESPACE}.${KEY_CHANCE_TO_SUCCEED_BY_SIMULATION}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION));

@@ -21,7 +21,7 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 
 	async initiativeSkills() {
 		if (!this.#initiativeSkills || this.#initiativeSkills.length === 0) {
-			const compendium = game.packs.get(CONFIG.genesys.skillsCompendium);
+			const compendium = game.packs.get(CONFIG.genesys.settings.skillsCompendium);
 
 			if (!compendium) {
 				return [{ skillName: 'Unskilled', skillChar: Characteristic.Brawn }];
