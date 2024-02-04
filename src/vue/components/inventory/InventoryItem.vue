@@ -446,7 +446,7 @@ async function dropInventoryIntoContainer(event: DragEvent) {
 			@contextmenu="changeDamageState(item, item.systemData.damage, -1)"
 			:data-tooltip="'Genesys.Equipment.DamageState.' + item.systemData.damage.capitalize()"
 		>
-			<i :class="{'fas': true, [damageStateToIcon.get(item.systemData.damage)!]: true}"></i>
+			<i :class="{ fas: true, [damageStateToIcon.get(item.systemData.damage)!]: true }"></i>
 		</a>
 
 		<ContextMenu class="actions" orientation="left" use-primary-click :disable-menu="!context.data.editable || mini">

@@ -328,21 +328,23 @@ export type FlagField<TSourceProp extends { [K in string]?: Record<string, unkno
 	TNullable
 >;
 
-export type SourcePropFromDataField<TDataField extends DataField> = TDataField extends SchemaField<infer TSchemaSourceProp, infer _TSchemaModelProp, infer TSchemaNullable>
-	? TSchemaNullable extends true
-		? SourceFromSchema<TSchemaSourceProp> | null
-		: SourceFromSchema<TSchemaSourceProp>
-	: TDataField extends DataField<infer TSourceProp, infer _TModelProp, infer TNullable>
-	? TNullable extends true
-		? TSourceProp | null
-		: TSourceProp
-	: never;
+export type SourcePropFromDataField<TDataField extends DataField> =
+	TDataField extends SchemaField<infer TSchemaSourceProp, infer _TSchemaModelProp, infer TSchemaNullable>
+		? TSchemaNullable extends true
+			? SourceFromSchema<TSchemaSourceProp> | null
+			: SourceFromSchema<TSchemaSourceProp>
+		: TDataField extends DataField<infer TSourceProp, infer _TModelProp, infer TNullable>
+			? TNullable extends true
+				? TSourceProp | null
+				: TSourceProp
+			: never;
 
-export type ModelPropFromDataField<TDataField extends DataField> = TDataField extends SchemaField<infer TSchemaSourceProp, infer _TSchemaModelProp, infer TSchemaNullable>
-	? TSchemaNullable extends true
-		? ModelPropsFromSchema<TSchemaSourceProp> | null
-		: ModelPropsFromSchema<TSchemaSourceProp>
-	: ReturnType<TDataField['initialize']>;
+export type ModelPropFromDataField<TDataField extends DataField> =
+	TDataField extends SchemaField<infer TSchemaSourceProp, infer _TSchemaModelProp, infer TSchemaNullable>
+		? TSchemaNullable extends true
+			? ModelPropsFromSchema<TSchemaSourceProp> | null
+			: ModelPropsFromSchema<TSchemaSourceProp>
+		: ReturnType<TDataField['initialize']>;
 
 type ModelPropsFromSchema<TDataSchema extends DataSchema> = {
 	[K in keyof TDataSchema]: ModelPropFromDataField<TDataSchema[K]>;

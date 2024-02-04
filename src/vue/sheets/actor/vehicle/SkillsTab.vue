@@ -82,7 +82,7 @@ async function openActorSheet(actor: GenesysActor) {
 			<section v-for="[memberId, details] in dataGroupedByMember" :key="memberId">
 				<div class="member-details">
 					<img class="member-image" :src="details.actor.img" :alt="details.actor.name" draggable="false" />
-					<a class="member-name" @click="openActorSheet(details.actor)">{{ details.actor.name }}</a>
+					<a class="member-name" @click="openActorSheet(details.actor as GenesysActor<NonVehicleDataModel>)">{{ details.actor.name }}</a>
 					<div class="member-roles"><Localized label="Genesys.Labels.Roles" />: {{ details.roles.join(', ') }}</div>
 
 					<div class="member-skills" v-if="details.skills.size > 0">
@@ -93,7 +93,7 @@ async function openActorSheet(actor: GenesysActor) {
 						<div class="member-skills-container">
 							<div v-for="[skillName, skill] in details.skills" :key="skillName" class="member-skill">
 								<img :src="skill.img" :alt="skill.name" />
-								<a class="skill-name" @click="rollSkillForActor(details.actor, skill)">
+								<a class="skill-name" @click="rollSkillForActor(details.actor as GenesysActor<NonVehicleDataModel>, skill as GenesysItem<SkillDataModel>)">
 									<span>{{ skill.name }} (<Localized :label="`Genesys.CharacteristicAbbr.${skill.systemData.characteristic.capitalize()}`" />)</span>
 								</a>
 

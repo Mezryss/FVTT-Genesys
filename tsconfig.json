@@ -32,7 +32,7 @@
 		"typeRoots": [
 			"node_modules",
 			"node_modules/handlebars",
-			"node_modules/types",
+            "node_modules/@types",
 			"types"
 		],
 		"types": [
