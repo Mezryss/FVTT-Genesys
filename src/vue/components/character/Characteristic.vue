@@ -60,7 +60,7 @@ const emit = defineEmits<{
 	(e: 'toggleSuper'): void;
 }>();
 
-const allowSuperCharacteristics = CONFIG.genesys.useSuperCharacteristics;
+const allowSuperCharacteristics = CONFIG.genesys.settings.useSuperCharacteristics;
 const markSuperCharacteristicLabel = game.i18n.localize('Genesys.Labels.MarkSuperCharacteristic');
 const unmarkSuperCharacteristicLabel = game.i18n.localize('Genesys.Labels.UnmarkSuperCharacteristic');
 </script>

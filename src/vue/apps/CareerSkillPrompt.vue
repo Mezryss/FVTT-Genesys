@@ -10,7 +10,7 @@ import GenesysItem from '@/item/GenesysItem';
 const context = inject<CareerSkillPromptContext>(RootContext)!;
 
 const selectedSkillIDs = ref<string[]>([]);
-const remaining = computed(() => CONFIG.genesys.freeCareerSkillRanks - selectedSkillIDs.value.length);
+const remaining = computed(() => CONFIG.genesys.settings.freeCareerSkillRanks - selectedSkillIDs.value.length);
 
 function selectSkill(event: Event, skill: GenesysItem<SkillDataModel>) {
 	event.preventDefault();

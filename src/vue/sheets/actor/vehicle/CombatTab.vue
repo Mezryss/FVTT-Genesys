@@ -104,7 +104,7 @@ async function pickAttackerAndRollAttack(weapon: GenesysItem<VehicleWeaponDataMo
 }
 
 async function repairHit(criticalHit: GenesysItem<InjuryDataModel>) {
-	const skillNameForRepairing = CONFIG.genesys.skillForRepairingHit;
+	const skillNameForRepairing = CONFIG.genesys.settings.skillForRepairingHit;
 	const relevantRoles = actor.value.systemData.roles.filter((role) => role.skills.includes(skillNameForRepairing));
 	const backupSkill = CONFIG.genesys.skills.find((skill) => skill.name === skillNameForRepairing);
 	const potentialRepairer: CharacterSkillOption[] = [];
