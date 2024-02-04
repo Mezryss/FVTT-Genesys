@@ -233,7 +233,7 @@ async function deleteSkill(skill: GenesysItem<SkillDataModel>) {
 
 						<div class="body">
 							<ContextMenu
-								v-for="skill in skills.filter(s => s.systemData.category === skillCategory).sort((l: GenesysItem, r: GenesysItem) => (l.name < r.name) ? -1 : (l.name > r.name) ? 1 : 0)"
+								v-for="skill in skills.filter((s) => s.systemData.category === skillCategory).sort((l: GenesysItem, r: GenesysItem) => (l.name < r.name ? -1 : l.name > r.name ? 1 : 0))"
 								:key="skill.id"
 								class="skill row"
 							>

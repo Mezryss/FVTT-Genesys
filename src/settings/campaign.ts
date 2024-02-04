@@ -60,16 +60,16 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SkillsCompendiumHint'),
 		scope: 'world',
 		config: true,
-		default: GENESYS_CONFIG.skillsCompendium,
+		default: GENESYS_CONFIG.settings.skillsCompendium,
 		type: String,
 		onChange: async (value) => {
 			// We always want a skill compendium so fallback to the default value if it's ever removed.
-			let skillsCompendiumName = GENESYS_CONFIG.skillsCompendium;
+			let skillsCompendiumName = GENESYS_CONFIG.settings.skillsCompendium;
 			if (!value) {
 				ui.notifications.warn('Genesys.Notifications.NoSkillsCompendium', { localize: true });
-				CONFIG.genesys.skillsCompendium = skillsCompendiumName;
+				CONFIG.genesys.settings.skillsCompendium = skillsCompendiumName;
 			} else {
-				CONFIG.genesys.skillsCompendium = skillsCompendiumName = value;
+				CONFIG.genesys.settings.skillsCompendium = skillsCompendiumName = value;
 			}
 
 			let skills: GenesysItem<SkillDataModel>[] = [];
@@ -95,10 +95,10 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SkillForInjuriesHint'),
 		scope: 'world',
 		config: true,
-		default: GENESYS_CONFIG.skillForHealingInjury,
+		default: GENESYS_CONFIG.settings.skillForHealingInjury,
 		type: String,
 		onChange: (value) => {
-			CONFIG.genesys.skillForHealingInjury = value ?? '';
+			CONFIG.genesys.settings.skillForHealingInjury = value ?? '';
 		},
 	});
 
@@ -107,10 +107,10 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SkillForRepairingVehicleHitsHint'),
 		scope: 'world',
 		config: true,
-		default: GENESYS_CONFIG.skillForRepairingHit,
+		default: GENESYS_CONFIG.settings.skillForRepairingHit,
 		type: String,
 		onChange: (value) => {
-			CONFIG.genesys.skillForRepairingHit = value ?? '';
+			CONFIG.genesys.settings.skillForRepairingHit = value ?? '';
 		},
 	});
 
@@ -119,10 +119,10 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.MoneyHint'),
 		scope: 'world',
 		config: true,
-		default: GENESYS_CONFIG.currencyName,
+		default: GENESYS_CONFIG.settings.currencyName,
 		type: String,
 		onChange: (value) => {
-			CONFIG.genesys.currencyName = value ?? '';
+			CONFIG.genesys.settings.currencyName = value ?? '';
 		},
 	});
 
@@ -131,11 +131,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.CareerSkillRanksHint'),
 		scope: 'world',
 		config: true,
-		default: GENESYS_CONFIG.freeCareerSkillRanks,
+		default: GENESYS_CONFIG.settings.freeCareerSkillRanks,
 		type: Number,
 		onChange: (value) => {
 			const valueAsInt = Math.floor(Math.abs((value as unknown as number) ?? 0));
-			CONFIG.genesys.freeCareerSkillRanks = valueAsInt;
+			CONFIG.genesys.settings.freeCareerSkillRanks = valueAsInt;
 		},
 	});
 
@@ -144,11 +144,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.UncoupleSkillsAlternateRuleHint'),
 		scope: 'world',
 		config: true,
-		default: GENESYS_CONFIG.uncoupleSkillsFromCharacteristics,
+		default: GENESYS_CONFIG.settings.uncoupleSkillsFromCharacteristics,
 		type: Boolean,
 		onChange: (value) => {
 			const valueAsBool = (value as unknown as boolean) ?? false;
-			CONFIG.genesys.uncoupleSkillsFromCharacteristics = valueAsBool;
+			CONFIG.genesys.settings.uncoupleSkillsFromCharacteristics = valueAsBool;
 		},
 	});
 
@@ -157,11 +157,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.ShowDamageOnFailureHint'),
 		scope: 'world',
 		config: true,
-		default: GENESYS_CONFIG.showAttackDetailsOnFailure,
+		default: GENESYS_CONFIG.settings.showAttackDetailsOnFailure,
 		type: Boolean,
 		onChange: (value) => {
 			const valueAsBool = (value as unknown as boolean) ?? false;
-			CONFIG.genesys.showAttackDetailsOnFailure = valueAsBool;
+			CONFIG.genesys.settings.showAttackDetailsOnFailure = valueAsBool;
 		},
 	});
 
@@ -170,11 +170,11 @@ export function register(namespace: string) {
 		hint: game.i18n.localize('Genesys.Settings.SuperCharacteristicsHint'),
 		scope: 'world',
 		config: true,
-		default: GENESYS_CONFIG.useSuperCharacteristics,
+		default: GENESYS_CONFIG.settings.useSuperCharacteristics,
 		type: Boolean,
 		onChange: (value) => {
 			const valueAsBool = (value as unknown as boolean) ?? false;
-			CONFIG.genesys.useSuperCharacteristics = valueAsBool;
+			CONFIG.genesys.settings.useSuperCharacteristics = valueAsBool;
 		},
 	});
 }

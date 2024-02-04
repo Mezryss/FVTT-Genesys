@@ -160,9 +160,9 @@ declare global {
 		[P in keyof T['_source']]: T[P] extends foundry.abstract.EmbeddedCollection<infer U>
 			? RawObject<U['data']>[]
 			: T[P] extends foundry.abstract.DocumentData
-			? RawObject<T[P]>
-			: T[P] extends foundry.abstract.DocumentData[]
-			? RawObject<T[P][number]>[]
-			: T[P];
+				? RawObject<T[P]>
+				: T[P] extends foundry.abstract.DocumentData[]
+					? RawObject<T[P][number]>[]
+					: T[P];
 	};
 }

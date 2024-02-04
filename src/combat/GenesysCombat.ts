@@ -124,14 +124,17 @@ export default class GenesysCombat extends Combat {
 		const chatRollMode = game.settings.get('core', 'rollMode');
 
 		const remainingExtraSlotsRolls = [...extraSlotsRolls];
-		const extraSlotsPerCombatant = this.extraSlotsForRound(this.round).reduce((accum, slot, index) => {
-			if (accum[slot.activationSource]) {
-				accum[slot.activationSource].push(index);
-			} else {
-				accum[slot.activationSource] = [index];
-			}
-			return accum;
-		}, {} as Record<string, number[]>);
+		const extraSlotsPerCombatant = this.extraSlotsForRound(this.round).reduce(
+			(accum, slot, index) => {
+				if (accum[slot.activationSource]) {
+					accum[slot.activationSource].push(index);
+				} else {
+					accum[slot.activationSource] = [index];
+				}
+				return accum;
+			},
+			{} as Record<string, number[]>,
+		);
 
 		let ignoreUpdateTurn = false;
 		const extraSlotsUpdates: { index: number; initiative: number }[] = [];
@@ -302,7 +305,7 @@ export default class GenesysCombat extends Combat {
 					initiative: combatant.initiative,
 					disposition: (combatant as GenesysCombatant).disposition,
 					id: combatant.id,
-				} as CombatSlotInfo),
+				}) as CombatSlotInfo,
 		);
 
 		const extraActivations = this.extraSlotsForRound(this.round).reduce((accum, slot) => {

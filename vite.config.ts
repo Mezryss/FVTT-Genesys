@@ -19,7 +19,7 @@ let releaseOnlyAliases: AliasOptions = [];
 let devOnlyAliases: AliasOptions = [];
 
 if (process.env.NODE_ENV === 'production') {
-	releaseOnlyAliases = [{ find: 'vue', replacement: path.resolve(__dirname, 'external/vue.esm-browser.prod.js') }];
+	releaseOnlyAliases = [{ find: 'vue', replacement: path.resolve(__dirname, 'node_modules/vue/dist/vue.esm-browser.prod.js') }];
 } else {
 	devOnlyAliases = [];
 }
