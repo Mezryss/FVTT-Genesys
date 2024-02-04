@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
+import { computed, inject, ref, watchEffect } from 'vue';
 
 import { ItemSheetContext, RootContext } from '@/vue/SheetContext';
 import BasicItemSheet from '@/vue/sheets/item/BasicItemSheet.vue';
@@ -12,8 +12,13 @@ import Enriched from '@/vue/components/Enriched.vue';
 import Characteristic from '@/vue/components/character/Characteristic.vue';
 
 const context = inject<ItemSheetContext<ArchetypeDataModel>>(RootContext)!;
-
 const system = computed(() => context.data.item.systemData);
+
+const source = ref('');
+
+watchEffect(async () => {
+	source.value = await TextEditor.enrichHTML(system.value.source, { async: true });
+});
 
 const abilitiesHeaderWords = game.i18n.localize('Genesys.Archetype.Abilities').split(' ');
 
@@ -35,6 +40,7 @@ async function deleteGrantedItem(index: number) {
 			<section class="overview">
 				<section class="description">
 					<Editor name="system.description" :content="system.description" button />
+					<div class="source" v-html="source" />
 				</section>
 
 				<section class="stats">
