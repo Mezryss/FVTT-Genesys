@@ -6,7 +6,7 @@
 		"lib": ["dom", "es2017"],
 		"strict": true,
 		"noImplicitOverride": true,
-		"noEmit": true
+		"noEmit": true,
 	},
-	"files": ["index.d.ts", "util.d.ts"]
+	"files": ["index.d.ts", "util.d.ts"],
 }

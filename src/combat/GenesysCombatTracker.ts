@@ -84,10 +84,13 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 		combat.initiativeSkills = await this.initiativeSkills();
 
 		// Compile a list of all the initiatives for all the combatants.
-		const initiatives = combat.combatants.reduce((accumulator, combatant) => {
-			accumulator[combatant.id] = [{ activationId: -1, initiative: combatant.initiative }];
-			return accumulator;
-		}, {} as Record<string, { activationId: number; initiative: number | null }[]>);
+		const initiatives = combat.combatants.reduce(
+			(accumulator, combatant) => {
+				accumulator[combatant.id] = [{ activationId: -1, initiative: combatant.initiative }];
+				return accumulator;
+			},
+			{} as Record<string, { activationId: number; initiative: number | null }[]>,
+		);
 
 		combat.extraSlotsForRound(combat.round).forEach((slot) => {
 			if (initiatives[slot.activationSource]) {
