@@ -313,10 +313,13 @@ async function rollPool() {
 		formula,
 		// Convert the symbols object into the old format to make the GenesysRoller understand it.
 		// A refactor of said class should get rid of this conversion.
-		symbols: Object.entries(symbols).reduce((accum, [symbolName, symbolAmount]) => {
-			accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
-			return accum;
-		}, {} as Record<string, number>),
+		symbols: Object.entries(symbols).reduce(
+			(accum, [symbolName, symbolAmount]) => {
+				accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
+				return accum;
+			},
+			{} as Record<string, number>,
+		),
 	};
 
 	switch (context.rollType) {
@@ -414,10 +417,13 @@ async function approximateProbability() {
 	} else {
 		// Convert the symbols object into the old format to make the GenesysRoller understand it.
 		// A refactor of said class should get rid of this conversion.
-		const oldFormatSymbols = Object.entries(symbols).reduce((accum, [symbolName, symbolAmount]) => {
-			accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
-			return accum;
-		}, {} as Record<string, number>);
+		const oldFormatSymbols = Object.entries(symbols).reduce(
+			(accum, [symbolName, symbolAmount]) => {
+				accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
+				return accum;
+			},
+			{} as Record<string, number>,
+		);
 		const simulation = await Promise.all(
 			[...Array(CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS)].map(async () => {
 				const roll = new Roll(formula, { symbols: oldFormatSymbols });
@@ -733,7 +739,14 @@ async function approximateProbability() {
 			cursor: pointer;
 
 			&:hover {
-				text-shadow: 0 0 0 #fff, 0 0 1px #fff, 0 0 2px #e60073, 0 0 3px #e60073, 0 0 4px #e60073, 0 0 5px #e60073, 0 0 6px #e60073;
+				text-shadow:
+					0 0 0 #fff,
+					0 0 1px #fff,
+					0 0 2px #e60073,
+					0 0 3px #e60073,
+					0 0 4px #e60073,
+					0 0 5px #e60073,
+					0 0 6px #e60073;
 			}
 		}
 

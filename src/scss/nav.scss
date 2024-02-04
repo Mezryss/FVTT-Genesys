@@ -78,7 +78,8 @@
 					content: ' ';
 					height: 100%;
 					width: 5px;
-					background: $decorative-lines-top-bottom,
+					background:
+						$decorative-lines-top-bottom,
 						// Radial gradient to mask some of the repeating vertical line.
 						radial-gradient(colors.$blue 0%, transparent 100%),
 						// Vertical line
