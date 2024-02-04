@@ -187,6 +187,7 @@ async function addXPJournalEntry() {
 		padding: 0.75em;
 
 		&.experience {
+			background: none;
 			grid-column: 1 / span all;
 			display: grid;
 			grid-template-columns: auto 1fr auto;
