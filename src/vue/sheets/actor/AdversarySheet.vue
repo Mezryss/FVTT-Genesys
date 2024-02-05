@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject, onBeforeMount, onBeforeUpdate, ref, toRaw } from 'vue';
+import { computed, inject, onBeforeMount, onBeforeUpdate, ref, toRaw, watchEffect } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import Characteristic from '@/vue/components/character/Characteristic.vue';
 import Localized from '@/vue/components/Localized.vue';
@@ -21,16 +21,20 @@ import { Characteristic as CharacteristicType } from '@/data/Characteristics';
 import InjuryDataModel from '@/item/data/InjuryDataModel';
 
 const context = inject<ActorSheetContext<AdversaryDataModel>>(RootContext)!;
-const actor = computed(() => toRaw(context.data.actor));
 const system = computed(() => toRaw(context.data.actor).systemData);
 
-const skills = computed(() => actor.value.items.filter((i) => i.type === 'skill') as GenesysItem<SkillDataModel>[]);
-const talents = computed(() => actor.value.items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[]);
-const abilities = computed(() => actor.value.items.filter((i) => i.type === 'ability') as GenesysItem<AbilityDataModel>[]);
-const equipment = computed(() => actor.value.items.filter((i) => AdversaryDataModel.isRelevantTypeForContext('INVENTORY', i.type)) as GenesysItem<EquipmentDataModel>[]);
-const injuries = computed(() => actor.value.items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
+const skills = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'skill') as GenesysItem<SkillDataModel>[]);
+const talents = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[]);
+const abilities = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'ability') as GenesysItem<AbilityDataModel>[]);
+const equipment = computed(() => toRaw(context.data.actor).items.filter((i) => AdversaryDataModel.isRelevantTypeForContext('INVENTORY', i.type)) as GenesysItem<EquipmentDataModel>[]);
+const injuries = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
 
 const effects = ref<any>([]);
+const source = ref('');
+
+watchEffect(async () => {
+	source.value = await TextEditor.enrichHTML(system.value.source, { async: true });
+});
 
 const editLabel = game.i18n.localize('Genesys.Labels.Edit');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
@@ -151,8 +155,11 @@ onBeforeUpdate(updateEffects);
 		<section class="sheet-body">
 			<div class="tab" data-tab="stats">
 				<section class="stats-tab">
-					<div :class="`description ${system.description.trim() === '' ? 'empty' : ''}`">
-						<Editor name="system.description" :content="system.description" button />
+					<div class="description-area">
+						<div :class="`adversary-description ${system.description.trim() === '' ? 'empty' : ''}`">
+							<Editor name="system.description" :content="system.description" button />
+							<div class="source" v-html="source" />
+						</div>
 					</div>
 
 					<div class="characteristics-container">
@@ -452,6 +459,11 @@ onBeforeUpdate(updateEffects);
 							</div>
 						</div>
 					</div>
+
+					<div class="data-row">
+						<label><Localized label="Genesys.Labels.Source" /></label>
+						<input type="text" name="system.source" :value="system.source" />
+					</div>
 				</section>
 			</div>
 
@@ -476,16 +488,42 @@ onBeforeUpdate(updateEffects);
 		flex-direction: column;
 		flex-wrap: nowrap;
 		gap: 0.5em;
+
+		.description-area {
+			display: grid;
+			grid-template-rows: 1fr auto;
+
+			.adversary-description {
+				display: flex;
+				flex-direction: column;
+
+				.source {
+					width: 100%;
+					font-family: 'Roboto Serif', serif;
+					font-style: italic;
+					font-size: 0.8em;
+					text-align: right;
+					padding-top: 0.25rem;
+					padding-right: 1.5rem;
+					margin-bottom: 0.5rem;
+					border-top: 1px dashed black;
+
+					&:empty {
+						border-top: none;
+					}
+				}
+
+				&.empty > :first-of-type {
+					min-height: 10rem;
+				}
+			}
+		}
 	}
 
 	.description {
 		display: grid;
 		grid-template-rows: 1fr;
 		min-height: 2rem;
-
-		&.empty {
-			min-height: 200px;
-		}
 	}
 
 	.adversary-items {
@@ -714,6 +752,33 @@ onBeforeUpdate(updateEffects);
 				.editor {
 					padding: 0.5em;
 				}
+			}
+		}
+
+		.data-row {
+			display: grid;
+			grid-template-columns: minmax(min-content, 30%) 1fr;
+			align-items: center;
+			border-top: 1px dashed black;
+			padding: 0.25em;
+			row-gap: 0.1em;
+			margin-top: 1rem;
+
+			input:not([type='checkbox']),
+			select {
+				width: 100%;
+			}
+
+			input[type='checkbox'] {
+				justify-self: right;
+			}
+
+			& > * {
+				grid-column: 2 / span 1;
+			}
+
+			& > label {
+				grid-column: 1 / span 1;
 			}
 		}
 	}

@@ -395,7 +395,7 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 			description: new fields.HTMLField(),
 			complement: new fields.StringField(),
 			consumables: new fields.StringField(),
-			source: new fields.StringField(),
+			source: new fields.HTMLField(),
 			price: new fields.NumberField({ initial: 0 }),
 			rarity: new fields.NumberField({ integer: true, initial: 0 }),
 			currency: new fields.NumberField({ initial: 0 }),

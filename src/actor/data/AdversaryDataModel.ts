@@ -34,6 +34,7 @@ export default abstract class AdversaryDataModel extends foundry.abstract.DataMo
 	abstract soak: number;
 	abstract defense: Defense;
 	abstract description: string;
+	abstract source: string;
 	abstract motivations: Motivations;
 	abstract superCharacteristics: Set<Characteristic>;
 
@@ -73,6 +74,7 @@ export default abstract class AdversaryDataModel extends foundry.abstract.DataMo
 				ranged: new fields.NumberField({ integer: true, initial: 0 }),
 			}),
 			description: new fields.HTMLField(),
+			source: new fields.HTMLField(),
 			motivations: new fields.SchemaField({
 				strength: new fields.SchemaField({
 					name: new fields.StringField(),
