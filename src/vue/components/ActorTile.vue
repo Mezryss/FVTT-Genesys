@@ -3,7 +3,7 @@ import VehicleDataModel from '@/actor/data/VehicleDataModel';
 import { inject, ref, toRaw } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import GenesysActor from '@/actor/GenesysActor';
-import { DragTransferData } from '@/data/DragTransferData';
+import { constructDragTransferTypeFromData, DragTransferData } from '@/data/DragTransferData';
 
 import Localized from '@/vue/components/Localized.vue';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
@@ -43,8 +43,10 @@ function dragStart(event: DragEvent) {
 		type: props.actor.documentName,
 		genesysType: props.actor.type,
 	};
+	const genesysTransferType = constructDragTransferTypeFromData(props.actor.type, props.actor.uuid);
 
 	event.dataTransfer?.setData('text/plain', JSON.stringify(transferData));
+	event.dataTransfer?.setData(genesysTransferType, '');
 
 	emit('dragstart', event);
 }
