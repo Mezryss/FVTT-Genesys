@@ -23,7 +23,7 @@ export default abstract class BaseItemDataModel extends foundry.abstract.DataMod
 
 		return {
 			description: new fields.HTMLField(),
-			source: new fields.StringField(),
+			source: new fields.HTMLField(),
 		};
 	}
 }
