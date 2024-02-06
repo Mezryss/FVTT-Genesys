@@ -5,7 +5,7 @@ import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import GenesysItem from '@/item/GenesysItem';
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
-import { DragTransferData } from '@/data/DragTransferData';
+import { DragTransferData, extractDataFromDragTransferTypes } from '@/data/DragTransferData';
 import { transferInventoryBetweenActors } from '@/operations/TransferBetweenActors';
 
 import Localized from '@/vue/components/Localized.vue';
@@ -133,24 +133,15 @@ async function resetDragCounters(_event: DragEvent) {
 }
 
 function modifyDragCounters(event: DragEvent, direction: number) {
-	let draggedType: string;
-	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
-	if (dragData.genesysType) {
-		draggedType = dragData.genesysType;
-	} else if (dragData.uuid) {
-		const droppedEntity = fromUuidSync(dragData.uuid) as { type: string } | null;
-		if (!droppedEntity) {
-			return;
-		}
-		draggedType = droppedEntity.type;
-	} else {
+	const dragDataFromType = extractDataFromDragTransferTypes(event.dataTransfer?.types);
+	if (!dragDataFromType) {
 		return;
 	}
 
-	if (VehicleDataModel.isRelevantTypeForContext('EQUIPABLE', draggedType)) {
+	if (VehicleDataModel.isRelevantTypeForContext('EQUIPABLE', dragDataFromType.genesysType)) {
 		dragCounters.value[EquipmentState.Equipped] += direction;
 	}
-	if (VehicleDataModel.isRelevantTypeForContext('INVENTORY', draggedType)) {
+	if (VehicleDataModel.isRelevantTypeForContext('INVENTORY', dragDataFromType.genesysType)) {
 		dragCounters.value[EquipmentState.Carried] += direction;
 	}
 }

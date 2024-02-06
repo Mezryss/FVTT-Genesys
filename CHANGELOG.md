@@ -1,3 +1,18 @@
+## Alpha 0.2.7
+
+### Features / Enhancements
+-	[PR #132](https://github.com/Mezryss/FVTT-Genesys/pull/132): ENHANCEMENT - Displays the source field data below an item's description
+-	[PR #134](https://github.com/Mezryss/FVTT-Genesys/pull/134): FEATURE - Adds source field to adversaries and display it below their description
+
+### Bug Fixes / Misc
+-	[PR #129](https://github.com/Mezryss/FVTT-Genesys/pull/129): CHORE - Upgrade dependencies including Vue
+-	[PR #131](https://github.com/Mezryss/FVTT-Genesys/pull/131): REFACTOR - Moves all the settings stored in the `CONFIG` to a nested path
+-	[PR #130](https://github.com/Mezryss/FVTT-Genesys/pull/130): LOCALIZATION - Updates the french translation to the latest version (thanks to @ZolOnTheNet)
+-	[PR #133](https://github.com/Mezryss/FVTT-Genesys/pull/133): BUGFIX - Fixes drag & drop highlight not working on Chrome/app
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.6
 This new version will attempt to perform a data migration for vehicles the first time a GM logins into the world. Make sure the migration is completed before doing anything on the world.
 
@@ -7,9 +22,6 @@ This new version will attempt to perform a data migration for vehicles the first
 ### Bug Fixes/Misc
 -	[PR #124](https://github.com/Mezryss/FVTT-Genesys/pull/124): Safely fail if the `CalculateChance` worker is not found
 -	[PR #126](https://github.com/Mezryss/FVTT-Genesys/pull/126): Adds the french translation to the language menu (thanks to @ZolOnTheNet)
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.5
 

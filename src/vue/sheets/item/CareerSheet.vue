@@ -1,14 +1,19 @@
 <script lang="ts" setup>
 import BasicItemSheet from '@/vue/sheets/item/BasicItemSheet.vue';
 import Localized from '@/vue/components/Localized.vue';
-import { computed, inject } from 'vue';
+import { computed, inject, ref, watchEffect } from 'vue';
 import { ItemSheetContext, RootContext } from '@/vue/SheetContext';
 import CareerDataModel from '@/item/data/CareerDataModel';
 import Editor from '@/vue/components/Editor.vue';
 
 const context = inject<ItemSheetContext<CareerDataModel>>(RootContext)!;
-
 const system = computed(() => context.data.item.systemData);
+
+const source = ref('');
+
+watchEffect(async () => {
+	source.value = await TextEditor.enrichHTML(system.value.source, { async: true });
+});
 
 const careerSkillsHeaderWords = game.i18n.localize('Genesys.Career.Skills').split(' ');
 
@@ -28,6 +33,7 @@ async function removeSkill(index: number) {
 			<section class="overview">
 				<section class="description">
 					<Editor name="system.description" :content="system.description" button />
+					<div class="source" v-html="source" />
 				</section>
 
 				<section class="stats">

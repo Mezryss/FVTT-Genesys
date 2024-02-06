@@ -51,9 +51,11 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/125">PR #125</a>: Feature - Enhance the vehicle sheet and make transfering items more robust</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/126">PR #126</a>: Bugfix - Adds the french translation to the language menu (thanks to @ZolOnTheNet!)</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/124">PR #124</a>: Bugfix - Safely fail if the 'CalculateChance' worker is not found</li>
+		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/132">PR #132</a>: Feature - Displays the source field data below an item's description</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/134">PR #134</a>: Feature - Adds source field to adversaries and displays it below their description</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/129">PR #129 & #131</a>: Chore - Upgraded dependencies and moved all the settings stored in the CONFIG to a nested path</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/126">PR #126</a>: Localization - Updates the french translation to the latest version (thanks to @ZolOnTheNet!)</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/124">PR #124</a>: Bugfix - Fixes drag & drop highlight not working on Chrome/app</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">

@@ -10,7 +10,7 @@ import WeaponDataModel from '@/item/data/WeaponDataModel';
 import VehicleWeaponDataModel from '@/item/data/VehicleWeaponDataModel';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
-import { DragTransferData } from '@/data/DragTransferData';
+import { constructDragTransferTypeFromData, DragTransferData, extractDataFromDragTransferTypes } from '@/data/DragTransferData';
 import { transferInventoryBetweenActors } from '@/operations/TransferBetweenActors';
 
 import Localized from '@/vue/components/Localized.vue';
@@ -232,8 +232,11 @@ function dragStart(event: DragEvent) {
 		type: props.item.documentName,
 		genesysType: props.item.type,
 	};
+	const genesysTransferType = constructDragTransferTypeFromData(props.item.type, props.item.uuid);
 
 	event.dataTransfer?.setData('text/plain', JSON.stringify(transferData));
+	event.dataTransfer?.setData(genesysTransferType, '');
+
 	emit('dragstart', event);
 }
 
@@ -249,13 +252,8 @@ function dragEnter(event: DragEvent) {
 		return;
 	}
 
-	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
-	if (!dragData.uuid || (dragData.genesysType && !props.canTypeBeInsideContainer(dragData.genesysType))) {
-		return;
-	}
-
-	const draggedEntity = fromUuidSync(dragData.uuid) as { type: string } | null;
-	if (!draggedEntity || !props.canTypeBeInsideContainer(draggedEntity.type)) {
+	const dragDataFromType = extractDataFromDragTransferTypes(event.dataTransfer?.types);
+	if (!dragDataFromType || (dragDataFromType.genesysType && !props.canTypeBeInsideContainer(dragDataFromType.genesysType))) {
 		return;
 	}
 

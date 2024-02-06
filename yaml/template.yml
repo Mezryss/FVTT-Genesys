@@ -22,6 +22,7 @@ Actor:
         melee: 0
         ranged: 0
       description: ''
+      source: ''
       superCharacteristics: []
     # The four motivations.
     motivations:

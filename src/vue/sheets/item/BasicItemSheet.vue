@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject, onBeforeMount, onBeforeUpdate, ref, toRaw } from 'vue';
+import { computed, inject, onBeforeMount, onBeforeUpdate, ref, toRaw, watchEffect } from 'vue';
 
 import { vLocalize } from '@/vue/directives';
 import { ItemSheetContext, RootContext } from '@/vue/SheetContext';
@@ -26,6 +26,11 @@ const system = computed(() => context.data.item.systemData);
 //   1. Use an 'any' typing to skirt around TypeScript's complaints.
 //   2. Keep a local ref that gets updated in onBeforeUpdate in order to work around some struggles with Foundry.
 const effects = ref<any>([]);
+const source = ref('');
+
+watchEffect(async () => {
+	source.value = await TextEditor.enrichHTML(system.value.source, { async: true });
+});
 
 async function addEffect(category: string) {
 	await toRaw(context.sheet.item).createEmbeddedDocuments('ActiveEffect', [
@@ -78,7 +83,10 @@ onBeforeUpdate(updateEffects);
 		<section class="sheet-body">
 			<div class="tab" data-group="primary" data-tab="description">
 				<slot name="description">
-					<Editor name="system.description" :content="system.description" button />
+					<section class="description">
+						<Editor name="system.description" :content="system.description" button />
+						<div class="source" v-html="source" />
+					</section>
 				</slot>
 			</div>
 
@@ -110,6 +118,27 @@ onBeforeUpdate(updateEffects);
 	.editor-content {
 		font-family: 'Roboto Serif', serif;
 		text-align: justify;
+	}
+
+	.description {
+		display: flex;
+		flex-direction: column;
+
+		.source {
+			width: 100%;
+			font-family: 'Roboto Serif', serif;
+			font-style: italic;
+			font-size: 0.8em;
+			text-align: right;
+			padding-top: 0.25rem;
+			padding-right: 1.5rem;
+			margin-bottom: 0.5rem;
+			border-top: 1px dashed black;
+
+			&:empty {
+				border-top: none;
+			}
+		}
 	}
 
 	header {
