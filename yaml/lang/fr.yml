@@ -413,14 +413,14 @@ Genesys:
     EffectiveTier: Catégorie courante
     Silhouette: Silhouette
     Speed: Vitesse
-    Handling: Tenu en main
+    Handling: Maniabilité
     HullTrauma: Dégâts de la coque
     HullTraumaThreshold: Seuil de dégâts de la coque
     SystemStrain: Stress Mécanique
     SystemStrainThreshold: Seuil de Stress Mécanique
     Illustration: Illustration
     Complement: Complément
-    Consumables: Consommable
+    Consumables: Consommables
     PassengerCapacity: Nombre de passagers
     EncumbranceCapacity: Valeur d'emcombrement
     Information: Information
