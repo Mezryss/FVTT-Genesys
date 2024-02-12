@@ -414,10 +414,10 @@ Genesys:
     Silhouette: Silhouette
     Speed: Vitesse
     Handling: Tenu en main
-    HullTrauma: Dommage de la coque
-    HullTraumaThreshold: Seuil du dommage de la coque
-    SystemStrain: Contrainte système
-    SystemStrainThreshold: Seuil de contrainte système
+    HullTrauma: Dégâts de la coque
+    HullTraumaThreshold: Seuil de dégâts de la coque
+    SystemStrain: Stress Mécanique
+    SystemStrainThreshold: Seuil de Stress Mécanique
     Illustration: Illustration
     Complement: Complément
     Consumables: Consommable
@@ -427,6 +427,6 @@ Genesys:
     Passengers: Passagers
     Roles: Rôles
     OverCapacity: Hors capacité!
-    RoleSkills: Compétence lié au rôle
+    RoleSkills: Compétences lié au rôle
     FiringArc: Arc de tir
     Select: Sélection
