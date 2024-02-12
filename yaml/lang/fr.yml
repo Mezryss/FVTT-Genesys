@@ -206,7 +206,7 @@ Genesys:
 
   # Sheet Tab names
   Tabs:
-    Skills: Compétence
+    Skills: Compétences
     Combat: Combat
     Talents: Talents
     Magic: Magie
@@ -333,7 +333,7 @@ Genesys:
     GeneralSkills: Compétences générales
     MagicSkills: Compétences Magiques
     CombatSkills: Compétences de combat
-    SocialSkills: Compétence Sociales
+    SocialSkills: Compétences Sociales
     KnowledgeSkills: Compétences de Connaissances
     Category: Catégorie
     Skills: Compétences
