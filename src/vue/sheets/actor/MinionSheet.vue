@@ -16,7 +16,7 @@ const context = inject<ActorSheetContext<MinionDataModel>>(RootContext)!;
 const actor = computed(() => toRaw(context.data.actor));
 const system = computed(() => toRaw(context.data.actor).systemData);
 
-const skills = computed(() => actor.value.items.filter((i) => i.type === 'skill') as GenesysItem<SkillDataModel>[]);
+const skills = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'skill') as GenesysItem<SkillDataModel>[]);
 
 const editLabel = game.i18n.localize('Genesys.Labels.Edit');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
