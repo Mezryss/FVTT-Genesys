@@ -206,7 +206,7 @@ Genesys:
 
   # Sheet Tab names
   Tabs:
-    Skills: Compétence
+    Skills: Compétences
     Combat: Combat
     Talents: Talents
     Magic: Magie
@@ -333,7 +333,7 @@ Genesys:
     GeneralSkills: Compétences générales
     MagicSkills: Compétences Magiques
     CombatSkills: Compétences de combat
-    SocialSkills: Compétence Sociales
+    SocialSkills: Compétences Sociales
     KnowledgeSkills: Compétences de Connaissances
     Category: Catégorie
     Skills: Compétences
@@ -413,20 +413,20 @@ Genesys:
     EffectiveTier: Catégorie courante
     Silhouette: Silhouette
     Speed: Vitesse
-    Handling: Tenu en main
-    HullTrauma: Dommage de la coque
-    HullTraumaThreshold: Seuil du dommage de la coque
-    SystemStrain: Contrainte système
-    SystemStrainThreshold: Seuil de contrainte système
+    Handling: Maniabilité
+    HullTrauma: Dégâts de la coque
+    HullTraumaThreshold: Seuil de dégâts de la coque
+    SystemStrain: Stress Mécanique
+    SystemStrainThreshold: Seuil de Stress Mécanique
     Illustration: Illustration
     Complement: Complément
-    Consumables: Consommable
+    Consumables: Consommables
     PassengerCapacity: Nombre de passagers
     EncumbranceCapacity: Valeur d'emcombrement
     Information: Information
     Passengers: Passagers
     Roles: Rôles
     OverCapacity: Hors capacité!
-    RoleSkills: Compétence lié au rôle
+    RoleSkills: Compétences lié au rôle
     FiringArc: Arc de tir
     Select: Sélection
