@@ -17,9 +17,9 @@ const rootContext = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 
 const actor = computed(() => toRaw(rootContext.data.actor));
 
-const weapons = computed(() => actor.value.items.filter((i) => i.type === 'weapon' && i.system.state === 'equipped') as GenesysItem<WeaponDataModel>[]);
-const armors = computed(() => actor.value.items.filter((i) => i.type === 'armor' && i.system.state === 'equipped') as GenesysItem<ArmorDataModel>[]);
-const injuries = computed(() => actor.value.items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
+const weapons = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'weapon' && i.system.state === 'equipped') as GenesysItem<WeaponDataModel>[]);
+const armors = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'armor' && i.system.state === 'equipped') as GenesysItem<ArmorDataModel>[]);
+const injuries = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
 
 const SEVERITY_TO_DIFFICULTY = {
 	'-': 0,

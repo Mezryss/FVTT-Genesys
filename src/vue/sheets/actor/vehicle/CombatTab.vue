@@ -20,8 +20,8 @@ import SelectCharacterSkillPrompt, { CharacterSkillOption } from '@/app/SelectCh
 const rootContext = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 
 const actor = computed(() => toRaw(rootContext.data.actor));
-const weapons = computed(() => actor.value.items.filter((i) => i.type === 'vehicleWeapon' && i.system.state === EquipmentState.Equipped) as GenesysItem<VehicleWeaponDataModel>[]);
-const criticalHits = computed(() => actor.value.items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
+const weapons = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'vehicleWeapon' && i.system.state === EquipmentState.Equipped) as GenesysItem<VehicleWeaponDataModel>[]);
+const criticalHits = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
 
 const SEVERITY_TO_DIFFICULTY: Record<InjuryDataModel['severity'], number> = {
 	'-': 0,
