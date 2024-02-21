@@ -1,3 +1,13 @@
+## Alpha 0.2.8
+
+### Bug Fixes / Misc
+-	[PR #136](https://github.com/Mezryss/FVTT-Genesys/pull/136), [PR #144](https://github.com/Mezryss/FVTT-Genesys/pull/144): BUGFIX - Minion skills and Combat tabs reflect changes immediately
+-	[PR #139](https://github.com/Mezryss/FVTT-Genesys/pull/139): LOCALIZATION - Corrections for the french translation (@ZolOnTheNet)
+-	[PR #143](https://github.com/Mezryss/FVTT-Genesys/pull/143): STYLING - Pad the motivation and notes editors
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.7
 
 ### Features / Enhancements
@@ -9,9 +19,6 @@
 -	[PR #131](https://github.com/Mezryss/FVTT-Genesys/pull/131): REFACTOR - Moves all the settings stored in the `CONFIG` to a nested path
 -	[PR #130](https://github.com/Mezryss/FVTT-Genesys/pull/130): LOCALIZATION - Updates the french translation to the latest version (thanks to @ZolOnTheNet)
 -	[PR #133](https://github.com/Mezryss/FVTT-Genesys/pull/133): BUGFIX - Fixes drag & drop highlight not working on Chrome/app
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.6
 This new version will attempt to perform a data migration for vehicles the first time a GM logins into the world. Make sure the migration is completed before doing anything on the world.

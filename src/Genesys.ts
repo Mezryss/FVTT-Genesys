@@ -51,11 +51,9 @@ async function doAlphaNotice() {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-		<li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/132">PR #132</a>: Feature - Displays the source field data below an item's description</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/134">PR #134</a>: Feature - Adds source field to adversaries and displays it below their description</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/129">PR #129 & #131</a>: Chore - Upgraded dependencies and moved all the settings stored in the CONFIG to a nested path</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/126">PR #126</a>: Localization - Updates the french translation to the latest version (thanks to @ZolOnTheNet!)</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/124">PR #124</a>: Bugfix - Fixes drag & drop highlight not working on Chrome/app</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/136">PR #136</a> & <a href="https://github.com/Mezryss/FVTT-Genesys/pull/144">PR #144</a>: Bugfix - Minion skills and Combat tabs reflect changes immediately</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/139">PR #139</a>: Localization - Corrections for the french translation (@ZolOnTheNet)</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/143">PR #143</a>: Styling - Pad the motivation and notes editors</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
