@@ -113,7 +113,6 @@ const system = computed(() => toRaw(context.data.actor).systemData);
 			.editor {
 				background: white;
 				border: 1px solid black;
-				padding: 0 0.5rem;
 			}
 		}
 

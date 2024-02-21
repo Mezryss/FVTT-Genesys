@@ -196,6 +196,11 @@ async function save() {
 		flex-direction: column;
 		flex-wrap: nowrap;
 
+		&:not(:has(.editor-container)) > * {
+			padding-left: 0.5em;
+			padding-right: 0.5em;
+		}
+
 		.editor-container {
 			height: 100%;
 			margin: 0 0 1em;
