@@ -748,10 +748,6 @@ onBeforeUpdate(updateEffects);
 				grid-template-rows: 1fr;
 				height: 100%;
 				min-height: 4rem;
-
-				.editor {
-					padding: 0.5em;
-				}
 			}
 		}
 
