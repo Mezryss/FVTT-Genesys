@@ -93,16 +93,18 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 	static readonly _GAME_VEHICLES = new Set<GenesysActor<VehicleDataModel>>();
 
 	static override migrateData(source: any) {
-		const passengers: Array<ActorPointer & { id?: string }> = source.passengers.list;
-		for (const passenger of passengers) {
-			// eslint-disable-next-line no-prototype-builtins
-			if (!passenger.hasOwnProperty('id')) {
-				break;
+		const passengers: Array<ActorPointer & { id?: string }> | undefined = source.passengers?.list;
+		if (passengers) {
+			for (const passenger of passengers) {
+				// eslint-disable-next-line no-prototype-builtins
+				if (!passenger.hasOwnProperty('id')) {
+					break;
+				}
+				// We removed the `id` property and added `uuid`. We transfer the data from one to the other to allow the migration
+				// script that runs after to save the proper data. (See "src\migrations\1-use-uuid-for-vehicle.ts")
+				passenger.uuid = passenger.id!;
+				delete passenger.id;
 			}
-			// We removed the `id` property and added `uuid`. We transfer the data from one to the other to allow the migration
-			// script that runs after to save the proper data. (See "src\migrations\1-use-uuid-for-vehicle.ts")
-			passenger.uuid = passenger.id!;
-			delete passenger.id;
 		}
 
 		return super.migrateData(source);
