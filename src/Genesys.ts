@@ -8,6 +8,7 @@
 
 import { register as registerConfig, ready as readyConfigs } from '@/config';
 import { register as registerCombat } from '@/combat';
+import { register as registerSidebars } from '@/sidebar';
 import { register as registerDice } from '@/dice';
 import { register as registerEnrichers } from '@/enrichers';
 import { register as registerFonts } from '@/fonts';
@@ -97,6 +98,7 @@ Hooks.once('init', async () => {
 
 	// Misc. modules with one-time registrations
 	registerCombat();
+	registerSidebars();
 	registerEnrichers();
 	registerFonts();
 	registerDice();

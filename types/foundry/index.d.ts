@@ -123,3 +123,4 @@ import './common/documents';
 import './common/types';
 import './common/utils';
 import './prosemirror';
+import './util';

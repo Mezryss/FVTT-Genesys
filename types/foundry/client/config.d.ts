@@ -14,6 +14,7 @@ declare global {
 		TCompendiumDirectory extends CompendiumDirectory = CompendiumDirectory,
 		THotbar extends Hotbar = Hotbar,
 		TItem extends Item = Item,
+		TItemDirectory extends ItemDirectory<TItem> = ItemDirectory<TItem>,
 		TMacro extends Macro = Macro,
 		TMeasuredTemplateDocument extends MeasuredTemplateDocument = MeasuredTemplateDocument,
 		TTileDocument extends TileDocument = TileDocument,
@@ -534,7 +535,7 @@ declare global {
 			compendium: ConstructorOf<TCompendiumDirectory>;
 			controls: typeof SceneControls;
 			hotbar: ConstructorOf<THotbar>;
-			items: typeof ItemDirectory;
+			items: ConstructorOf<TItemDirectory>;
 			// journal: typeof JournalDirectory;
 			// macros: typeof MacroDirectory;
 			menu: typeof MainMenu;

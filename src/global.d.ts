@@ -13,9 +13,20 @@ import GenesysCombat from '@/combat/GenesysCombat';
 import GenesysCombatant from '@/combat/GenesysCombatant';
 import GenesysCombatTracker from '@/combat/GenesysCombatTracker';
 import { GENESYS_CONFIG } from '@/config';
+import GenesysActorDirectory from '@/sidebar/GenesysActorDirectory';
+import GenesysItemDirectory from '@/sidebar/GenesysItemDirectory';
 
 declare global {
-	const ui: FoundryUI<GenesysActor, ActorDirectory<GenesysActor>, GenesysItem, ChatMessage<GenesysActor>, ChatLog<ChatMessage<GenesysActor>>, CompendiumDirectory, GenesysCombatTracker<GenesysCombat>>;
+	const ui: FoundryUI<
+		GenesysActor,
+		GenesysActorDirectory<GenesysActor>,
+		GenesysItem,
+		GenesysItemDirectory<GenesysItem>,
+		ChatMessage<GenesysActor>,
+		ChatLog<ChatMessage<GenesysActor>>,
+		CompendiumDirectory,
+		GenesysCombatTracker<GenesysCombat>
+	>;
 	const canvas: Canvas;
 
 	interface GenesysConfig
@@ -23,7 +34,7 @@ declare global {
 			AmbientLightDocument,
 			GenesysEffect,
 			GenesysActor,
-			ActorDirectory<GenesysActor>,
+			GenesysActorDirectory<GenesysActor>,
 			ChatLog,
 			ChatMessage,
 			GenesysCombat,
@@ -32,6 +43,7 @@ declare global {
 			CompendiumDirectory,
 			Hotbar,
 			GenesysItem,
+			GenesysItemDirectory<GenesysItem>,
 			Macro,
 			MeasuredTemplateDocument,
 			TileDocument,
