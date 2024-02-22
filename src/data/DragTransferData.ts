@@ -1,5 +1,5 @@
 export type DragTransferData = {
-	uuid: string;
+	uuid?: string;
 	type?: string;
 	genesysType?: string;
 };

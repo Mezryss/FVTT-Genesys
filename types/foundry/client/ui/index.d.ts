@@ -12,6 +12,7 @@ declare global {
 		TActor extends Actor = Actor,
 		TActorDirectory extends ActorDirectory<TActor> = ActorDirectory<TActor>,
 		TItem extends Item<TActor> = Item<TActor>,
+		TItemDirectory extends ItemDirectory<TItem> = ItemDirectory<TItem>,
 		TChatMessage extends ChatMessage<TActor> = ChatMessage<TActor>,
 		TChatLog extends ChatLog<TChatMessage> = ChatLog<TChatMessage>,
 		TCompendiumDirectory extends CompendiumDirectory = CompendiumDirectory,
@@ -23,7 +24,7 @@ declare global {
 		combat: TCombatTracker;
 		compendium: TCompendiumDirectory;
 		controls: SceneControls;
-		items: ItemDirectory<TItem>;
+		items: TItemDirectory;
 		notifications: Notifications;
 		settings: Settings;
 		tables: RollTableDirectory;
