@@ -146,9 +146,9 @@ async function addXPJournalEntry() {
 			<div class="header"><Localized label="Genesys.Labels.XPJournal" /></div>
 
 			<div class="entries-header">
-				<div><Localized label="Genesys.Labels.Reason" /></div>
+				<div><Localized label="Genesys.RewardsPrompt.Reason" /></div>
 				<div />
-				<div><Localized label="Genesys.Labels.Amount" /></div>
+				<div><Localized label="Genesys.RewardsPrompt.Amount" /></div>
 				<div>
 					<a @click="addXPJournalEntry"><i class="fas fa-plus"></i></a>
 				</div>

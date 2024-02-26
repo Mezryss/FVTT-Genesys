@@ -154,6 +154,16 @@ Genesys:
     ChanceToSucceedByPermutationDisclaimer: The displayed probability is exact unless the dice pool includes a super-characteristic.
     ChanceToSucceedBySimulationDisclaimer: The displayed probability is an approximation that uses the Monte Carlo method.
 
+  # Rewards Prompt Labels
+  RewardsPrompt:
+    Title: Rewards
+    Amount: Amount
+    Reason: Reason
+
+  # Character Skill Prompt Labels
+  CharacterSkillPrompt:
+    Title: Select User
+
   # Experience Journal Labels
   XPJournal:
     Award: '<strong>XP Awarded by GM</strong>: {reason}'
@@ -404,9 +414,6 @@ Genesys:
     RankDown: Rank Down
     FreeRankUp: Rank Up (Free)
     FreeRankDown: Rank Down (Free)
-    AwardXP: Award XP
-    Amount: Amount
-    Reason: Reason
     IsRated: Is Rated?
     Qualities: Qualities
     Severity: Severity
@@ -447,5 +454,3 @@ Genesys:
     RoleSkills: Role Skills
     FiringArc: Firing Arc
     Select: Select
-    CharacterSkillPromptTitle: Select User
-    AwardPromptTitle: Rewards

@@ -96,7 +96,7 @@ Genesys:
 
   # Career Skill Prompt
   CareerSkillPrompt:
-    Header: Compétence de Carrière
+    Title: Compétence de Carrière
     Hint: 'Choissisez une compétence de Carrière pour gagner un rang:'
     RemainingChoices: Autres choix
     Confirm: Réalisé
@@ -154,6 +154,16 @@ Genesys:
     ChanceToSucceedByPermutationDisclaimer: "Affiche la probabilité exacte à moins qu'un dé dans le pool soit une super-caractéristique."
     ChanceToSucceedBySimulationDisclaimer: La probabilité affiché est une approximation caculé à partir de la méthode de Monte Carlo.
 
+  # Rewards Prompt Labels
+  RewardsPrompt:
+    Title: Rewards
+    Amount: Valeur
+    Reason: Raison
+
+  # Character Skill Prompt Labels
+  CharacterSkillPrompt:
+    Title: Select User
+
   # Experience Journal Labels
   XPJournal:
     Award: '<strong>XP attribué par le MJ</strong>: {reason}'
@@ -187,6 +197,21 @@ Genesys:
     InvalidTokenTypeForAction: Le token selectionné est d'un type invalide pour réaliser cette action.
     EffectsWereNotUpdatedAfterTransfer: Une erreur s'est produite lors de la mise à jour des effets avec les dernières données disponibles durant le transfert de '{name}'.
     NoRoleMembersWithAppropriateSkills: Aucun membre du groupe pour ce rôle ne possède les compétences appropriées pour faire cette action.
+
+  # Migration Related Messages
+  Migration:
+    MustPerformMigration: >-
+      MIGRATION NEEDED!: Some data needs to be migrated and failure to do so might corrupt the data or break functionality.
+      Please exit out of the world and wait for a GM to perform the migration.
+    StartingMigration: 'MIGRATION STARTED: Commencing {amount} migration(s); please be patient and do not close the application.'
+    StartingScriptMigration: 'MIGRATION STARTED [{id}]: Commencing migration.'
+    StoppedScriptMigration: 'MIGRATION STOPPED [{id}]: Encountered an error while migrating.'
+    CompletedScriptMigration: 'MIGRATION FINISHED [{id}]: Migration completed.'
+    MultipleSuccessfulMigration: 'MIGRATION VERSION UPDATED: At least one migration was completed successfully.'
+    StoppedMigration: >-
+      MIGRATION STOPPED: The migration has stopped due to some errors; consult the console log for what these errors are.
+      There are still {amount} migration(s) that haven't been performed.
+    CompletedMigration: 'MIGRATION FINISHED: All migrations done; thanks for your patience.'
 
   # Story Points
   StoryPoints:
@@ -388,9 +413,6 @@ Genesys:
     RankDown: Rang Inférieur
     FreeRankUp: Rang Supérieur (Gratuit)
     FreeRankDown: Rang Inférieur (Gratuit)
-    AwardXP: XP obtenus
-    Amount: Valeur
-    Reason: Raison
     IsRated: Est-il mesuré?
     Qualities: Qualitées
     Severity: Sévérité
@@ -425,6 +447,7 @@ Genesys:
     EncumbranceCapacity: Valeur d'emcombrement
     Information: Information
     Passengers: Passagers
+    Role: Rôle
     Roles: Rôles
     OverCapacity: Hors capacité!
     RoleSkills: Compétences lié au rôle
