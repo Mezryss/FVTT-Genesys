@@ -176,6 +176,13 @@ Hooks.on('renderChatLog', (_sidebar: SidebarTab, html: JQuery<HTMLElement>, _dat
 	});
 });
 
+// Currently there is no way to specify the class for rendering a compendium collection application since it is
+// hardcoded. However, we can cheat the system into using our own implementation by manually instanciating it and
+// patching the compendium. Also, because we want to apply this even to newly created compendia we run this on every
+// compendium directory bar rendering (it's triggered right after a new compendium is created). We went with this way
+// of cheating the system in order to maintain compatibility with FVTTv10+ and to capture newly created compendia.
+// For context, we want to perform this patch to allow sheets with drop areas to properly highlight when something is
+// being dragged from a compendium.
 const COMPENDIUM_PATCHING = {
 	PATCHED: new Set<string>(),
 	TYPES: ['Actor', 'Item'],
