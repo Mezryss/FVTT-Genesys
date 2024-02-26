@@ -443,7 +443,6 @@ async function approximateProbability() {
 	<div class="genesys dice-prompt">
 		<!-- Header Text -->
 		<header>
-			<span><Localized label="Genesys.DicePrompt.Title" /></span>
 			<span class="hint"><Localized label="Genesys.DicePrompt.Hint" /></span>
 		</header>
 

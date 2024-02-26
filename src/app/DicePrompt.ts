@@ -60,6 +60,7 @@ export default class DicePrompt extends VueSheet(Application) {
 			...super.defaultOptions,
 			classes: ['app-dice-prompt'],
 			width: 500,
+			title: game.i18n.localize('Genesys.DicePrompt.Title'),
 		};
 	}
 
