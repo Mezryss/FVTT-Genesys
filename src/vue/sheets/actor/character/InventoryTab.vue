@@ -77,6 +77,8 @@ async function dropInventoryToSortSlot(event: DragEvent, sortCategory: Equipment
 		if (!droppedItem) {
 			return;
 		}
+	} else if (!sourceActor) {
+		[droppedItem] = (await actor.createEmbeddedDocuments('Item', [droppedItem.toObject()])) as GenesysItem<EquipmentDataModel>[];
 	}
 
 	// Select the proper inventory category to sort the dropped item among them.

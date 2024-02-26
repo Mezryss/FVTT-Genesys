@@ -9,7 +9,7 @@ import SortSlot from '@/vue/components/inventory/SortSlot.vue';
 import ActorTile from '@/vue/components/ActorTile.vue';
 
 import GenesysActor from '@/actor/GenesysActor';
-import { CrewDragTransferData, CrewExtraDragTransferData, extractDataFromDragTransferTypes } from '@/data/DragTransferData';
+import { CrewDragTransferData, CrewExtraDragTransferData, DragTransferData, extractDataFromDragTransferTypes } from '@/data/DragTransferData';
 
 type FromUuidSimpleReturnData = null | {
 	name: string;
@@ -251,14 +251,14 @@ function modifyDragCounters(event: DragEvent, direction: number) {
 }
 
 function dragStart(event: DragEvent, extraData: CrewExtraDragTransferData) {
-	const dragSource = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}');
-	const dragSourceWithExtra: CrewDragTransferData = {
-		...dragSource,
+	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
+	const dragDataWithExtra: CrewDragTransferData = {
+		...dragData,
 		...extraData,
 		sourceVehicleUuid: context.data.actor.uuid,
 	};
 
-	event.dataTransfer?.setData('text/plain', JSON.stringify(dragSourceWithExtra));
+	event.dataTransfer?.setData('text/plain', JSON.stringify(dragDataWithExtra));
 }
 
 function dragEnter(event: DragEvent) {
