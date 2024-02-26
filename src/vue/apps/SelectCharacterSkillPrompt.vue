@@ -105,7 +105,7 @@ function submitSelection(event: Event) {
 			width: 1.5em;
 			height: 1.5em;
 			font-size: 1rem;
-            line-height: 1.5em;
+			line-height: 1.5em;
 		}
 	}
 
