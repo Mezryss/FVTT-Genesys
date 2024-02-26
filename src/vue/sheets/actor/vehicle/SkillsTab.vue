@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
-import { inject, toRaw, ref, watchEffect } from 'vue';
+import { inject, toRaw, ref, watch } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import GenesysActor from '@/actor/GenesysActor';
 import GenesysItem from '@/item/GenesysItem';
@@ -9,60 +9,117 @@ import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import AdversaryDataModel from '@/actor/data/AdversaryDataModel';
 
 import DicePrompt from '@/app/DicePrompt';
-
 import Localized from '@/vue/components/Localized.vue';
 import SkillRanks from '@/vue/components/character/SkillRanks.vue';
 
 type NonVehicleDataModel = CharacterDataModel | AdversaryDataModel;
-type GroupedByMemberData = Map<
-	string,
-	{
-		actor: GenesysActor<NonVehicleDataModel>;
-		roles: string[];
-		skills: Map<string, GenesysItem<SkillDataModel>>;
-	}
->;
+
+type GroupedByMemberData = {
+	actor: GenesysActor<NonVehicleDataModel>;
+	role: string;
+	skills: Map<string, GenesysItem<SkillDataModel>>;
+};
+
+type GroupedBySkillData = {
+	skillName: string;
+	skillImage: string;
+	actors: Map<
+		string,
+		{
+			actor: GenesysActor<NonVehicleDataModel>;
+			skill: GenesysItem<SkillDataModel>;
+			role: string;
+		}
+	>;
+};
+
+type GroupingMode = 'member' | 'skill';
 
 const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 
-const dataGroupedByMember = ref<GroupedByMemberData>(new Map());
+const groupingMode = ref<GroupingMode>('member');
+const groupedByMember = ref<Map<string, GroupedByMemberData>>(new Map());
+const groupedBySkill = ref<Map<string, GroupedBySkillData>>(new Map());
 
-// We want to render only actors that exists, which requires us to asynchronously get their data.
-watchEffect(async () => {
-	const data: GroupedByMemberData = new Map();
-	for (const role of toRaw(context.data.actor).systemData.roles) {
-		for (const member of role.members) {
-			if (!data.has(member)) {
-				const targetActor = await fromUuid<GenesysActor<NonVehicleDataModel>>(member);
-				if (!targetActor) {
-					continue;
-				}
+watch(
+	[context.sheet, groupingMode],
+	async () => {
+		const actorData = toRaw(context.data.actor).systemData;
+		const allActorSkills = new Map<string, GroupedByMemberData>();
 
-				data.set(member, { actor: targetActor, roles: [], skills: new Map() });
-			}
-			const details = data.get(member)!;
-
-			details.roles.push(role.name);
-
+		for (const role of actorData.roles) {
 			for (const skill of role.skills) {
-				if (!details.skills.has(skill)) {
-					const skillItem = details.actor.items.find((item) => item.type === 'skill' && item.name === skill);
+				for (const member of role.members) {
+					if (!allActorSkills.has(member)) {
+						const targetActor = await fromUuid<GenesysActor<NonVehicleDataModel>>(member);
+						if (!targetActor) {
+							continue;
+						}
+						allActorSkills.set(member, { actor: targetActor, role: role.name, skills: new Map() });
+					}
 
-					if (skillItem) {
-						details.skills.set(skill, skillItem as GenesysItem<SkillDataModel>);
-					} else {
-						const backupSkill = CONFIG.genesys.skills.find((aSkill) => aSkill.name === skill);
+					const targetActorSkill = allActorSkills.get(member)!;
 
-						if (backupSkill) {
-							details.skills.set(skill, backupSkill);
+					if (!targetActorSkill.skills.has(skill)) {
+						const skillItem = targetActorSkill.actor.items.find((item) => item.type === 'skill' && item.name === skill);
+						if (skillItem) {
+							targetActorSkill.skills.set(skill, skillItem as GenesysItem<SkillDataModel>);
+						} else {
+							const backupSkill = CONFIG.genesys.skills.find((aSkill) => aSkill.name === skill);
+							if (backupSkill) {
+								targetActorSkill.skills.set(skill, backupSkill);
+							} else {
+								continue;
+							}
 						}
 					}
 				}
 			}
 		}
-	}
-	dataGroupedByMember.value = data;
-});
+
+		if (groupingMode.value === 'member') {
+			groupedByMember.value = allActorSkills;
+		} else if (groupingMode.value === 'skill') {
+			const groupedBySkillData = new Map<string, GroupedBySkillData>();
+			for (const role of actorData.roles) {
+				for (const skill of role.skills) {
+					if (!groupedBySkillData.has(skill)) {
+						const targetSkill = CONFIG.genesys.skills.find((skillItem) => skillItem.name === skill);
+						if (!targetSkill) {
+							continue;
+						}
+
+						groupedBySkillData.set(skill, {
+							skillName: skill,
+							skillImage: targetSkill.img,
+							actors: new Map(),
+						});
+					}
+					const skillUsers = groupedBySkillData.get(skill)!;
+
+					for (const member of role.members) {
+						const actorSkills = allActorSkills.get(member);
+						if (!actorSkills) {
+							continue;
+						}
+
+						const desiredSkill = actorSkills.skills.get(skill);
+						if (desiredSkill) {
+							skillUsers.actors.set(member, {
+								actor: actorSkills.actor,
+								skill: desiredSkill,
+								role: role.name,
+							});
+						}
+					}
+				}
+			}
+
+			groupedBySkill.value = groupedBySkillData;
+		}
+	},
+	{ immediate: true },
+);
 
 async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDataModel>) {
 	if (actor.isOwner) {
@@ -78,12 +135,19 @@ async function openActorSheet(actor: GenesysActor) {
 
 <template>
 	<section class="tab-skills">
-		<div class="skills-container">
-			<section v-for="[memberId, details] in dataGroupedByMember" :key="memberId">
+		<div class="grouping-mode">
+			Group By:
+			<select v-model="groupingMode">
+				<option value="member">Member</option>
+				<option value="skill">Skill</option>
+			</select>
+		</div>
+		<div v-if="groupingMode === 'member'" class="members-container">
+			<section v-for="[memberId, details] in groupedByMember" :key="memberId">
 				<div class="member-details">
 					<img class="member-image" :src="details.actor.img" :alt="details.actor.name" draggable="false" />
 					<a class="member-name" @click="openActorSheet(details.actor as GenesysActor<NonVehicleDataModel>)">{{ details.actor.name }}</a>
-					<div class="member-roles"><Localized label="Genesys.Labels.Roles" />: {{ details.roles.join(', ') }}</div>
+					<div class="member-roles"><Localized label="Genesys.Labels.Role" />: {{ details.role }}</div>
 
 					<div class="member-skills" v-if="details.skills.size > 0">
 						<div class="member-skills-header">
@@ -105,6 +169,36 @@ async function openActorSheet(actor: GenesysActor) {
 				</div>
 			</section>
 		</div>
+		<div v-else-if="groupingMode === 'skill'" class="skills-container">
+			<section v-for="[skillName, details] in groupedBySkill" :key="skillName">
+				<div class="skill-details">
+					<div class="skill-details-name">
+						<img class="skill-details-image" :src="details.skillImage" :alt="details.skillName" draggable="false" />
+						{{ details.skillName }}
+					</div>
+					<div class="skill-contents">
+						<div class="skill-content-header">
+							<div class="skill-content-header-charName"><Localized label="Genesys.Labels.CharacterName" /></div>
+							<div class="skill-content-header-roles"><Localized label="Genesys.Labels.Role" /></div>
+							<div class="skill-content-header-skill"><Localized label="Genesys.Labels.Skill" /></div>
+						</div>
+
+						<div v-for="[actorId, actorRoleSkill] in details.actors" :key="actorId" class="skill-content-details">
+							<img class="skill-content-details-charImage" :src="actorRoleSkill.actor.img" :alt="actorRoleSkill.actor.name" draggable="false" />
+							<a class="skill-content-details-charName" @click="openActorSheet(actorRoleSkill.actor as GenesysActor<NonVehicleDataModel>)">{{ actorRoleSkill.actor.name }}</a>
+							<div>{{ actorRoleSkill.role }}</div>
+							<div class="skill-content-details-skillRank">{{ actorRoleSkill.skill.systemData.rank }}</div>
+							<a @click="rollSkillForActor(actorRoleSkill.actor as GenesysActor<NonVehicleDataModel>, actorRoleSkill.skill as GenesysItem<SkillDataModel>)">
+								<SkillRanks
+									:skill-value="actorRoleSkill.skill.systemData.rank"
+									:characteristic-value="(actorRoleSkill.actor.systemData as NonVehicleDataModel).characteristics[actorRoleSkill.skill.systemData.characteristic]"
+								/>
+							</a>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
 	</section>
 </template>
 
@@ -112,10 +206,24 @@ async function openActorSheet(actor: GenesysActor) {
 @use '@scss/vars/colors.scss';
 
 .tab-skills {
-	.skills-container {
+	display: flex;
+	flex-direction: column;
+
+	.grouping-mode {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 1em;
+		margin-left: auto;
+
+		select {
+			margin-left: 0.5rem;
+		}
+	}
+
+	.members-container {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 0.5em;
+		margin-top: 0.5em;
 
 		.member-details {
 			display: grid;
@@ -207,10 +315,106 @@ async function openActorSheet(actor: GenesysActor) {
 							border: 1px dashed black;
 							border-radius: 0.75rem;
 							text-align: center;
-							margin: 0.1em 0.1em 0.1em 0.2em;
-							min-width: 1.5rem;
+							margin: 0.1em;
+							width: 1.5rem;
 							height: 1.5rem;
 						}
+					}
+				}
+			}
+		}
+	}
+
+	.skills-container {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		gap: 0.5em;
+		padding: 0.5em;
+
+		.skill-details {
+			display: grid;
+			grid-template-rows: auto auto;
+			background: transparentize(colors.$light-blue, 0.8);
+			border-radius: 1em;
+			height: 100%;
+			gap: 0.5em;
+			padding: 0.5rem;
+
+			.skill-details-name {
+				grid-row: 1 / span 1;
+				font-family: 'Bebas Neue', sans-serif;
+				width: 100%;
+				font-size: 2rem;
+				vertical-align: bottom;
+				padding: 0px;
+
+				.skill-details-image {
+					width: 2rem;
+					border: none;
+					border-radius: 0.25rem;
+					vertical-align: middle;
+				}
+			}
+
+			.skill-contents {
+				grid-row: 2 / span 1;
+				display: grid;
+				grid-template-rows: auto auto;
+
+				.skill-content-header {
+					grid-row: 1 / span 1;
+					display: grid;
+					grid-template-columns: 1.5rem 2fr 1.5fr 1.5em 80px;
+					font-family: 'Bebas Neue', sans-serif;
+					align-items: center;
+					justify-items: center;
+
+					.skill-content-header-charName {
+						grid-column: 1 / span 2;
+						justify-self: left;
+					}
+
+					.skill-content-header-roles {
+						grid-column: 3 / span 1;
+					}
+
+					.skill-content-header-skill {
+						grid-column: 4 / span 2;
+					}
+				}
+
+				.skill-content-details {
+					grid-row: auto / span 1;
+					display: grid;
+					width: 100%;
+					grid-template-columns: 1.5rem 2fr 1.5fr 1.5em 80px;
+					border-top: 1px dashed colors.$blue;
+					align-items: center;
+					justify-items: center;
+					padding: 2px 0;
+					gap: 0.5em;
+
+					.skill-content-details-charImage {
+						border: none;
+						border-radius: 0.25rem;
+					}
+
+					.skill-content-details-charName {
+						font-family: 'Roboto Serif', serif;
+						font-size: 1rem;
+						justify-self: left;
+					}
+
+					.skill-content-details-skillRank {
+						background: transparentize(white, 0.5);
+						border: 1px dashed black;
+						border-radius: 0.75rem;
+						text-align: center;
+						margin: 0.1em;
+						width: 1.5em;
+						height: 1.5em;
+						line-height: 1.5em;
 					}
 				}
 			}
