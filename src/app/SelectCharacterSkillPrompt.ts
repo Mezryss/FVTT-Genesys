@@ -26,7 +26,7 @@ export default class SelectCharacterSkillPrompt extends VueSheet(Application) {
 			...super.defaultOptions,
 			classes: ['app-select-character-skill-prompt'],
 			width: 100,
-			title: game.i18n.localize('Genesys.Labels.CharacterSkillPromptTitle'),
+			title: game.i18n.localize('Genesys.CharacterSkillPrompt.Title'),
 		};
 	}
 

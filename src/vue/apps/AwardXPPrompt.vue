@@ -23,12 +23,12 @@ function awardXP(event: Event) {
 <template>
 	<div class="genesys award-xp-prompt">
 		<div class="amount">
-			<label><Localized label="Genesys.Labels.Amount" /></label>
+			<label><Localized label="Genesys.RewardsPrompt.Amount" /></label>
 			<input type="number" min="0" v-model="amount" />
 		</div>
 
 		<div class="reason">
-			<label><Localized label="Genesys.Labels.Reason" /></label>
+			<label><Localized label="Genesys.RewardsPrompt.Reason" /></label>
 			<textarea v-model="reason"></textarea>
 		</div>
 
