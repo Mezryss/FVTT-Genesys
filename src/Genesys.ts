@@ -24,7 +24,8 @@ import { register as registerVehicles } from '@/actor/data/VehicleDataModel';
 import DicePrompt, { registerWorker } from '@/app/DicePrompt';
 
 import GenesysActor from '@/actor/GenesysActor';
-import { migrate_UseUuidForVehicles } from '@/migrations/1-use-uuid-for-vehicle';
+import GenesysCompendium from '@/sidebar/GenesysCompendium';
+import { performMigrations } from '@/migrations/MigrationHelper';
 
 import './scss/index.scss';
 
@@ -89,8 +90,6 @@ async function doAlphaNotice() {
 }
 
 Hooks.once('init', async () => {
-	console.debug('Genesys | Initializing...');
-
 	// System Documents
 	registerActors();
 	registerEffects();
@@ -105,18 +104,15 @@ Hooks.once('init', async () => {
 	registerHandlebarsHelpers();
 	registerSettings();
 	registerConfig();
-
-	console.debug('Genesys | Initialization Complete.');
 });
 
 Hooks.once('ready', async () => {
-	registerStoryPointTracker();
 	await doAlphaNotice();
-
 	readyConfigs();
 
-	await migrate_UseUuidForVehicles();
+	await performMigrations();
 
+	registerStoryPointTracker();
 	registerVehicles();
 	registerWorker();
 });
@@ -158,11 +154,7 @@ Hooks.on('renderDialog', (_dialog: Dialog, html: JQuery<HTMLElement>, _data: obj
 	}
 });
 
-Hooks.on('renderSidebarTab', (sidebar: SidebarTab, html: JQuery<HTMLElement>, _data: object) => {
-	if (sidebar.tabName !== 'chat') {
-		return;
-	}
-
+Hooks.on('renderChatLog', (_sidebar: SidebarTab, html: JQuery<HTMLElement>, _data: object) => {
 	const diceIcon = html.find('#chat-controls > .chat-control-icon');
 	diceIcon.on('click', async (_event) => {
 		const controlledTokens = canvas.tokens.controlled;
@@ -182,4 +174,20 @@ Hooks.on('renderSidebarTab', (sidebar: SidebarTab, html: JQuery<HTMLElement>, _d
 
 		await DicePrompt.promptForRoll(targetActor, '');
 	});
+});
+
+const COMPENDIUM_PATCHING = {
+	PATCHED: new Set<string>(),
+	TYPES: ['Actor', 'Item'],
+};
+Hooks.on('renderCompendiumDirectory', (_sidebar: SidebarTab, _html: JQuery<HTMLElement>, _data: object) => {
+	for (const pack of game.packs.values()) {
+		if (!COMPENDIUM_PATCHING.PATCHED.has(pack.metadata.id)) {
+			COMPENDIUM_PATCHING.PATCHED.add(pack.metadata.id);
+			if (COMPENDIUM_PATCHING.TYPES.includes(pack.metadata.type)) {
+				pack.apps.shift();
+				pack.apps.push(new GenesysCompendium(pack));
+			}
+		}
+	}
 });

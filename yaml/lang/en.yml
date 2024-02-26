@@ -96,7 +96,7 @@ Genesys:
 
   # Career Skill Prompt
   CareerSkillPrompt:
-    Header: Career Skills
+    Title: Career Skills
     Hint: 'Select Career Skills to gain a rank:'
     RemainingChoices: Remaining Choices
     Confirm: Done
@@ -188,6 +188,21 @@ Genesys:
     InvalidTokenTypeForAction: The selected token is of an invalid type to perform this action.
     EffectsWereNotUpdatedAfterTransfer: There was an error updating the effects with the latest values for the transfered '{name}'.
     NoRoleMembersWithAppropriateSkills: There are no role members that have the appropriate skills to perform this action.
+
+  # Migration Related Messages
+  Migration:
+    MustPerformMigration: >-
+      MIGRATION NEEDED!: Some data needs to be migrated and failure to do so might corrupt the data or break functionality.
+      Please exit out of the world and wait for a GM to perform the migration.
+    StartingMigration: 'MIGRATION STARTED: Commencing {amount} migration(s); please be patient and do not close the application.'
+    StartingScriptMigration: 'MIGRATION STARTED [{id}]: Commencing migration.'
+    StoppedScriptMigration: 'MIGRATION STOPPED [{id}]: Encountered an error while migrating.'
+    CompletedScriptMigration: 'MIGRATION FINISHED [{id}]: Migration completed.'
+    MultipleSuccessfulMigration: 'MIGRATION VERSION UPDATED: At least one migration was completed successfully.'
+    StoppedMigration: >-
+      MIGRATION STOPPED: The migration has stopped due to some errors; consult the console log for what these errors are.
+      There are still {amount} migration(s) that haven't been performed.
+    CompletedMigration: 'MIGRATION FINISHED: All migrations done; thanks for your patience.'
 
   # Story Points
   StoryPoints:
@@ -426,8 +441,11 @@ Genesys:
     EncumbranceCapacity: Encumbrance Capacity
     Information: Information
     Passengers: Passengers
+    Role: Role
     Roles: Roles
     OverCapacity: Over Capacity!
     RoleSkills: Role Skills
     FiringArc: Firing Arc
     Select: Select
+    CharacterSkillPromptTitle: Select User
+    AwardPromptTitle: Rewards
