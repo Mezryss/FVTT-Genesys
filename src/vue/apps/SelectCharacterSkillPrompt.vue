@@ -55,7 +55,6 @@ function submitSelection(event: Event) {
 
 <style lang="scss">
 @use '@scss/mixins/backgrounds.scss';
-@use '@scss/vars/colors.scss';
 
 .app-select-character-skill-prompt {
 	min-width: 28rem;
@@ -65,6 +64,10 @@ function submitSelection(event: Event) {
 		@include backgrounds.crossboxes();
 	}
 }
+</style>
+
+<style lang="scss" scoped>
+@use '@scss/vars/colors.scss';
 
 .select-character-skill-prompt {
 	.char-skill-option {
@@ -98,10 +101,11 @@ function submitSelection(event: Event) {
 			border: 1px dashed black;
 			border-radius: 0.75rem;
 			text-align: center;
-			margin: 0.1em 0.1em 0.1em 0.2em;
-			min-width: 1.5rem;
-			height: 1.5rem;
+			margin: 0.1em;
+			width: 1.5em;
+			height: 1.5em;
 			font-size: 1rem;
+            line-height: 1.5em;
 		}
 	}
 

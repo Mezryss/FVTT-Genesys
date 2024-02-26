@@ -32,8 +32,6 @@ function confirm(event: Event) {
 
 <template>
 	<div class="genesys career-skill-prompt">
-		<header><Localized label="Genesys.CareerSkillPrompt.Header" /></header>
-
 		<div class="career-skills-hint"><Localized label="Genesys.CareerSkillPrompt.Hint" /></div>
 
 		<div class="selections">
@@ -75,12 +73,6 @@ function confirm(event: Event) {
 
 	button {
 		font-family: 'Roboto Serif', serif;
-	}
-
-	header {
-		font-family: 'Bebas Neue', sans-serif;
-		color: colors.$blue;
-		font-size: 2em;
 	}
 
 	.career-skills-hint {

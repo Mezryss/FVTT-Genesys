@@ -39,6 +39,7 @@ export default class AwardXPPrompt extends VueSheet(Application) {
 			...super.defaultOptions,
 			classes: ['app-award-xp-prompt'],
 			width: 400,
+			title: game.i18n.localize('Genesys.Labels.AwardPromptTitle'),
 		};
 	}
 

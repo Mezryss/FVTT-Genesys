@@ -27,6 +27,7 @@ export default class CareerSkillPrompt extends VueSheet(Application) {
 			...super.defaultOptions,
 			classes: ['app-career-skill-prompt'],
 			width: 400,
+			title: game.i18n.localize('Genesys.CareerSkillPrompt.Title'),
 		};
 	}
 
