@@ -115,11 +115,21 @@ watch(
 				}
 			}
 
-			groupedBySkill.value = groupedBySkillData;
+			groupedBySkill.value = new Map([...groupedBySkillData.entries()].sort(sortNames));
 		}
 	},
 	{ immediate: true },
 );
+
+function sortNames([left]: [string, any], [right]: [string, any]) {
+	if (left > right) {
+		return 1;
+	} else if (left < right) {
+		return -1;
+	} else {
+		return 0;
+	}
+}
 
 async function rollSkillForActor(actor: GenesysActor, skill: GenesysItem<SkillDataModel>) {
 	if (actor.isOwner) {
@@ -138,8 +148,8 @@ async function openActorSheet(actor: GenesysActor) {
 		<div class="grouping-mode">
 			Group By:
 			<select v-model="groupingMode">
-				<option value="member">Member</option>
-				<option value="skill">Skill</option>
+				<option value="member"><Localized label="Genesys.Tabs.Crew" /></option>
+				<option value="skill"><Localized label="Genesys.Labels.Skill" /></option>
 			</select>
 		</div>
 		<div v-if="groupingMode === 'member'" class="members-container">
@@ -369,6 +379,7 @@ async function openActorSheet(actor: GenesysActor) {
 					font-family: 'Bebas Neue', sans-serif;
 					align-items: center;
 					justify-items: center;
+					gap: 0.5em;
 
 					.skill-content-header-charName {
 						grid-column: 1 / span 2;

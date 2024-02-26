@@ -1,6 +1,6 @@
 <script lang="ts" setup>
+import { inject, ref, toRaw, onUpdated } from 'vue';
 import VehicleDataModel from '@/actor/data/VehicleDataModel';
-import { inject, ref, toRaw } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import GenesysActor from '@/actor/GenesysActor';
 import { constructDragTransferTypeFromData, DragTransferData } from '@/data/DragTransferData';
@@ -30,11 +30,30 @@ const emit = defineEmits<{
 const context = inject<ActorSheetContext<VehicleDataModel>>(RootContext)!;
 
 const isBeingDragged = ref(false);
+const imageDom = ref<HTMLImageElement | null>(null);
 
 const editLabel = game.i18n.localize('Genesys.Labels.Edit');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 
 const career = props.actor.type === 'character' ? toRaw(props.actor).items.find((item) => item.type === 'career')?.name : undefined;
+
+// When we are on "tile" mode the image DOM element used to display the actor's picture is wrapped by a context menu
+// component. Sadly, even when we force a re-render of this component sometimes said DOM element won't be re-rendered
+// with the latest data from the actor. Therefore, we keep a reference to the element and update it manually if needed.
+onUpdated(() => {
+	const imageDomValue = imageDom.value;
+	if (imageDomValue) {
+		const imageSrc = imageDomValue.getAttribute('src');
+		if (imageSrc !== props.actor.img) {
+			imageDomValue.setAttribute('src', props.actor.img);
+		}
+
+		const imageAlt = imageDomValue.getAttribute('alt');
+		if (imageAlt !== props.actor.name) {
+			imageDomValue.setAttribute('alt', props.actor.name);
+		}
+	}
+});
 
 function dragStart(event: DragEvent) {
 	isBeingDragged.value = true;
@@ -124,7 +143,7 @@ async function openActorSheet() {
 				</MenuItem>
 			</template>
 
-			<img :src="actor.img" :alt="actor.name" draggable="false" />
+			<img ref="imageDom" :src="actor.img" :alt="actor.name" draggable="false" />
 		</ContextMenu>
 	</div>
 </template>
