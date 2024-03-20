@@ -31,9 +31,9 @@ export default class MinionSheet extends AdversarySheet {
 			return false;
 		}
 
-		// Make sure that the item in question exists.
+		// Make sure that the item in question exists and this actor doesn't own it.
 		const droppedItem = await fromUuid<GenesysItem<BaseItemDataModel>>(dragData.uuid);
-		if (!droppedItem) {
+		if (!droppedItem || droppedItem.actor?.uuid === this.actor.uuid) {
 			return false;
 		}
 

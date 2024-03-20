@@ -19,6 +19,7 @@ import Enriched from '@/vue/components/Enriched.vue';
 import WeaponDataModel from '@/item/data/WeaponDataModel';
 import { Characteristic as CharacteristicType } from '@/data/Characteristics';
 import InjuryDataModel from '@/item/data/InjuryDataModel';
+import { DragTransferData, constructDragTransferTypeFromData } from '@/data/DragTransferData';
 
 const context = inject<ActorSheetContext<AdversaryDataModel>>(RootContext)!;
 const system = computed(() => toRaw(context.data.actor).systemData);
@@ -37,6 +38,7 @@ watchEffect(async () => {
 });
 
 const editLabel = game.i18n.localize('Genesys.Labels.Edit');
+const checkLabel = game.i18n.localize('Genesys.Labels.PerformCheck');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 const rankUpLabel = game.i18n.localize('Genesys.Labels.RankUp');
 const rankDownLabel = game.i18n.localize('Genesys.Labels.RankDown');
@@ -129,6 +131,18 @@ async function toggleSuper(characteristic: CharacteristicType) {
 	await toRaw(context.data.actor).update({
 		'system.superCharacteristics': Array.from(superCharacteristics),
 	});
+}
+
+function dragStart(event: DragEvent, item: GenesysItem) {
+	const transferData: DragTransferData = {
+		uuid: item.uuid,
+		type: item.documentName,
+		genesysType: item.type,
+	};
+	const genesysTransferType = constructDragTransferTypeFromData(item.type, item.uuid);
+
+	event.dataTransfer?.setData('text/plain', JSON.stringify(transferData));
+	event.dataTransfer?.setData(genesysTransferType, '');
 }
 
 onBeforeMount(updateEffects);
@@ -344,13 +358,18 @@ onBeforeUpdate(updateEffects);
 										{{ editLabel }}
 									</MenuItem>
 
-									<MenuItem @click="deleteItem(item)" v-if="context.data.editable">
+									<MenuItem @click="rollAttack(item)">
+										<template v-slot:icon><i class="far fa-dice-d10"></i></template>
+										{{ checkLabel }}
+									</MenuItem>
+
+									<MenuItem @click="deleteItem(item)">
 										<template v-slot:icon><i class="fas fa-trash"></i></template>
 										{{ deleteLabel }}
 									</MenuItem>
 								</template>
 
-								<a @click="rollAttack(item)">
+								<a @click="rollAttack(item)" draggable="true" @dragstart="dragStart($event, item)">
 									<i class="far fa-dice-d10"></i>
 									{{ item.name }}
 									(<span class="weapon-details">
@@ -366,13 +385,18 @@ onBeforeUpdate(updateEffects);
 							</ContextMenu>
 							<ContextMenu v-for="item in equipment.filter((i) => i.type !== 'weapon')" :key="item.id" class="inventory-item" :disable-menu="!context.data.editable">
 								<template v-slot:menu-items>
+									<MenuItem @click="editItem(item)">
+										<template v-slot:icon><i class="fas fa-edit"></i></template>
+										{{ editLabel }}
+									</MenuItem>
+
 									<MenuItem @click="deleteItem(item)">
 										<template v-slot:icon><i class="fas fa-trash"></i></template>
 										{{ deleteLabel }}
 									</MenuItem>
 								</template>
 
-								<a @click="editItem(item)">
+								<a @click="editItem(item)" draggable="true" @dragstart="dragStart($event, item)">
 									{{ item.name }}
 
 									<span v-if="item.type === 'armor'" style="padding-right: 0.2em"> (+{{ item.system.soak }} <Localized label="Genesys.Labels.Soak" />) </span>
