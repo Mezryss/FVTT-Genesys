@@ -29,13 +29,10 @@ import { performMigrations } from '@/migrations/MigrationHelper';
 
 import './scss/index.scss';
 
-async function doAlphaNotice() {
+async function doAlphaNotice(lastAlpha: string) {
 	if (!game.user.isGM) {
 		return;
 	}
-
-	// Get the last-acknowledged Alpha version notice.
-	const lastAlpha = game.settings.get(SETTINGS_NAMESPACE, KEY_ALPHA_VERSION) as string;
 
 	const [lastMajor, lastMinor, lastRevision] = lastAlpha.split('.').map((v) => parseInt(v));
 	const [currMajor, currMinor, currRevision] = game.system.version.split('.').map((v) => parseInt(v));
@@ -107,10 +104,13 @@ Hooks.once('init', async () => {
 });
 
 Hooks.once('ready', async () => {
-	await doAlphaNotice();
+	// Get the last-acknowledged Alpha version notice.
+	const lastAlpha = game.settings.get<string>(SETTINGS_NAMESPACE, KEY_ALPHA_VERSION) ?? '0.0.0';
+
+	await doAlphaNotice(lastAlpha);
 	readyConfigs();
 
-	await performMigrations();
+	await performMigrations(lastAlpha);
 
 	registerStoryPointTracker();
 	registerVehicles();

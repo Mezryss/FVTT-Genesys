@@ -48,7 +48,7 @@ onBeforeUpdate(updateEffects);
 			<div class="stats-row">
 				<Characteristic label="Genesys.Labels.Silhouette" :value="system.silhouette" name="system.silhouette" can-edit />
 				<Characteristic label="Genesys.Labels.Speed" :value="system.speed" name="system.speed" can-edit />
-				<Characteristic label="Genesys.Labels.Handling" :value="`${system.handling >= 0 ? '+' : ''}${system.handling}`" name="system.handling" can-edit />
+				<Characteristic label="Genesys.Labels.Handling" :value="system.handling.signedString()" name="system.handling" can-edit />
 
 				<div class="stats-column">
 					<CombatStat label="Genesys.Labels.Defense" name="system.defense" :value="system.defense" edit-primary />

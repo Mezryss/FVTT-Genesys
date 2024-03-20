@@ -13,7 +13,7 @@ export function register(namespace: string) {
 	game.settings.register(namespace, KEY_MIGRATION_VERSION, {
 		name: 'Migration Version',
 		config: false,
-		default: 2,
+		default: 0,
 		type: Number,
 		scope: 'world',
 	});

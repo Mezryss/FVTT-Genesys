@@ -10,10 +10,17 @@ export const enum MigrationStatus {
 
 const migrationScripts: Array<(migrationId: number) => Promise<MigrationStatus>> = [migrate_UseUuidForVehicles, migrate_ActorOnlyOnceInCrew];
 
-export async function performMigrations() {
-	const currentMigrationVersion = game.settings.get<number>(NAMESPACE, KEY_MIGRATION_VERSION) ?? 0;
+export async function performMigrations(lastAlpha: string) {
 	const totalMigrationScripts = migrationScripts.length;
+	if (lastAlpha === '0.0.0') {
+		await game.settings.set(NAMESPACE, KEY_MIGRATION_VERSION, totalMigrationScripts);
+		migrationScripts.length = 0;
+		return;
+	}
+
+	const currentMigrationVersion = game.settings.get<number>(NAMESPACE, KEY_MIGRATION_VERSION) ?? 0;
 	if (currentMigrationVersion === totalMigrationScripts) {
+		migrationScripts.length = 0;
 		return;
 	}
 
@@ -50,7 +57,6 @@ export async function performMigrations() {
 	if (runAmountMigrations > 0) {
 		await game.settings.set(NAMESPACE, KEY_MIGRATION_VERSION, lastMigrationRun);
 		ui.notifications.info('Genesys.Migration.MultipleSuccessfulMigration', { localize: true, permanent: true });
-		migrationScripts.splice(0, runAmountMigrations);
 	}
 
 	const remainingAmountMigrations = totalMigrationScripts - lastMigrationRun;
@@ -59,4 +65,6 @@ export async function performMigrations() {
 	} else {
 		ui.notifications.info('Genesys.Migration.CompletedMigration', { localize: true, permanent: true });
 	}
+
+	migrationScripts.length = 0;
 }
