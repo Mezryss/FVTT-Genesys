@@ -5,7 +5,7 @@ export default class GenesysCompendium extends Compendium {
 		super._onDragStart(event);
 
 		const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as DragTransferData;
-		if (dragData.uuid) {
+		if ((dragData.type === 'Actor' || dragData.type === 'Item') && dragData.uuid) {
 			const draggedEntity = fromUuidSync(dragData.uuid) as { type: string } | null;
 			if (draggedEntity) {
 				const genesysTransferType = constructDragTransferTypeFromData(draggedEntity.type, dragData.uuid as ItemUUID | ActorUUID);

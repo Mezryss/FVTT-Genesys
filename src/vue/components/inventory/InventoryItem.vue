@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject, ref, toRaw } from 'vue';
+import { computed, inject, ref, toRaw, nextTick } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 
 import GenesysItem from '@/item/GenesysItem';
@@ -264,7 +264,10 @@ function dragLeave() {
 	dragCounter.value = Math.max(0, dragCounter.value - 1);
 }
 
-async function changeItemQuantity(item: GenesysItem, value: number) {
+async function changeItemQuantity(event: MouseEvent, item: GenesysItem, value: number) {
+	const containerDiv = (event.currentTarget as HTMLAnchorElement | null)?.parentElement?.parentElement;
+	const containerScroll = containerDiv?.scrollTop;
+
 	if (value <= 0) {
 		await toRaw(item).delete();
 	} else {
@@ -272,6 +275,12 @@ async function changeItemQuantity(item: GenesysItem, value: number) {
 			'system.quantity': value,
 		});
 	}
+
+	nextTick(() => {
+		if (containerDiv && containerScroll !== undefined) {
+			containerDiv.scrollTop = containerScroll;
+		}
+	});
 }
 
 async function changeDamageState(item: GenesysItem, currentState: EquipmentDamageState, direction: number) {
@@ -320,6 +329,8 @@ async function dropInventoryIntoContainer(event: DragEvent) {
 		if (!droppedItem) {
 			return;
 		}
+	} else if (!sourceActor) {
+		[droppedItem] = (await actor.createEmbeddedDocuments('Item', [droppedItem.toObject()])) as GenesysItem<EquipmentDataModel>[];
 	}
 
 	// Mark the items as being inside the dropped container.
@@ -431,7 +442,13 @@ async function dropInventoryIntoContainer(event: DragEvent) {
 			</div>
 		</div>
 
-		<a class="quantity" @click="changeItemQuantity(item, item.systemData.quantity + 1)" @contextmenu="changeItemQuantity(item, item.systemData.quantity - 1)" v-if="item.type !== 'container'" data-tooltip="Genesys.Labels.Quantity">
+		<a
+			v-if="item.type !== 'container'"
+			class="quantity"
+			@click="changeItemQuantity($event, item, item.systemData.quantity + 1)"
+			@contextmenu="changeItemQuantity($event, item, item.systemData.quantity - 1)"
+			data-tooltip="Genesys.Labels.Quantity"
+		>
 			{{ item.systemData.quantity }}
 			<i class="fas fa-backpack"></i>
 		</a>

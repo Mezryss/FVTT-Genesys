@@ -32,7 +32,7 @@ function decodeUpperCase(text: string) {
 	return text.replace(ENCODED_UPPER_CASE_PATTERN, (_match, group1: string) => String.fromCodePoint(parseInt(group1, 10)));
 }
 
-export function constructDragTransferTypeFromData(genesysType: string, uuid: ItemUUID | ActorUUID | TokenDocumentUUID) {
+export function constructDragTransferTypeFromData(genesysType: string, uuid: DocumentUUID) {
 	return `${GENESYS_DRAG_TYPE_PREFIX}/${encodeUpperCase(genesysType)}/${encodeUpperCase(uuid)}`;
 }
 
