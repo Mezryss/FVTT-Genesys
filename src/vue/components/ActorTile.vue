@@ -43,13 +43,11 @@ const career = props.actor.type === 'character' ? toRaw(props.actor).items.find(
 onUpdated(() => {
 	const imageDomValue = imageDom.value;
 	if (imageDomValue) {
-		const imageSrc = imageDomValue.getAttribute('src');
-		if (imageSrc !== props.actor.img) {
+		if (imageDomValue.getAttribute('src') !== props.actor.img) {
 			imageDomValue.setAttribute('src', props.actor.img);
 		}
 
-		const imageAlt = imageDomValue.getAttribute('alt');
-		if (imageAlt !== props.actor.name) {
+		if (imageDomValue.getAttribute('alt') !== props.actor.name) {
 			imageDomValue.setAttribute('alt', props.actor.name);
 		}
 	}
