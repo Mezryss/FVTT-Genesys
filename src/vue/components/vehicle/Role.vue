@@ -7,6 +7,8 @@ import MenuItem from '@/vue/components/MenuItem.vue';
 import ActorTile from '@/vue/components/ActorTile.vue';
 import GenesysActor from '@/actor/GenesysActor';
 
+type MemberUUID = ActorUUID | TokenDocumentUUID;
+
 const props = withDefaults(
 	defineProps<{
 		id: string;
@@ -27,7 +29,7 @@ const emit = defineEmits<{
 	(e: 'removeMember', memberUuid: string): void;
 	(e: 'actorDragStart', event: DragEvent): void;
 	(e: 'actorDragEnd'): void;
-	(e: 'entityDrop', event: DragEvent): void;
+	(e: 'entityDrop', event: DragEvent, memberUnder?: MemberUUID): void;
 }>();
 
 const dragCounter = ref(0);
@@ -55,10 +57,10 @@ function dragLeave() {
 	dragCounter.value -= 1;
 }
 
-function drop(event: DragEvent) {
+function drop(event: DragEvent, memberUnder?: MemberUUID) {
 	dragCounter.value = 0;
 
-	emit('entityDrop', event);
+	emit('entityDrop', event, memberUnder);
 }
 </script>
 
@@ -72,7 +74,7 @@ function drop(event: DragEvent) {
 		:data-role-id="props.id"
 		@dragenter="dragEnter"
 		@dragleave="dragLeave"
-		@drop="drop"
+		@drop="drop($event)"
 	>
 		<div class="role-data">
 			<div class="role-name">
@@ -101,7 +103,7 @@ function drop(event: DragEvent) {
 
 			<div class="role-members">
 				<TransitionGroup name="mems">
-					<div v-for="member in actorsInRole" :key="member.uuid" class="role-member">
+					<div v-for="member in actorsInRole" :key="member.uuid" class="role-member" @drop="drop($event, member.uuid)">
 						<ActorTile :actor="member as GenesysActor" draggable="true" @dragstart="emit('actorDragStart', $event)" @dragend="emit('actorDragEnd')" :dragging="dragging" @remove-member="emit('removeMember', member.uuid)" />
 					</div>
 				</TransitionGroup>
@@ -110,7 +112,7 @@ function drop(event: DragEvent) {
 	</div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@scss/mixins/reset.scss';
 @use '@scss/vars/colors.scss';
 
