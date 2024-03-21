@@ -133,7 +133,7 @@ async function dropToPassengers(event: DragEvent, relativeToPassengerUuid: strin
 	}
 }
 
-async function dropToRole(event: DragEvent, roleId: string) {
+async function dropToRole(event: DragEvent, roleId: string, memberUnder?: ActorUUID | TokenDocumentUUID) {
 	// Check that we have the UUID of whatever was dropped and that it can be processed by this method.
 	const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') ?? '{}') as CrewDragTransferData;
 	if (!dragData.uuid || (dragData.genesysType && !VehicleDataModel.isRelevantTypeForContext('ROLE', dragData.genesysType))) {
@@ -199,28 +199,35 @@ async function dropToRole(event: DragEvent, roleId: string) {
 			passengers.splice(passengerIndex, 1);
 			updateMap.set('system.passengers.list', passengers);
 		} else if (dragData.origin === 'role') {
-			// Make sure the dropped crew member is not already on the role.
-			if (roles[roleIndex].members.includes(crewUuid)) {
-				return;
-			}
+			const crewIndex = roles[roleIndex].members.findIndex((member) => member === crewUuid);
+			if (crewIndex === -1) {
+				// If the crew member is currently on another role then remove it from it.
+				const originRoleIndex = roles.findIndex((role) => role.id === dragData.roleId);
+				if (originRoleIndex === -1) {
+					return;
+				}
+				const memberIndex = roles[originRoleIndex].members.findIndex((member) => member === crewUuid);
+				if (memberIndex === -1) {
+					return;
+				}
 
-			// If the crew member is currently on another role then remove it from it.
-			const originRoleIndex = roles.findIndex((role) => role.id === dragData.roleId);
-			if (originRoleIndex === -1) {
+				roles[originRoleIndex].members.splice(memberIndex, 1);
+			} else if (memberUnder && memberUnder !== crewUuid) {
+				// If the crew member is on this role but we drop it on top of another crew member then we
+				// want to change its position.
+				roles[roleIndex].members.splice(crewIndex, 1);
+			} else {
+				// If the crew member is already on this role but we are not sorting it then exit.
 				return;
 			}
-			const memberIndex = roles[originRoleIndex].members.findIndex((member) => member === crewUuid);
-			if (memberIndex === -1) {
-				return;
-			}
-			roles[originRoleIndex].members.splice(memberIndex, 1);
 		} else {
 			return;
 		}
 	}
 
 	// Add the crew member to the role.
-	roles[roleIndex].members.push(crewUuid);
+	const positionIndex = memberUnder ? roles[roleIndex].members.findIndex((member) => member === memberUnder) : roles[roleIndex].members.length;
+	roles[roleIndex].members.splice(positionIndex, 0, crewUuid);
 	updateMap.set('system.roles', roles);
 
 	await actor.update(Object.fromEntries(updateMap));
@@ -291,7 +298,7 @@ function dragLeave(event: DragEvent) {
 						@remove-skill="(skillName) => system.removeSkillFromRole(role.id, skillName)"
 						@remove-member="(memberId) => system.removeMemberFromRole(role.id, memberId)"
 						@actor-drag-start="dragStart($event, { origin: 'role', roleId: role.id })"
-						@entity-drop="dropToRole($event, role.id)"
+						@entity-drop="(event, memberUnder) => dropToRole(event, role.id, memberUnder)"
 					/>
 				</template>
 			</TransitionGroup>

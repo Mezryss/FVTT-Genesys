@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject, ref, toRaw, nextTick } from 'vue';
+import { computed, inject, ref, toRaw } from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 
 import GenesysItem from '@/item/GenesysItem';
@@ -276,11 +276,9 @@ async function changeItemQuantity(event: MouseEvent, item: GenesysItem, value: n
 		});
 	}
 
-	nextTick(() => {
-		if (containerDiv && containerScroll !== undefined) {
-			containerDiv.scrollTop = containerScroll;
-		}
-	});
+	if (containerDiv && containerScroll !== undefined) {
+		containerDiv.scrollTop = containerScroll;
+	}
 }
 
 async function changeDamageState(item: GenesysItem, currentState: EquipmentDamageState, direction: number) {
