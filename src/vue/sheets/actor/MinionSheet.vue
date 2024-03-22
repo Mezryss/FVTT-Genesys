@@ -18,6 +18,7 @@ const system = computed(() => toRaw(context.data.actor).systemData);
 
 const skills = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'skill') as GenesysItem<SkillDataModel>[]);
 
+const isIndependent = actor.value.getFlag<boolean>('genesys', 'independentMinion');
 const editLabel = game.i18n.localize('Genesys.Labels.Edit');
 const deleteLabel = game.i18n.localize('Genesys.Labels.Delete');
 
@@ -38,7 +39,7 @@ async function deleteItem(item: GenesysItem) {
 	<AdversarySheet>
 		<template v-slot:stats>
 			<CombatStat
-				v-if="actor.isToken"
+				v-if="actor.isToken || isIndependent"
 				label="Genesys.Labels.GroupSize"
 				primary-label="Genesys.Adversary.Base"
 				name="system.groupSize"
@@ -55,7 +56,7 @@ async function deleteItem(item: GenesysItem) {
 			<CombatStat label="Genesys.Labels.Soak" name="system.soak" :value="system.soak" edit-primary />
 
 			<CombatStat
-				v-if="actor.isToken"
+				v-if="actor.isToken || isIndependent"
 				label="Genesys.Labels.Wounds"
 				primary-label="Genesys.Labels.Threshold"
 				:value="system.groupWoundThreshold"

@@ -516,6 +516,7 @@ async function approximateProbability() {
 		<div v-if="USE_CHANCE_TO_SUCCEED" class="chance-to-succeed">
 			<label>
 				<i class="fas fa-circle-info" :data-tooltip="`Genesys.DicePrompt.ChanceToSucceedBy${USE_CHANCE_TO_SUCCEED_BY_PERMUTATION ? 'Permutation' : 'Simulation'}Disclaimer`"></i>
+				{{ '\xa0' }}
 				<Localized label="Genesys.DicePrompt.ChanceToSucceed" />
 			</label>
 
@@ -528,10 +529,8 @@ async function approximateProbability() {
 	</div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @use '@scss/mixins/backgrounds.scss';
-@use '@scss/vars/colors.scss';
-@use '@scss/vars/sheet.scss';
 
 .app-dice-prompt {
 	min-width: 500px;
@@ -541,6 +540,11 @@ async function approximateProbability() {
 		@include backgrounds.crossboxes();
 	}
 }
+</style>
+
+<style lang="scss" scoped>
+@use '@scss/vars/colors.scss';
+@use '@scss/vars/sheet.scss';
 
 .dice-prompt {
 	display: grid;
@@ -558,8 +562,8 @@ async function approximateProbability() {
 
 		.hint {
 			font-family: 'Roboto', serif;
-			font-size: 0.8rem;
-			color: colors.$dark-blue;
+			font-size: 1rem;
+			// color: colors.$dark-blue;
 		}
 	}
 

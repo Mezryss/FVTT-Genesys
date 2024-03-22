@@ -358,7 +358,7 @@ declare global {
 				 * @param key   The flag key
 				 * @return The flag value
 				 */
-				getFlag(scope: string, key: string): unknown;
+				getFlag<FlagType = unknown>(scope: string, key: string): FlagType;
 
 				/**
 				 * Assign a "flag" to this document.
