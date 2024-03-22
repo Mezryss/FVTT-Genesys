@@ -34,6 +34,8 @@ declare global {
 		/** Cache the last drawn wildcard token to avoid repeat draws */
 		protected _lastWildcard: string | null;
 
+		flags: Record<string, Record<string, unknown>>;
+
 		/** A convenient reference to the file path of the Actor's profile image */
 		get img(): ImageFilePath;
 

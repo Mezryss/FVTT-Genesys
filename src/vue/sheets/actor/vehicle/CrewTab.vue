@@ -10,6 +10,7 @@ import ActorTile from '@/vue/components/ActorTile.vue';
 
 import GenesysActor from '@/actor/GenesysActor';
 import { CrewDragTransferData, CrewExtraDragTransferData, DragTransferData, extractDataFromDragTransferTypes } from '@/data/DragTransferData';
+import CloneActorPrompt from '@/app/CloneActorPrompt';
 
 type FromUuidSimpleReturnData = null | {
 	name: string;
@@ -81,12 +82,34 @@ async function dropToPassengers(event: DragEvent, relativeToPassengerUuid: strin
 	const crewUuid = dragData.uuid;
 	let droppedCrew: { uuid: string; sort: number };
 
-	if (!dragData.sourceVehicleUuid || isDropFromAnotherActor) {
-		// If the passenger was dropped from a folder, compendium, or another actor then add it if it's not already on the vehicle.
+	if (isDropFromAnotherActor) {
+		// If the passenger was dropped from another actor then add it if it's not already on the vehicle.
 		if (actor.systemData.hasCrew(crewUuid)) {
 			return;
 		}
 		droppedCrew = { uuid: crewUuid, sort: 0 };
+		passengers.push(droppedCrew);
+	} else if (!dragData.sourceVehicleUuid) {
+		// If the passenger was dropped from a folder or compendium then add it if it's not already on the vehicle.
+		if (actor.systemData.hasCrew(crewUuid)) {
+			return;
+		}
+
+		droppedCrew = { uuid: crewUuid, sort: 0 };
+
+		// If the dropped actor produces unlinked tokens and the user can create actors then ask if they want to make a
+		// clone and save a reference of it instead.
+		if (!(droppedEntity as GenesysActor).prototypeToken.actorLink && (Actor.implementation as typeof GenesysActor).canUserCreate(game.user)) {
+			const actorToAdd = await CloneActorPrompt.promptForInstantiation(droppedEntity as GenesysActor);
+
+			if (actorToAdd) {
+				droppedCrew = { uuid: actorToAdd.uuid, sort: 0 };
+			} else {
+				// The prompt was closed so cancel the drop.
+				return;
+			}
+		}
+
 		passengers.push(droppedCrew);
 	} else {
 		const targetCrew = passengers.find((passenger) => passenger.uuid === crewUuid);
@@ -180,12 +203,29 @@ async function dropToRole(event: DragEvent, roleId: string, memberUnder?: ActorU
 		return;
 	}
 
-	const crewUuid = dragData.uuid;
-	if (!dragData.sourceVehicleUuid || isDropFromAnotherActor) {
-		// If the crew member was dropped from a folder, compendium, or another actor then simply check that it's not already in the
-		// vehicle.
+	let crewUuid = dragData.uuid;
+	if (isDropFromAnotherActor) {
+		// If the crew member was dropped from another actor then simply check that it's not already in the vehicle.
 		if (actor.systemData.hasCrew(crewUuid)) {
 			return;
+		}
+	} else if (!dragData.sourceVehicleUuid) {
+		// If the crew member was dropped from a folder or compendium check that it's not already in the vehicle.
+		if (actor.systemData.hasCrew(crewUuid)) {
+			return;
+		}
+
+		// If the dropped actor produces unlinked tokens and the user can create actors then ask if they want to make a
+		// clone and save a reference of it instead.
+		if (!(droppedEntity as GenesysActor).prototypeToken.actorLink && (Actor.implementation as typeof GenesysActor).canUserCreate(game.user)) {
+			const actorToAdd = await CloneActorPrompt.promptForInstantiation(droppedEntity as GenesysActor);
+
+			if (actorToAdd) {
+				crewUuid = actorToAdd.uuid;
+			} else {
+				// The prompt was closed so cancel the drop.
+				return;
+			}
 		}
 	} else {
 		if (dragData.origin === 'passenger') {

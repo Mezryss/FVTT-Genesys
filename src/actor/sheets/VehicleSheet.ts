@@ -9,6 +9,7 @@ import GenesysActor from '@/actor/GenesysActor';
 import { CrewDragTransferData, DragTransferData } from '@/data/DragTransferData';
 import { transferInventoryBetweenActors } from '@/operations/TransferBetweenActors';
 import { EquipmentState } from '@/item/data/EquipmentDataModel';
+import CloneActorPrompt from '@/app/CloneActorPrompt';
 
 export default class VehicleSheet extends VueSheet(GenesysActorSheet<VehicleDataModel>) {
 	override get vueComponent() {
@@ -92,7 +93,7 @@ export default class VehicleSheet extends VueSheet(GenesysActorSheet<VehicleData
 		}
 
 		// Make sure that the passenger in question exists and can be processed by this method.
-		const crewUuid = dragData.uuid;
+		let crewUuid = dragData.uuid;
 		const droppedEntity = fromUuidSync(crewUuid) as { type: string } | null;
 		if (!droppedEntity || !VehicleDataModel.isRelevantTypeForContext('PASSENGER', droppedEntity.type)) {
 			return false;
@@ -120,6 +121,19 @@ export default class VehicleSheet extends VueSheet(GenesysActorSheet<VehicleData
 			// If the item comes from a folder or compendium then check it's not already on our list.
 			if (this.actor.systemData.hasCrew(crewUuid)) {
 				return false;
+			}
+
+			// If the dropped actor produces unlinked tokens and the user can create actors then ask if they want to
+			// make a clone and save a reference of it instead.
+			if (!(droppedEntity as GenesysActor).prototypeToken.actorLink && (Actor.implementation as typeof GenesysActor).canUserCreate(game.user)) {
+				const actorToAdd = await CloneActorPrompt.promptForInstantiation(droppedEntity as GenesysActor);
+
+				if (actorToAdd) {
+					crewUuid = actorToAdd.uuid;
+				} else {
+					// The prompt was closed so cancel the drop.
+					return false;
+				}
 			}
 		} else {
 			// Ignore dropped passengers if they are already on this actor; they should be handled by specific components on the sheet.

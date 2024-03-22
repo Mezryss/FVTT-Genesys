@@ -164,6 +164,19 @@ Genesys:
   CharacterSkillPrompt:
     Title: Select User
 
+  # Clone Actor Prompt Labels
+  CloneActorPrompt:
+    Title: Drop Confirmation
+    OriginalMethod:
+      Label: Reference
+      Description: A reference to the actor will be saved.
+    CloneMethod:
+      Label: Clone
+      Description: >-
+        A clone of the dropped actor will be created and a reference to it will be saved.
+        Additionally, the cloned actor will appear on the 'Actors' directory as a new entry with the name specified below.
+      ActorNameLabel: New Name
+
   # Experience Journal Labels
   XPJournal:
     Award: '<strong>XP Awarded by GM</strong>: {reason}'
