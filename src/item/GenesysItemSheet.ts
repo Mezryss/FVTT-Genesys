@@ -55,7 +55,7 @@ export default class GenesysItemSheet<ItemDataModel extends BaseItemDataModel = 
 	 * Add support for drop data on Item sheets.
 	 */
 	protected override _onDrop(event: DragEvent) {
-		const data: DropData = <DropData>TextEditor.getDragEventData(event);
+		const data: DropData = <DropData>TextEditor.getDragEventData(event as ElementDragEvent);
 
 		switch (data.type) {
 			case 'ActiveEffect':

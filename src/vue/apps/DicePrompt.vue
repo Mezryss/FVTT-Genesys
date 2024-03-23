@@ -10,43 +10,16 @@ import Localized from '@/vue/components/Localized.vue';
 import MinionDataModel from '@/actor/data/MinionDataModel';
 import { DieType } from '@/dice';
 import { DieCategory } from '@/dice/types/GenesysDie';
+import { GenesysSymbol } from '@/dice/types/GenesysSymbol';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import AdversaryDataModel from '@/actor/data/AdversaryDataModel';
 import GenesysActor from '@/actor/GenesysActor';
-
-const SymbolType = {
-	Triumph: {
-		GLYPH: 't',
-		CATEGORY: 'positive',
-	},
-	Success: {
-		GLYPH: 's',
-		CATEGORY: 'positive',
-	},
-	Advantage: {
-		GLYPH: 'a',
-		CATEGORY: 'positive',
-	},
-
-	Despair: {
-		GLYPH: 'd',
-		CATEGORY: 'negative',
-	},
-	Failure: {
-		GLYPH: 'f',
-		CATEGORY: 'negative',
-	},
-	Threat: {
-		GLYPH: 'h',
-		CATEGORY: 'negative',
-	},
-};
 
 type AlsoNone<T> = T | undefined;
 type PartialRecord<K extends keyof any, T> = Partial<Record<K, T>>;
 
 type DieName = keyof typeof DieType;
-type SymbolName = keyof typeof SymbolType;
+type SymbolName = keyof typeof GenesysSymbol;
 type PoolEntity = DieName | SymbolName;
 
 type NonVehicleActorDataModel = CharacterDataModel | AdversaryDataModel;
@@ -215,7 +188,7 @@ function removeDie(dieName: DieName, index: number) {
 }
 
 function addSymbol(symbolName: SymbolName) {
-	const symbols = SymbolType[symbolName].CATEGORY === 'positive' ? positiveSymbols : negativeSymbols;
+	const symbols = GenesysSymbol[symbolName].CATEGORY === 'positive' ? positiveSymbols : negativeSymbols;
 
 	symbols.value.push(symbolName);
 	symbols.value.sort(sortPoolEntities);
@@ -224,7 +197,7 @@ function addSymbol(symbolName: SymbolName) {
 }
 
 function removeSymbol(symbolName: SymbolName, index: number) {
-	const symbols = SymbolType[symbolName].CATEGORY === 'positive' ? positiveSymbols : negativeSymbols;
+	const symbols = GenesysSymbol[symbolName].CATEGORY === 'positive' ? positiveSymbols : negativeSymbols;
 
 	symbols.value.splice(index, 1);
 
@@ -308,7 +281,7 @@ function compileDicePool() {
 function convertToOldSymbolsFormat(symbols: PartialRecord<SymbolName, number>) {
 	return Object.entries(symbols).reduce(
 		(accum, [symbolName, symbolAmount]) => {
-			accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
+			accum[GenesysSymbol[symbolName as SymbolName].GLYPH] = symbolAmount;
 			return accum;
 		},
 		{} as Record<string, number>,
@@ -447,13 +420,13 @@ async function approximateProbability() {
 			<!-- Positive Pool -->
 			<div class="positive">
 				<div v-for="(dieName, index) in positiveDice" :key="index" @click="removeDie(dieName, index)" :class="`die die-${dieName}`">{{ DieType[dieName].GLYPH }}</div>
-				<div v-for="(symbolName, index) in positiveSymbols" :key="index" @click="removeSymbol(symbolName, index)" class="symbol">{{ SymbolType[symbolName].GLYPH }}</div>
+				<div v-for="(symbolName, index) in positiveSymbols" :key="index" @click="removeSymbol(symbolName, index)" class="symbol">{{ GenesysSymbol[symbolName].GLYPH }}</div>
 			</div>
 
 			<!-- Negative Pool -->
 			<div class="negative">
 				<div v-for="(dieName, index) in negativeDice" :key="index" @click="removeDie(dieName, index)" :class="`die die-${dieName}`">{{ DieType[dieName].GLYPH }}</div>
-				<div v-for="(symbolName, index) in negativeSymbols" :key="index" @click="removeSymbol(symbolName, index)" class="symbol">{{ SymbolType[symbolName].GLYPH }}</div>
+				<div v-for="(symbolName, index) in negativeSymbols" :key="index" @click="removeSymbol(symbolName, index)" class="symbol">{{ GenesysSymbol[symbolName].GLYPH }}</div>
 			</div>
 
 			<!-- Dice Box -->

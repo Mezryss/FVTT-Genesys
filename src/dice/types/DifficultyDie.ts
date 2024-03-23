@@ -6,7 +6,8 @@
  * @file Definition for the Difficulty die.
  */
 
-import GenesysDie, { DieCategory } from '@/dice/types/GenesysDie';
+import GenesysDie from '@/dice/types/GenesysDie';
+import { GenesysDieFace } from '@/dice/types/GenesysSymbol';
 
 /**
  * Difficulty (purple) Die
@@ -14,7 +15,8 @@ import GenesysDie, { DieCategory } from '@/dice/types/GenesysDie';
 export default class DifficultyDie extends GenesysDie {
 	static override DENOMINATION = 'i';
 	static override GLYPH = 'D';
-	static override FORMULA = 'di';
-	static override CATEGORY = 'negative' as DieCategory;
-	static override FACES = [' ', 'f', 'ff', 'h', 'h', 'h', 'hh', 'fh'];
+	static override FORMULA = 'di' as const;
+	static override CATEGORY = 'negative' as const;
+	static override COLOR = 'P';
+	static override FACES: GenesysDieFace[] = [' ', 'f', 'ff', 'h', 'h', 'h', 'hh', 'fh'];
 }

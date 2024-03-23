@@ -6,7 +6,8 @@
  * @file Definition for the Setback die.
  */
 
-import GenesysDie, { DieCategory } from '@/dice/types/GenesysDie';
+import GenesysDie from '@/dice/types/GenesysDie';
+import { GenesysDieFace } from '@/dice/types/GenesysSymbol';
 
 /**
  * Setback (black) Die
@@ -14,7 +15,8 @@ import GenesysDie, { DieCategory } from '@/dice/types/GenesysDie';
 export default class SetbackDie extends GenesysDie {
 	static override DENOMINATION = 's';
 	static override GLYPH = 'S';
-	static override FORMULA = 'ds';
-	static override CATEGORY = 'negative' as DieCategory;
-	static override FACES = [' ', ' ', 'f', 'f', 'h', 'h'];
+	static override FORMULA = 'ds' as const;
+	static override CATEGORY = 'negative' as const;
+	static override COLOR = 'K';
+	static override FACES: GenesysDieFace[] = [' ', ' ', 'f', 'f', 'h', 'h'];
 }

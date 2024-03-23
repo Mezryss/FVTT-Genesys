@@ -6,7 +6,8 @@
  * @file Definition for the Proficiency die.
  */
 
-import GenesysDie, { DieCategory } from '@/dice/types/GenesysDie';
+import GenesysDie from '@/dice/types/GenesysDie';
+import { GenesysDieFace } from '@/dice/types/GenesysSymbol';
 
 /**
  * Proficiency (yellow) Die
@@ -14,7 +15,8 @@ import GenesysDie, { DieCategory } from '@/dice/types/GenesysDie';
 export default class ProficiencyDie extends GenesysDie {
 	static override DENOMINATION = 'p';
 	static override GLYPH = 'P';
-	static override FORMULA = 'dp';
-	static override CATEGORY = 'positive' as DieCategory;
-	static override FACES = [' ', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', 't'];
+	static override FORMULA = 'dp' as const;
+	static override CATEGORY = 'positive' as const;
+	static override COLOR = 'Y';
+	static override FACES: GenesysDieFace[] = [' ', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', 't'];
 }

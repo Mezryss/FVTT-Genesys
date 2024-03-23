@@ -45,7 +45,7 @@ function basicSheet(vueComponent: any, sheetType: VueSheetConstructor = VueSheet
 				data: (await thisAsSheet.getData()) as GenesysItemSheetData,
 			};
 		}
-	};
+	} as unknown as ConstructorOf<GenesysItemSheet>;
 }
 
 /**
