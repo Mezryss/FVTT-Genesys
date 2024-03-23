@@ -303,23 +303,28 @@ function compileDicePool() {
 	};
 }
 
+// Convert the symbols object into the old format to make the GenesysRoller understand it.
+// A refactor of said class should get rid of this method.
+function convertToOldSymbolsFormat(symbols: PartialRecord<SymbolName, number>) {
+	return Object.entries(symbols).reduce(
+		(accum, [symbolName, symbolAmount]) => {
+			accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
+			return accum;
+		},
+		{} as Record<string, number>,
+	);
+}
+
 async function rollPool() {
 	const { formula, symbols } = compileDicePool();
 
+	const oldFormatSymbols = convertToOldSymbolsFormat(symbols);
 	const baseRollData = {
 		actor: toRaw(context.actor),
 		characteristic: selectedCharacteristic.value,
 		skillId: selectedSkill.value?.id ?? '-',
 		formula,
-		// Convert the symbols object into the old format to make the GenesysRoller understand it.
-		// A refactor of said class should get rid of this conversion.
-		symbols: Object.entries(symbols).reduce(
-			(accum, [symbolName, symbolAmount]) => {
-				accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
-				return accum;
-			},
-			{} as Record<string, number>,
-		),
+		symbols: oldFormatSymbols,
 	};
 
 	switch (context.rollType) {
@@ -336,7 +341,7 @@ async function rollPool() {
 
 		case RollType.Initiative:
 			(context.rollData as InitiativeRollData).resolvePromise({
-				roll: new Roll(formula, { symbols }),
+				roll: new Roll(formula, { symbols: oldFormatSymbols }),
 				skillName: selectedSkill.value?.name ?? 'Unskilled',
 			});
 			break;
@@ -415,18 +420,9 @@ async function approximateProbability() {
 			criteriaType: 'SUCCESS',
 		})) as number;
 	} else {
-		// Convert the symbols object into the old format to make the GenesysRoller understand it.
-		// A refactor of said class should get rid of this conversion.
-		const oldFormatSymbols = Object.entries(symbols).reduce(
-			(accum, [symbolName, symbolAmount]) => {
-				accum[SymbolType[symbolName as SymbolName].GLYPH] = symbolAmount;
-				return accum;
-			},
-			{} as Record<string, number>,
-		);
 		const simulation = await Promise.all(
 			[...Array(CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS)].map(async () => {
-				const roll = new Roll(formula, { symbols: oldFormatSymbols });
+				const roll = new Roll(formula, { symbols: convertToOldSymbolsFormat(symbols) });
 				const result = await roll.evaluate({ async: true });
 				return GenesysRoller.parseRollResults(result);
 			}),
