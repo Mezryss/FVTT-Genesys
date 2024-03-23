@@ -1,12 +1,23 @@
+## Alpha 0.2.9
+
+### Features / Enhancements
+- [PR #145](https://github.com/Mezryss/FVTT-Genesys/pull/145): FEATURE - Additional enhacenments and fixes to vehicle's sheets
+    - Drop areas on the Inventory and Crew tabs now highlight regardless of the drop origin
+    - Alternative view for the Skills tab
+    - Propt for minion instantiation when dropping it to the sheet
+
+### Bug Fixes / Misc
+- [PR #149](https://github.com/Mezryss/FVTT-Genesys/pull/149): BUGFIX - Fix initiative message when rolling with symbols
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.8
 
 ### Bug Fixes / Misc
 -	[PR #136](https://github.com/Mezryss/FVTT-Genesys/pull/136), [PR #144](https://github.com/Mezryss/FVTT-Genesys/pull/144): BUGFIX - Minion skills and Combat tabs reflect changes immediately
 -	[PR #139](https://github.com/Mezryss/FVTT-Genesys/pull/139): LOCALIZATION - Corrections for the french translation (@ZolOnTheNet)
 -	[PR #143](https://github.com/Mezryss/FVTT-Genesys/pull/143): STYLING - Pad the motivation and notes editors
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.7
 

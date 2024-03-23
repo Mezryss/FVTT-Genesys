@@ -50,9 +50,8 @@ async function doAlphaNotice(lastAlpha: string) {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/136">PR #136</a> & <a href="https://github.com/Mezryss/FVTT-Genesys/pull/144">PR #144</a>: Bugfix - Minion skills and Combat tabs reflect changes immediately</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/139">PR #139</a>: Localization - Corrections for the french translation (@ZolOnTheNet)</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/143">PR #143</a>: Styling - Pad the motivation and notes editors</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/145">PR #145</a>: FEATURE - Additional enhacenments and fixes to vehicle's sheets</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/149">PR #149</a>: BUGFIX - Fix initiative message when rolling with symbols</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
