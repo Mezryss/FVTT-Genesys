@@ -264,15 +264,29 @@ function dragLeave() {
 	dragCounter.value = Math.max(0, dragCounter.value - 1);
 }
 
-async function changeItemQuantity(event: MouseEvent, item: GenesysItem, value: number) {
+async function changeItemQuantity(event: MouseEvent, item: GenesysItem<EquipmentDataModel>, direction: number) {
+	const newQuantity = item.systemData.quantity + direction;
 	const containerDiv = (event.currentTarget as HTMLAnchorElement | null)?.parentElement?.parentElement;
-	const containerScroll = containerDiv?.scrollTop;
+	let containerScroll = containerDiv?.scrollTop;
 
-	if (value <= 0) {
-		await toRaw(item).delete();
+	if (newQuantity <= 0) {
+		const shouldDeleteItem = await Dialog.confirm({
+			title: game.i18n.localize('Genesys.Dialogs.ConfirmDeleteItem.Title'),
+			content: game.i18n.localize('Genesys.Dialogs.ConfirmDeleteItem.Content'),
+			yes: () => true,
+			no: () => false,
+			defaultYes: false,
+		});
+
+		// Make sure we have the latest for this value since it's possible that it has changed while we waited.
+		containerScroll = containerDiv?.scrollTop;
+
+		if (shouldDeleteItem) {
+			await toRaw(item).delete();
+		}
 	} else {
 		await toRaw(item).update({
-			'system.quantity': value,
+			'system.quantity': newQuantity,
 		});
 	}
 
@@ -281,16 +295,37 @@ async function changeItemQuantity(event: MouseEvent, item: GenesysItem, value: n
 	}
 }
 
-async function changeDamageState(item: GenesysItem, currentState: EquipmentDamageState, direction: number) {
-	const currentDamageStateIndex = damageStateProgression.indexOf(currentState);
+async function changeDamageState(event: MouseEvent, item: GenesysItem<EquipmentDataModel>, direction: number) {
+	const currentDamageStateIndex = damageStateProgression.indexOf(item.systemData.damage);
 	const newDamageStateIndex = currentDamageStateIndex + direction;
+	const containerDiv = (event.currentTarget as HTMLAnchorElement | null)?.parentElement?.parentElement;
+	let containerScroll = containerDiv?.scrollTop;
 
-	if (currentDamageStateIndex === -1 || newDamageStateIndex < 0 || newDamageStateIndex >= damageStateToIcon.size) {
+	if (currentDamageStateIndex === -1 || newDamageStateIndex < 0) {
 		return;
+	} else if (newDamageStateIndex >= damageStateToIcon.size) {
+		const shouldDeleteItem = await Dialog.confirm({
+			title: game.i18n.localize('Genesys.Dialogs.ConfirmDeleteItem.Title'),
+			content: game.i18n.localize('Genesys.Dialogs.ConfirmDeleteItem.Content'),
+			yes: () => true,
+			no: () => false,
+			defaultYes: false,
+		});
+
+		// Make sure we have the latest for this value since it's possible that it has changed while we waited.
+		containerScroll = containerDiv?.scrollTop;
+
+		if (shouldDeleteItem) {
+			await toRaw(item).delete();
+		}
 	} else {
 		await toRaw(item).update({
 			'system.damage': damageStateProgression[newDamageStateIndex],
 		});
+	}
+
+	if (containerDiv && containerScroll !== undefined) {
+		containerDiv.scrollTop = containerScroll;
 	}
 }
 
@@ -440,25 +475,14 @@ async function dropInventoryIntoContainer(event: DragEvent) {
 			</div>
 		</div>
 
-		<a
-			v-if="item.type !== 'container'"
-			class="quantity"
-			@click="changeItemQuantity($event, item, item.systemData.quantity + 1)"
-			@contextmenu="changeItemQuantity($event, item, item.systemData.quantity - 1)"
-			data-tooltip="Genesys.Labels.Quantity"
-		>
+		<a v-if="item.type !== 'container'" class="quantity" @click="changeItemQuantity($event, item, +1)" @contextmenu="changeItemQuantity($event, item, -1)" data-tooltip="Genesys.Labels.Quantity">
 			{{ item.systemData.quantity }}
 			<i class="fas fa-backpack"></i>
 		</a>
 
 		<div class="weight" data-tooltip="Genesys.Labels.Encumbrance">{{ system.encumbrance < 0 ? '+' : null }}{{ Math.abs(system.encumbrance) }} <i class="fas fa-weight-hanging"></i></div>
 
-		<a
-			class="damage"
-			@click="changeDamageState(item, item.systemData.damage, +1)"
-			@contextmenu="changeDamageState(item, item.systemData.damage, -1)"
-			:data-tooltip="'Genesys.Equipment.DamageState.' + item.systemData.damage.capitalize()"
-		>
+		<a class="damage" @click="changeDamageState($event, item, +1)" @contextmenu="changeDamageState($event, item, -1)" :data-tooltip="'Genesys.Equipment.DamageState.' + item.systemData.damage.capitalize()">
 			<i :class="{ fas: true, [damageStateToIcon.get(item.systemData.damage)!]: true }"></i>
 		</a>
 
