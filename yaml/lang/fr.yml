@@ -211,6 +211,12 @@ Genesys:
     EffectsWereNotUpdatedAfterTransfer: Une erreur s'est produite lors de la mise à jour des effets avec les dernières données disponibles durant le transfert de '{name}'.
     NoRoleMembersWithAppropriateSkills: Aucun membre du groupe pour ce rôle ne possède les compétences appropriées pour faire cette action.
 
+  # Dialogs Prompts
+  Dialogs:
+    ConfirmDeleteItem:
+      Title: Confirm Removal
+      Content: This will remove the item. Do you want to proceed?
+
   # Migration Related Messages
   Migration:
     MustPerformMigration: >-
