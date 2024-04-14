@@ -25,7 +25,7 @@ export interface DicePromptContext extends ContextBase {
 	actor?: GenesysActor;
 	skillName?: string;
 	rollType: RollType;
-	difficulty: number;
+	difficulty: string;
 	rollUnskilled?: Characteristic;
 	rollData: any;
 	app: DicePrompt;
@@ -42,7 +42,7 @@ export type InitiativeRollData = {
 
 type DicePromptOptions = {
 	rollType?: RollType;
-	difficulty?: number;
+	difficulty?: string;
 	rollUnskilled?: Characteristic;
 	rollData?: { [key: string]: any };
 };
@@ -84,7 +84,7 @@ export default class DicePrompt extends VueSheet(Application) {
 	actor?: GenesysActor;
 	skillName?: string;
 	rollType: RollType;
-	difficulty: number;
+	difficulty: string;
 	rollUnskilled?: Characteristic;
 	rollData?: { [key: string]: any };
 
@@ -94,7 +94,7 @@ export default class DicePrompt extends VueSheet(Application) {
 		this.actor = actor;
 		this.skillName = skillName;
 		this.rollType = rollType ?? RollType.Skill;
-		this.difficulty = difficulty ?? 2;
+		this.difficulty = difficulty ?? CONFIG.genesys.settings.defaultDifficulty;
 		this.rollUnskilled = rollUnskilled;
 		this.rollData = rollData;
 	}
@@ -123,12 +123,9 @@ export default class DicePrompt extends VueSheet(Application) {
 export const CALCULATE_CHANCE_WORKER_NAME = 'CalculateChance';
 
 export function registerWorker() {
-	// eslint-disable-next-line
-	if (!!game.workers.get) {
-		if (CONFIG.genesys.settings.showChanceToSucceedFromPermutations) {
-			game.workers.createWorker(CALCULATE_CHANCE_WORKER_NAME, {
-				scripts: ['../systems/genesys/scripts/calculate-chance-worker.js'],
-			});
-		}
+	if (CONFIG.genesys.settings.showChanceToSucceedFromPermutations) {
+		game.workers.createWorker(CALCULATE_CHANCE_WORKER_NAME, {
+			scripts: ['../systems/genesys/scripts/calculate-chance-worker.js'],
+		});
 	}
 }

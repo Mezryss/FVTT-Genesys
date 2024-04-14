@@ -33,6 +33,10 @@ Genesys:
   Settings:
     SkillsCompendium: Skills Compendium
     SkillsCompendiumHint: An Item compendium containing all of the skills that should be applied to new characters. Changing this value will have no impact on existing characters.
+    DefaultDifficulty: Default Difficulty
+    DefaultDifficultyHint: >-
+      The default dice pool modifications that should be added to the dice pool when doing a check. This default might be ignored in cases were the difficulty is known.
+      For an explanation of all the possible modifications and their glyph please check [[Dice-Pool-Modification-Glyphs|Dice Pool Modification Glyphs]].
     Money: Currency Label
     MoneyHint: The name (such as Gold, Credits, Cash, Doubloons, etc) used for Currency in the system.
     CareerSkillRanks: Career Skill Ranks
@@ -47,6 +51,10 @@ Genesys:
     SkillForRepairingVehicleHitsHint: Name of the skill used when recovering from Critical Hits.
     UseMagicalGirlSymbols: Use Magical Girl Symbols by MilkMyth (Client-Only)
     UseMagicalGirlSymbolsHint: Swap the Genesys symbol set for MilkMyth's Magical Girls symbol set. This will not affect other users.
+    DicePoolCollapseModifications: Collapse the Pool Modifications Section
+    DicePoolCollapseModificationsHint: If enabled the 'Pool Modifications' section on the dice pool prompt will be collapsed during the initial render.
+    DicePoolAutoApplyModifications: Auto-Apply Pool Modifications
+    DicePoolAutoApplyModificationsHint: If enabled all the modifications that can affect the dice pool will be applied when opening the dice pool prompt.
     DicePoolChanceToSucceedByPermutation: Calculate the Chance to Succeed for Dice Pools
     DicePoolChanceToSucceedByPermutationHint: >-
       If enabled this will spawn a Web Worker that calculates the exact chance to succeed.
@@ -121,6 +129,7 @@ Genesys:
     Average: Average
     Hard: Hard
     Daunting: Daunting
+    Formidable: Formidable
     Impossible: Impossible
 
   Inventory:
@@ -142,7 +151,10 @@ Genesys:
       ModifyCharacteristic: Modify Characteristic
       ModifyStat: Modify Stat
       ModifySkill: Modify Skill
-      ModifyDicePool: Modify Dice Pool
+      ModifyDicePool:
+        GroupLabel: Modify Dice Pool
+        Options:
+          Skill: Skill Dice Pool
 
   # Dice Prompt Labels
   DicePrompt:
@@ -150,6 +162,10 @@ Genesys:
     Roll: Roll!
     Hint: Use the dice box on the right to add, upgrade, and downgrade. Click dice in the pool to remove them!
     UseSuperCharacteristic: Roll as a super-characteristic
+    PoolModifications:
+      Title: Pool Modifications
+      DefaultDifficulty: Default Difficulty
+      ManualChanges: Manual Changes
     ChanceToSucceed: 'Chance to Succeed:'
     ChanceToSucceedByPermutationDisclaimer: The displayed probability is exact unless the dice pool includes a super-characteristic.
     ChanceToSucceedBySimulationDisclaimer: The displayed probability is an approximation that uses the Monte Carlo method.
@@ -244,6 +260,7 @@ Genesys:
   # Localized strings used in TextEditor enrichers.
   Enrichers:
     Difficulty: '{difficulty} [{symbols}] {skill} check'  # e.g. Average [♦♦] Coercion Check
+    Opposed: 'Opposed {skill1} versus {skill2} check'
 
   # Combat Tracker
   CombatTracker:

@@ -8,6 +8,7 @@
 import { NAMESPACE as SETTINGS_NAMESPACE } from '@/settings';
 import {
 	KEY_CAREER_SKILL_RANKS,
+	KEY_DEFAULT_DIFFICULTY,
 	KEY_MONEY_NAME,
 	KEY_SHOW_DAMAGE_ON_FAILURE,
 	KEY_SKILLS_COMPENDIUM,
@@ -16,7 +17,7 @@ import {
 	KEY_SUPER_CHARACTERISTICS,
 	KEY_UNCOUPLE_SKILLS_FROM_CHARACTERISTICS,
 } from '@/settings/campaign';
-import { KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION, KEY_USE_MAGICAL_GIRL_SYMBOLS } from '@/settings/user';
+import { KEY_AUTO_APPLY_POOL_MODIFICATIONS, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION, KEY_COLLAPSE_POOL_MODIFICATIONS, KEY_USE_MAGICAL_GIRL_SYMBOLS } from '@/settings/user';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import GenesysItem from '@/item/GenesysItem';
 
@@ -25,11 +26,20 @@ import GenesysItem from '@/item/GenesysItem';
  */
 export const DEFAULT_SKILLS_COMPENDIUM = 'genesys.crb-skills';
 
+/**
+ * The default difficulty modifications to use if the setting is misconfigured.
+ */
+export const DEFAULT_DIFFICULTY = 'DD';
+
 export const GENESYS_CONFIG = {
-	/** World Settings **/
 	settings: {
+		/** World Settings **/
+
 		// Default skills compendium to use if the setting is misconfigured.
 		skillsCompendium: DEFAULT_SKILLS_COMPENDIUM,
+
+		// Default dice pool modifications that should be added to the dice pool when doing a check.
+		defaultDifficulty: DEFAULT_DIFFICULTY,
 
 		// The name of the skill to use for healing Critical Injuries.
 		skillForHealingInjury: 'Resilience',
@@ -56,6 +66,12 @@ export const GENESYS_CONFIG = {
 
 		// Whether to use the Magical Girl symbols where possible in the system.
 		useMagicalGirlSymbols: false,
+
+		// Wheter to collapse the 'Pool Modifications' section when a dice prompt renders.
+		startWithCollapsedPoolModifications: false,
+
+		// Wheter to automatically apply all the pool modifications shown on the dice prompt.
+		autoApplyPoolModifications: false,
 
 		// Wheter to show the chance to succeed of a dice pool by constructing permutations.
 		showChanceToSucceedFromPermutations: false,
@@ -85,8 +101,8 @@ export function register() {
  */
 export function ready() {
 	/** World Settings **/
-
 	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_SKILLS_COMPENDIUM}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SKILLS_COMPENDIUM));
+	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_DEFAULT_DIFFICULTY}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_DEFAULT_DIFFICULTY));
 	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_SKILL_FOR_INJURIES}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_INJURIES));
 	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SKILL_FOR_REPAIRING_VEHICLE_HITS));
 	game.settings.settings.get<string>(`${SETTINGS_NAMESPACE}.${KEY_MONEY_NAME}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_MONEY_NAME));
@@ -96,13 +112,9 @@ export function ready() {
 	game.settings.settings.get<boolean>(`${SETTINGS_NAMESPACE}.${KEY_SUPER_CHARACTERISTICS}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_SUPER_CHARACTERISTICS));
 
 	/** User Settings **/
-
 	CONFIG.genesys.settings.useMagicalGirlSymbols = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_USE_MAGICAL_GIRL_SYMBOLS) ?? false;
-
-	// eslint-disable-next-line
-	if (!!game.workers.get) {
-		CONFIG.genesys.settings.showChanceToSucceedFromPermutations = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) ?? false;
-	}
-
+	game.settings.settings.get<boolean>(`${SETTINGS_NAMESPACE}.${KEY_COLLAPSE_POOL_MODIFICATIONS}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_COLLAPSE_POOL_MODIFICATIONS));
+	game.settings.settings.get<boolean>(`${SETTINGS_NAMESPACE}.${KEY_AUTO_APPLY_POOL_MODIFICATIONS}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_AUTO_APPLY_POOL_MODIFICATIONS));
+	CONFIG.genesys.settings.showChanceToSucceedFromPermutations = game.settings.get<boolean>(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION) ?? false;
 	game.settings.settings.get<number>(`${SETTINGS_NAMESPACE}.${KEY_CHANCE_TO_SUCCEED_BY_SIMULATION}`)?.onChange?.(game.settings.get(SETTINGS_NAMESPACE, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION));
 }

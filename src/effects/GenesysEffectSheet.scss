@@ -137,5 +137,9 @@
 		.header {
 			grid-template-columns: /* Key */ 2fr /* Change Mode */ 1fr /* Value */ 1fr /* Actions */ auto;
 		}
+
+		.hide-it {
+			display: none;
+		}
 	}
 }

@@ -14,6 +14,13 @@ export default class GenesysEffect extends ActiveEffect {
 		return this.disabled;
 	}
 
+	// Prefix string used to identify active effects that are supposed to modify a dice pool that is using a specific
+	// skill.
+	static DICE_POOL_MOD_SKILL_PREFIX = 'genesys.pool.skill';
+
+	// The value of an effect that modifies the dice pool must be composed of 'tokens' that followe this pattern.
+	static DICE_POOL_MOD_SKILL_PATTERN = /(-?[BAPSDCasthfd]|[\^*_~])/g;
+
 	get originItem(): GenesysItem | undefined {
 		if (!this.origin || !(this.parent instanceof GenesysActor) || !this.origin.includes('.Item.')) {
 			return undefined;

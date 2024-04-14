@@ -15,6 +15,7 @@ import { register as registerFonts } from '@/fonts';
 import { register as registerHandlebarsHelpers } from '@/handlebars';
 import { NAMESPACE as SETTINGS_NAMESPACE, register as registerSettings } from '@/settings';
 import { KEY_ALPHA_VERSION } from '@/settings/alpha';
+import { KEY_DEFAULT_DIFFICULTY } from '@/settings/campaign';
 
 import { register as registerStoryPointTracker } from '@/app/StoryPointTracker';
 import { register as registerActors, AdversaryTypes } from '@/actor';
@@ -126,6 +127,7 @@ function constructOptGroup(select: HTMLSelectElement, groupLabel: string, optVal
 	return optgroup;
 }
 
+// Add options groups to the dialog that appears when creating an actor or item.
 Hooks.on('renderDialog', (_dialog: Dialog, html: JQuery<HTMLElement>, _data: object) => {
 	const container = html[0];
 
@@ -153,6 +155,7 @@ Hooks.on('renderDialog', (_dialog: Dialog, html: JQuery<HTMLElement>, _data: obj
 	}
 });
 
+// Makes the dice icon at the bottom of the chat to function as a shortcut to call the dice prompt.
 Hooks.on('renderChatLog', (_sidebar: SidebarTab, html: JQuery<HTMLElement>, _data: object) => {
 	const diceIcon = html.find('#chat-controls > .chat-control-icon');
 	diceIcon.on('click', async (_event) => {
@@ -172,6 +175,16 @@ Hooks.on('renderChatLog', (_sidebar: SidebarTab, html: JQuery<HTMLElement>, _dat
 		}
 
 		await DicePrompt.promptForRoll(targetActor, '');
+	});
+});
+
+// Create wiki links in the description section of certain settings. We use a hook here since there is no way to
+// directly add links as any HTML is escaped.
+const wikiLinkPattern = /\[\[([^|\]]+(\|([^\]]+))?)\]\]/g;
+Hooks.on('renderSettingsConfig', (_app: SettingsConfig, html: JQuery<HTMLElement>, _data: object) => {
+	const [note] = html.find(`[data-setting-id='genesys.${KEY_DEFAULT_DIFFICULTY}'] > .notes`);
+	note.innerHTML = note.innerHTML.replaceAll(wikiLinkPattern, (_m, g1, _g2, g3) => {
+		return `<a href="https://github.com/Mezryss/FVTT-Genesys/wiki/${g1}" target="_blank">${g3 ? g3 : g1}</a>`;
 	});
 });
 

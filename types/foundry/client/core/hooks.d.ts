@@ -57,6 +57,7 @@ declare global {
 		static on(...args: HookParamsRender<ItemDirectory<Item>, 'ItemDirectory'>): number;
 		static on(...args: HookParamsRender<SceneControls, 'SceneControls'>): number;
 		static on(...args: HookParamsRender<Settings, 'Settings'>): number;
+		static on(...args: HookParamsRender<SettingsConfig, 'SettingsConfig'>): number;
 		static on(...args: HookParamsRender<TokenHUD, 'TokenHUD'>): number;
 		static on(...args: HookParamsRender<JournalPageSheet, 'JournalPageSheet'>): number;
 		static on(...args: HookParamsRender<JournalTextPageSheet, 'JournalTextPageSheet'>): number;
@@ -99,6 +100,7 @@ declare global {
 		static once(...args: HookParamsRender<JournalTextPageSheet, 'JournalTextPageSheet'>): number;
 		static once(...args: HookParamsRender<SceneControls, 'SceneControls'>): number;
 		static once(...args: HookParamsRender<Settings, 'Settings'>): number;
+		static once(...args: HookParamsRender<SettingsConfig, 'SettingsConfig'>): number;
 		static once(...args: HookParamsRender<TokenHUD, 'TokenHUD'>): number;
 		static once(...args: HookParamsRender<SidebarTab, 'SidebarTab'>): number;
 		static once(...args: HookParamsTargetToken): number;

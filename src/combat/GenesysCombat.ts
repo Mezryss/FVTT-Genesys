@@ -153,7 +153,7 @@ export default class GenesysCombat extends Combat {
 
 			if (prompt) {
 				try {
-					const promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillName, { difficulty: 0 });
+					const promptedRoll = await DicePrompt.promptForInitiative(combatant.actor, skillName, { difficulty: '' });
 
 					roll = promptedRoll.roll;
 					skillName = promptedRoll.skillName;
