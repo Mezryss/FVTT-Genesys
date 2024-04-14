@@ -23,6 +23,7 @@ const system = computed(() => context.data.item.systemData);
 						<option value="average"><Localized label="Genesys.Difficulty.Average" /></option>
 						<option value="hard"><Localized label="Genesys.Difficulty.Hard" /></option>
 						<option value="daunting"><Localized label="Genesys.Difficulty.Daunting" /></option>
+						<option value="formidable"><Localized label="Genesys.Difficulty.Formidable" /></option>
 					</select>
 				</div>
 

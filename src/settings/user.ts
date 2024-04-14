@@ -14,6 +14,16 @@ import { GENESYS_CONFIG } from '@/config';
 export const KEY_USE_MAGICAL_GIRL_SYMBOLS = 'useMagicalGirlSymbols';
 
 /**
+ * Wheter to collapse the 'Pool Modifications' section when a dice prompt renders.
+ */
+export const KEY_COLLAPSE_POOL_MODIFICATIONS = 'dicePoolCollapseModificationsDetails';
+
+/**
+ * Wheter to automatically apply all the pool modifications shown on the dice prompt.
+ */
+export const KEY_AUTO_APPLY_POOL_MODIFICATIONS = 'dicePoolAutoApplyModifications';
+
+/**
  * Wheter the user wants to calculate the chance to succeed by constructing the permutations on a Web Worker.
  */
 export const KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION = 'dicePoolChanceToSucceedByPermutation';
@@ -34,20 +44,41 @@ export function register(namespace: string) {
 		requiresReload: true,
 	});
 
-	// This setting is only available for FVTT v11+ because it depends on the changes made to the workers API
-	// introduced in that version.
-	// eslint-disable-next-line
-	if (!!game.workers.get) {
-		game.settings.register(namespace, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, {
-			name: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutation'),
-			hint: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutationHint'),
-			scope: 'client',
-			config: true,
-			default: GENESYS_CONFIG.settings.showChanceToSucceedFromPermutations,
-			type: Boolean,
-			requiresReload: true,
-		});
-	}
+	game.settings.register(namespace, KEY_COLLAPSE_POOL_MODIFICATIONS, {
+		name: game.i18n.localize('Genesys.Settings.DicePoolCollapseModifications'),
+		hint: game.i18n.localize('Genesys.Settings.DicePoolCollapseModificationsHint'),
+		scope: 'client',
+		config: true,
+		default: GENESYS_CONFIG.settings.startWithCollapsedPoolModifications,
+		type: Boolean,
+		onChange: (value) => {
+			const valueAsBool = (value as unknown as boolean) ?? false;
+			CONFIG.genesys.settings.startWithCollapsedPoolModifications = valueAsBool;
+		},
+	});
+
+	game.settings.register(namespace, KEY_AUTO_APPLY_POOL_MODIFICATIONS, {
+		name: game.i18n.localize('Genesys.Settings.DicePoolAutoApplyModifications'),
+		hint: game.i18n.localize('Genesys.Settings.DicePoolAutoApplyModificationsHint'),
+		scope: 'client',
+		config: true,
+		default: GENESYS_CONFIG.settings.autoApplyPoolModifications,
+		type: Boolean,
+		onChange: (value) => {
+			const valueAsBool = (value as unknown as boolean) ?? false;
+			CONFIG.genesys.settings.autoApplyPoolModifications = valueAsBool;
+		},
+	});
+
+	game.settings.register(namespace, KEY_CHANCE_TO_SUCCEED_BY_PERMUTATION, {
+		name: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutation'),
+		hint: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedByPermutationHint'),
+		scope: 'client',
+		config: !!game.workers.get, // eslint-disable-line -- Only show setting for FVTT v11+
+		default: GENESYS_CONFIG.settings.showChanceToSucceedFromPermutations,
+		type: Boolean,
+		requiresReload: true,
+	});
 
 	game.settings.register(namespace, KEY_CHANCE_TO_SUCCEED_BY_SIMULATION, {
 		name: game.i18n.localize('Genesys.Settings.DicePoolChanceToSucceedBySimulation'),

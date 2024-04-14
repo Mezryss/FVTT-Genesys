@@ -23,12 +23,13 @@ const actor = computed(() => toRaw(rootContext.data.actor));
 const weapons = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'vehicleWeapon' && i.system.state === EquipmentState.Equipped) as GenesysItem<VehicleWeaponDataModel>[]);
 const criticalHits = computed(() => toRaw(rootContext.data.actor).items.filter((i) => i.type === 'injury') as GenesysItem<InjuryDataModel>[]);
 
-const SEVERITY_TO_DIFFICULTY: Record<InjuryDataModel['severity'], number> = {
-	'-': 0,
-	easy: 1,
-	average: 2,
-	hard: 3,
-	daunting: 4,
+const SEVERITY_TO_DIFFICULTY: Record<InjuryDataModel['severity'], string> = {
+	'-': 'D'.repeat(0),
+	easy: 'D'.repeat(1),
+	average: 'D'.repeat(2),
+	hard: 'D'.repeat(3),
+	daunting: 'D'.repeat(4),
+	formidable: 'D'.repeat(5),
 };
 
 function getFiringArcLabels(weapon: GenesysItem<VehicleWeaponDataModel>) {

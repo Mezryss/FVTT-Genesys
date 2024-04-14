@@ -6,7 +6,8 @@
  * @file System settings data related to campaign setting customization.
  */
 
-import { GENESYS_CONFIG } from '@/config';
+import { DEFAULT_DIFFICULTY, DEFAULT_SKILLS_COMPENDIUM, GENESYS_CONFIG } from '@/config';
+import GenesysEffect from '@/effects/GenesysEffect';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import GenesysItem from '@/item/GenesysItem';
 
@@ -14,6 +15,11 @@ import GenesysItem from '@/item/GenesysItem';
  * The Skills Compendium to use for default skill data.
  */
 export const KEY_SKILLS_COMPENDIUM = 'skillsCompendium';
+
+/**
+ * The default difficulty of a check.
+ */
+export const KEY_DEFAULT_DIFFICULTY = 'defaultDifficulty';
 
 /**
  * The name of the skill to use for healing Critical Injuries.
@@ -64,7 +70,7 @@ export function register(namespace: string) {
 		type: String,
 		onChange: async (value) => {
 			// We always want a skill compendium so fallback to the default value if it's ever removed.
-			let skillsCompendiumName = GENESYS_CONFIG.settings.skillsCompendium;
+			let skillsCompendiumName = DEFAULT_SKILLS_COMPENDIUM;
 			if (!value) {
 				ui.notifications.warn('Genesys.Notifications.NoSkillsCompendium', { localize: true });
 				CONFIG.genesys.settings.skillsCompendium = skillsCompendiumName;
@@ -87,6 +93,20 @@ export function register(namespace: string) {
 			}
 
 			CONFIG.genesys.skills = skills;
+		},
+	});
+
+	game.settings.register(namespace, KEY_DEFAULT_DIFFICULTY, {
+		name: game.i18n.localize('Genesys.Settings.DefaultDifficulty'),
+		hint: game.i18n.localize('Genesys.Settings.DefaultDifficultyHint'),
+		scope: 'world',
+		config: true,
+		default: GENESYS_CONFIG.settings.defaultDifficulty,
+		type: String,
+		onChange: (value) => {
+			const difficulty = value ?? '';
+			const difficultyPattern = new RegExp(`^${GenesysEffect.DICE_POOL_MOD_SKILL_PATTERN.source}*$`);
+			CONFIG.genesys.settings.defaultDifficulty = difficultyPattern.test(difficulty) ? difficulty : DEFAULT_DIFFICULTY;
 		},
 	});
 

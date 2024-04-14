@@ -12,6 +12,7 @@ declare global {
 
 	interface ActiveEffectConfigData<TDocument extends ActiveEffect = ActiveEffect> extends DocumentSheetData<TDocument> {
 		effect: TDocument;
+		data: TDocument;
 		isActorEffect: boolean;
 		isItemEffect: boolean;
 		submitText: string;
@@ -23,7 +24,7 @@ declare global {
 		static get defaultOptions(): ActiveEffectConfigOptions;
 
 		/** @override */
-		getData(options?: DocumentSheetOptions): ActiveEffectConfigData<TDocument>;
+		getData(options?: DocumentSheetOptions): ActiveEffectConfigData<TDocument> | Promise<ActiveEffectConfigData<TDocument>>;
 
 		/**
 		 * Provide centralized handling of mouse clicks on control buttons.

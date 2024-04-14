@@ -112,7 +112,7 @@
 					</div>
 				</div>
 
-				{{#each data.changes as |change i|}}
+				{{#each changes as |change i|}}
 					<div class="row effect-change" data-index="{{i}}">
 						{{#select change.key}}
 							<select name="changes.{{i}}.key">
@@ -159,11 +159,17 @@
 								{{!-- Skill Changes --}}
 
 								{{!-- Dice Pool Changes --}}
+                                <optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.GroupLabel'}}">
+                                    <option value="genesys.pool.skill">&#x1F9D1; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Skill'}}</option>
+                                </optgroup>
 							</select>
 						{{/select}}
-						<select name="changes.{{i}}.mode" data-dtype="Number">
-							{{selectOptions ../modes selected=change.mode}}
-						</select>
+                        <select name="changes.{{i}}.skill" class="skill-selection {{#if (ne change.key 'genesys.pool.skill')}}hide-it{{/if}}">
+                            {{selectOptions ../skills selected=change.skill sort=true}}
+                        </select>
+                        <select name="changes.{{i}}.mode" data-dtype="Number" class="effect-mode {{#if (eq change.key 'genesys.pool.skill')}}hide-it{{/if}}">
+                            {{selectOptions ../modes selected=change.mode}}
+                        </select>
 						<input type="text" name="changes.{{i}}.value" value="{{change.value}}" />
 						<div class="effect-controls">
 							<a class="effect-control" data-action="delete"><i class="fas fa-trash"></i></a>

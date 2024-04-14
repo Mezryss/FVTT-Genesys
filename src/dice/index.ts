@@ -18,7 +18,7 @@ import './diceSoNice';
 /**
  * An object used to get general details of each dice type.
  */
-export const DieType = {
+export const GenesysDice = {
 	Proficiency: ProficiencyDie,
 	Ability: AbilityDie,
 	Boost: BoostDie,
@@ -32,7 +32,7 @@ export const DieType = {
  * Registers custom dice types.
  */
 export function register() {
-	Object.values(DieType).forEach((dieType) => {
+	Object.values(GenesysDice).forEach((dieType) => {
 		CONFIG.Dice.terms[dieType.DENOMINATION] = dieType;
 	});
 }
