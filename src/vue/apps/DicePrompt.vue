@@ -256,7 +256,7 @@ function calculatePoolModificationsForSkill() {
 
 					if (relevantChanges.length > 0) {
 						modifications.push({
-							name: effect.name,
+							name: effect.name ?? effect.label,
 							enabled: CONFIG.genesys.settings.autoApplyPoolModifications,
 							mods: relevantChanges.sort(sortPoolModifications),
 						});
@@ -349,19 +349,15 @@ function compileSymbolsData() {
 }
 
 function hasSameChanceToSucceed(firstDicePool: DicePool, secondDicePool: DicePool) {
-	const firstPoolDiceEntries = Object.entries(firstDicePool.dice);
-
 	// Dice always contribute to the success rate so any difference implies the pools have different probabilities.
-	if (firstPoolDiceEntries.length !== Object.keys(secondDicePool.dice).length) {
-		return false;
-	}
-
-	for (const [diceKey, diceAmount] of firstPoolDiceEntries) {
-		if (secondDicePool.dice[diceKey as DieName] !== diceAmount) {
+	const diceTypes = new Set([...Object.keys(firstDicePool.dice), ...Object.keys(secondDicePool.dice)]);
+	for (const diceType of diceTypes) {
+		if ((firstDicePool.dice[diceType as DieName] ?? 0) !== (secondDicePool.dice[diceType as DieName] ?? 0)) {
 			return false;
 		}
 	}
 
+	// Even if the dice on both pools are the same a discrepancy in super-characteristics will yield different results.
 	if (firstDicePool.usesSuperCharacteristic !== secondDicePool.usesSuperCharacteristic) {
 		return false;
 	}
@@ -383,7 +379,7 @@ async function approximateProbability() {
 	previousDicePool = dicePool;
 
 	// Slight optimization for a pool without dice.
-	if (Object.keys(dicePool.dice).length === 0) {
+	if (Object.values(dicePool.dice).reduce((accum, amount) => accum + amount) === 0) {
 		const totalSuccesses = (dicePool.symbols.Success ?? 0) + (dicePool.symbols.Triumph ?? 0);
 		const totalFailures = (dicePool.symbols.Failure ?? 0) + (dicePool.symbols.Despair ?? 0);
 		const deterministicResult = totalSuccesses > totalFailures ? 100 : 0;
@@ -412,10 +408,10 @@ async function approximateProbability() {
 		})) as number;
 	} else {
 		const formula = compileDiceFormula();
-		const symbols = compileSymbolsData();
+		const symbols = { symbols: compileSymbolsData() };
 		const simulation = await Promise.all(
 			[...Array(CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS)].map(async () => {
-				const roll = new Roll(formula, { symbols });
+				const roll = new Roll(formula, symbols);
 				const result = await roll.evaluate({ async: true });
 				return GenesysRoller.parseRollResults(result);
 			}),

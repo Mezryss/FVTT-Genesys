@@ -180,12 +180,19 @@ Hooks.on('renderChatLog', (_sidebar: SidebarTab, html: JQuery<HTMLElement>, _dat
 
 // Create wiki links in the description section of certain settings. We use a hook here since there is no way to
 // directly add links as any HTML is escaped.
-const wikiLinkPattern = /\[\[([^|\]]+(\|([^\]]+))?)\]\]/g;
+const wikiLinkPattern = /\[\[([^|\]]+)(\|([^\]]+))?\]\]/g;
 Hooks.on('renderSettingsConfig', (_app: SettingsConfig, html: JQuery<HTMLElement>, _data: object) => {
-	const [note] = html.find(`[data-setting-id='genesys.${KEY_DEFAULT_DIFFICULTY}'] > .notes`);
-	note.innerHTML = note.innerHTML.replaceAll(wikiLinkPattern, (_m, g1, _g2, g3) => {
-		return `<a href="https://github.com/Mezryss/FVTT-Genesys/wiki/${g1}" target="_blank">${g3 ? g3 : g1}</a>`;
-	});
+	let [note] = html.find(`[data-setting-id='genesys.${KEY_DEFAULT_DIFFICULTY}'] > .notes`);
+	if (!note) {
+		// FVTT v10 has a different way for structuring their settings.
+		[note] = html.find(`.form-fields:has(input[name='genesys.${KEY_DEFAULT_DIFFICULTY}']) + p.notes`);
+	}
+
+	if (note) {
+		note.innerHTML = note.innerHTML.replaceAll(wikiLinkPattern, (_m, g1, _g2, g3) => {
+			return `<a href="https://github.com/Mezryss/FVTT-Genesys/wiki/${g1}" target="_blank">${g3 ? g3 : g1}</a>`;
+		});
+	}
 });
 
 // Currently there is no way to specify the class for rendering a compendium collection application since it is
