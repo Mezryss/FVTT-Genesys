@@ -165,7 +165,7 @@ export function register() {
 	CONFIG.TextEditor.enrichers.push({
 		pattern: new RegExp(`@pool(-mod(ifications?)?)?\\[(?<mods>${PoolModGlyphPattern.source}+)]`, 'gim'),
 		enricher: async (match, _) => {
-			const mods: string[] = match.groups?.['mods']?.match(PoolModGlyphPattern)?.sort((left, right) => GenesysPoolModifications[left].sort - GenesysPoolModifications[right].sort) ?? [];
+			const mods: string[] = match.groups?.['mods']?.match(PoolModGlyphPattern) ?? [];
 
 			const container = document.createElement('span');
 			container.className = 'font-genesys-symbols pool-modifications';
