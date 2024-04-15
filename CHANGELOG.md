@@ -1,3 +1,13 @@
+## Alpha 0.2.10
+
+### Features / Enhancements
+- [PR #151](https://github.com/Mezryss/FVTT-Genesys/pull/151): FEATURE - Confirm inventory deletion upon certain circumstances
+- [PR #152](https://github.com/Mezryss/FVTT-Genesys/pull/152): FEATURE - Adds support for effects that cause pool modifications (Read the PR for more details)
+- [PR #153](https://github.com/Mezryss/FVTT-Genesys/pull/153): FEATURE - Enhance text enrichers
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.9
 
 ### Features / Enhancements
@@ -9,14 +19,11 @@
 ### Bug Fixes / Misc
 - [PR #149](https://github.com/Mezryss/FVTT-Genesys/pull/149): BUGFIX - Fix initiative message when rolling with symbols
 
-<details>
-<summary>Previous Releases</summary>
-
 ## Alpha 0.2.8
 
 ### Bug Fixes / Misc
 -	[PR #136](https://github.com/Mezryss/FVTT-Genesys/pull/136), [PR #144](https://github.com/Mezryss/FVTT-Genesys/pull/144): BUGFIX - Minion skills and Combat tabs reflect changes immediately
--	[PR #139](https://github.com/Mezryss/FVTT-Genesys/pull/139): LOCALIZATION - Corrections for the french translation (@ZolOnTheNet)
+-	[PR #139](https://github.com/Mezryss/FVTT-Genesys/pull/139): LOCALIZATION - Corrections for the french translation (ZolOnTheNet)
 -	[PR #143](https://github.com/Mezryss/FVTT-Genesys/pull/143): STYLING - Pad the motivation and notes editors
 
 ## Alpha 0.2.7
@@ -28,7 +35,7 @@
 ### Bug Fixes / Misc
 -	[PR #129](https://github.com/Mezryss/FVTT-Genesys/pull/129): CHORE - Upgrade dependencies including Vue
 -	[PR #131](https://github.com/Mezryss/FVTT-Genesys/pull/131): REFACTOR - Moves all the settings stored in the `CONFIG` to a nested path
--	[PR #130](https://github.com/Mezryss/FVTT-Genesys/pull/130): LOCALIZATION - Updates the french translation to the latest version (thanks to @ZolOnTheNet)
+-	[PR #130](https://github.com/Mezryss/FVTT-Genesys/pull/130): LOCALIZATION - Updates the french translation to the latest version (thanks to ZolOnTheNet)
 -	[PR #133](https://github.com/Mezryss/FVTT-Genesys/pull/133): BUGFIX - Fixes drag & drop highlight not working on Chrome/app
 
 ## Alpha 0.2.6
@@ -39,12 +46,12 @@ This new version will attempt to perform a data migration for vehicles the first
 
 ### Bug Fixes/Misc
 -	[PR #124](https://github.com/Mezryss/FVTT-Genesys/pull/124): Safely fail if the `CalculateChance` worker is not found
--	[PR #126](https://github.com/Mezryss/FVTT-Genesys/pull/126): Adds the french translation to the language menu (thanks to @ZolOnTheNet)
+-	[PR #126](https://github.com/Mezryss/FVTT-Genesys/pull/126): Adds the french translation to the language menu (thanks to ZolOnTheNet)
 
 ## Alpha 0.2.5
 
 ### Features
--	[PR #117](https://github.com/Mezryss/FVTT-Genesys/pull/117): French translations thanks to @ZolOnTheNet
+-	[PR #117](https://github.com/Mezryss/FVTT-Genesys/pull/117): French translations thanks to ZolOnTheNet
 
 ### Bug Fixes/Misc
 -	[PR #116](https://github.com/Mezryss/FVTT-Genesys/pull/116): Fixes a harmless bug on the chance to succeed Web Worker

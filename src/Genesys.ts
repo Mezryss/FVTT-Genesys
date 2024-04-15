@@ -51,13 +51,14 @@ async function doAlphaNotice(lastAlpha: string) {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/145">PR #145</a>: FEATURE - Additional enhacenments and fixes to vehicle's sheets</li>
-        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/149">PR #149</a>: BUGFIX - Fix initiative message when rolling with symbols</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/151">PR #151</a>: FEATURE - Confirm inventory deletion upon certain circumstances</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/152">PR #152</a>: FEATURE - Adds support for effects that cause pool modifications (Read the PR for more details)</li>
+        <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/153">PR #153</a>: FEATURE - Enhance text enrichers</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
-        <li><strong>0.3:</strong> CRB: Attachments optional rule</li>
-        <li><strong>0.4:</strong> CRB: Magic optional rule</li>
+        <li><strong>0.3:</strong> CRB: Magic optional rule</li>
+        <li><strong>0.4:</strong> CRB: Attachments optional rule</li>
         <li><strong>1.0:</strong> Core Rulebook Compatibility</li>
 		<li><strong>1.1:</strong> Expanded Player's Guide Compatibility</li>
 		<li><strong>1.2:</strong> First-Party Setting Books Compatibility</li>
