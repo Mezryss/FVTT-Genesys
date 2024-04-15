@@ -7,7 +7,7 @@
  */
 
 import { DEFAULT_DIFFICULTY, DEFAULT_SKILLS_COMPENDIUM, GENESYS_CONFIG } from '@/config';
-import GenesysEffect from '@/effects/GenesysEffect';
+import { PoolModGlyphPattern } from '@/dice/types/GenesysPoolModifications';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import GenesysItem from '@/item/GenesysItem';
 
@@ -105,7 +105,7 @@ export function register(namespace: string) {
 		type: String,
 		onChange: (value) => {
 			const difficulty = value ?? '';
-			const difficultyPattern = new RegExp(`^${GenesysEffect.DICE_POOL_MOD_SKILL_PATTERN.source}*$`);
+			const difficultyPattern = new RegExp(`^${PoolModGlyphPattern.source}*$`);
 			CONFIG.genesys.settings.defaultDifficulty = difficultyPattern.test(difficulty) ? difficulty : DEFAULT_DIFFICULTY;
 		},
 	});

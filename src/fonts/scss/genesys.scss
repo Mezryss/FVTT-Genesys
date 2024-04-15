@@ -33,6 +33,24 @@
 	&.nolig {
 		font-variant-ligatures: none;
 	}
+
+	&.pool-modifications {
+		.die,
+		.symbol {
+			& + i.fas {
+				-webkit-text-stroke: 0 transparent;
+				text-stroke: 0 transparent;
+				color: black;
+				position: relative;
+				font-size: 0.5em;
+				top: -1em;
+			}
+		}
+
+		.symbol {
+			font-style: normal;
+		}
+	}
 }
 
 .die {
@@ -42,29 +60,35 @@
 	font-family: 'Genesys Symbols', sans-serif;
 
 	// Ability & Difficulty Die
-	&.die-A {
+	&.die-A,
+	&.die-Ability {
 		color: colors.$die-ability;
 	}
 
-	&.die-D {
+	&.die-D,
+	&.die-Difficulty {
 		color: colors.$die-difficulty;
 	}
 
 	// Proficiency Die
-	&.die-P {
+	&.die-P,
+	&.die-Proficiency {
 		color: colors.$die-proficiency;
 	}
 
-	&.die-C {
+	&.die-C,
+	&.die-Challenge {
 		color: colors.$die-challenge;
 	}
 
 	// Boost Die
-	&.die-B {
+	&.die-B,
+	&.die-Boost {
 		color: colors.$die-boost;
 	}
 
-	&.die-S {
+	&.die-S,
+	&.die-Setback {
 		color: colors.$die-setback;
 	}
 }

@@ -7,6 +7,7 @@
  */
 
 import GenesysEffect from '@/effects/GenesysEffect';
+import { PoolModGlyphPattern } from '@/dice/types/GenesysPoolModifications';
 import './GenesysEffectSheet.scss';
 
 type EffectChangeExpanded = foundry.data.EffectChangeSource & {
@@ -104,7 +105,7 @@ export default class GenesysEffectSheet extends ActiveEffectConfig<GenesysEffect
 	}
 
 	protected override _getSubmitData(updateData?: Record<string, unknown>) {
-		const dicePoolModificationPattern = new RegExp(`^${GenesysEffect.DICE_POOL_MOD_SKILL_PATTERN.source}*$`);
+		const dicePoolModificationPattern = new RegExp(`^${PoolModGlyphPattern.source}*$`);
 		const submitData = super._getSubmitData(updateData) as IncompleteSheetSubmitData;
 
 		// Loop through all the changes and make sure to construct the proper key for those that deal with dice pool
