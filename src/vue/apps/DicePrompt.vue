@@ -15,6 +15,7 @@ import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import AdversaryDataModel from '@/actor/data/AdversaryDataModel';
 import GenesysActor from '@/actor/GenesysActor';
 import { GenesysPoolGradeOperation } from '@/dice/types/GenesysPoolGradeOperation';
+import { GenesysPoolModifications, PoolModGlyphPattern } from '@/dice/types/GenesysPoolModifications';
 import GenesysEffect from '@/effects/GenesysEffect';
 
 type AlsoNone<T> = T | undefined;
@@ -43,79 +44,6 @@ type DicePoolModifications = {
 		mods: string[];
 	}>;
 };
-
-type PoolModificationData = {
-	targetName: PoolEntity;
-	icon: { baseName: string; baseGlyph: string; operator: string };
-	sort: number;
-};
-
-const POOL_MODIFICATIONS_DATA: Record<string, PoolModificationData> = Object.fromEntries([
-	...Object.entries(GenesysDice).map(([dieName, dieType]) => [
-		dieType.GLYPH,
-		{
-			targetName: dieName,
-			icon: { baseName: dieName, baseGlyph: dieType.GLYPH, operator: 'fa-plus' },
-			sort: 0,
-		},
-	]),
-	[
-		GenesysPoolGradeOperation.UpgradeAbility.GLYPH,
-		{
-			targetName: 'UpgradeAbility',
-			icon: { baseName: 'Ability', baseGlyph: GenesysDice['Ability'].GLYPH, operator: 'fa-arrow-up' },
-			sort: 1,
-		},
-	],
-	[
-		GenesysPoolGradeOperation.UpgradeDifficulty.GLYPH,
-		{
-			targetName: 'UpgradeDifficulty',
-			icon: { baseName: 'Difficulty', baseGlyph: GenesysDice['Difficulty'].GLYPH, operator: 'fa-arrow-up' },
-			sort: 1,
-		},
-	],
-	[
-		GenesysPoolGradeOperation.DowngradeAbility.GLYPH,
-		{
-			targetName: 'DowngradeAbility',
-			icon: { baseName: 'Proficiency', baseGlyph: GenesysDice['Proficiency'].GLYPH, operator: 'fa-arrow-down' },
-			sort: 2,
-		},
-	],
-	[
-		GenesysPoolGradeOperation.DowngradeDifficulty.GLYPH,
-		{
-			targetName: 'DowngradeDifficulty',
-			icon: { baseName: 'Challenge', baseGlyph: GenesysDice['Challenge'].GLYPH, operator: 'fa-arrow-down' },
-			sort: 2,
-		},
-	],
-	...Object.entries(GenesysDice).map(([dieName, dieType]) => [
-		`-${dieType.GLYPH}`,
-		{
-			targetName: dieName,
-			icon: { baseName: dieName, baseGlyph: dieType.GLYPH, operator: 'fa-minus' },
-			sort: 3,
-		},
-	]),
-	...Object.entries(GenesysSymbol).map(([symbolName, symbolType]) => [
-		symbolType.GLYPH,
-		{
-			targetName: symbolName,
-			icon: { baseName: symbolName, baseGlyph: symbolType.GLYPH, operator: 'fa-plus' },
-			sort: 4,
-		},
-	]),
-	...Object.entries(GenesysSymbol).map(([symbolName, symbolType]) => [
-		`-${symbolType.GLYPH}`,
-		{
-			targetName: symbolName,
-			icon: { baseName: symbolName, baseGlyph: symbolType.GLYPH, operator: 'fa-minus' },
-			sort: 5,
-		},
-	]),
-]);
 
 const SORT_ORDER: Record<SimplePoolEntity, number> = {
 	Proficiency: 0,
@@ -170,7 +98,7 @@ let previousDicePool: DicePool = {
 onMounted(() => {
 	const actor = toRaw(context.actor);
 
-	poolModifications.value.baseDifficulty = context.difficulty.match(GenesysEffect.DICE_POOL_MOD_SKILL_PATTERN)?.sort(sortPoolModifications) ?? [];
+	poolModifications.value.baseDifficulty = context.difficulty.match(PoolModGlyphPattern)?.sort(sortPoolModifications) ?? [];
 	availableSkills.value = actor
 		? (actor.items.filter((item) => item.type === 'skill') as GenesysItem<SkillDataModel>[]).sort((f, s) => {
 				const nameA = f.name.toLowerCase();
@@ -194,7 +122,7 @@ onMounted(() => {
 //  5- Adding symbols (this is not a formal step but adding it here is done for convenience since it doesn't interfere)
 //  6- Removing symbols (see above)
 function sortPoolModifications(left: string, right: string) {
-	return POOL_MODIFICATIONS_DATA[left].sort - POOL_MODIFICATIONS_DATA[right].sort;
+	return GenesysPoolModifications[left].sort - GenesysPoolModifications[right].sort;
 }
 
 function applyDicePoolModifications(dicePool: DicePool, modifierTokens: string[]) {
@@ -227,7 +155,7 @@ function applyDicePoolModifications(dicePool: DicePool, modifierTokens: string[]
 			// Check which sub pool we want to modify. Note that dice glyphs are always uppercase letters while symbols
 			// use lowercase letters.
 			const targetSubPool: PartialRecord<PoolEntity, number> = targetEntity === targetEntity.toUpperCase() ? dicePool.dice : dicePool.symbols;
-			const entityName = POOL_MODIFICATIONS_DATA[targetEntity].targetName;
+			const entityName = GenesysPoolModifications[targetEntity].targetName;
 
 			// Do not let the number of dice or symbols be a negative value.
 			if (direction > 0 || targetSubPool[entityName]) {
@@ -249,7 +177,7 @@ function calculatePoolModificationsForSkill() {
 					// Find all the changes inside this effect that apply to the selected skill.
 					const relevantChanges = effect.changes.reduce((accum, change) => {
 						if (change.key === targetChangeKey) {
-							accum.push(...(change.value.match(GenesysEffect.DICE_POOL_MOD_SKILL_PATTERN)?.sort(sortPoolModifications) ?? []));
+							accum.push(...(change.value.match(PoolModGlyphPattern)?.sort(sortPoolModifications) ?? []));
 						}
 						return accum;
 					}, [] as string[]);
@@ -552,23 +480,23 @@ async function rollPool() {
 			<!-- Dice Box -->
 			<div class="dice-box">
 				<!-- Add Positive Dice -->
-				<a @click="addDiceOperation('Ability')" data-die="Ability">A<i class="fas fa-plus"></i></a>
-				<a @click="addDiceOperation('Proficiency')" data-die="Proficiency">P<i class="fas fa-plus"></i></a>
-				<a @click="addDiceOperation('Boost')" data-die="Boost">B<i class="fas fa-plus"></i></a>
+				<a @click="addDiceOperation('Ability')" data-pool-entity="Ability">A<i class="fas fa-plus"></i></a>
+				<a @click="addDiceOperation('Proficiency')" data-pool-entity="Proficiency">P<i class="fas fa-plus"></i></a>
+				<a @click="addDiceOperation('Boost')" data-pool-entity="Boost">B<i class="fas fa-plus"></i></a>
 
 				<!-- Upgrade/Downgrade Positive Dice -->
-				<a @click="addPoolOperation('UpgradeAbility')" data-die="Ability">A<i class="fas fa-arrow-up"></i></a>
-				<a @click="addPoolOperation('DowngradeAbility')" data-die="Proficiency">P<i class="fas fa-arrow-down"></i></a>
+				<a @click="addPoolOperation('UpgradeAbility')" data-pool-entity="Ability">A<i class="fas fa-arrow-up"></i></a>
+				<a @click="addPoolOperation('DowngradeAbility')" data-pool-entity="Proficiency">P<i class="fas fa-arrow-down"></i></a>
 				<span />
 
 				<!-- Add Negative Dice -->
-				<a @click="addDiceOperation('Difficulty')" data-die="Difficulty">D<i class="fas fa-plus"></i></a>
-				<a @click="addDiceOperation('Challenge')" data-die="Challenge">C<i class="fas fa-plus"></i></a>
-				<a @click="addDiceOperation('Setback')" data-die="Setback">S<i class="fas fa-plus"></i></a>
+				<a @click="addDiceOperation('Difficulty')" data-pool-entity="Difficulty">D<i class="fas fa-plus"></i></a>
+				<a @click="addDiceOperation('Challenge')" data-pool-entity="Challenge">C<i class="fas fa-plus"></i></a>
+				<a @click="addDiceOperation('Setback')" data-pool-entity="Setback">S<i class="fas fa-plus"></i></a>
 
 				<!-- Upgrade/Downgrade Negative Dice -->
-				<a @click="addPoolOperation('UpgradeDifficulty')" data-die="Difficulty">D<i class="fas fa-arrow-up"></i></a>
-				<a @click="addPoolOperation('DowngradeDifficulty')" data-die="Challenge">C<i class="fas fa-arrow-down"></i></a>
+				<a @click="addPoolOperation('UpgradeDifficulty')" data-pool-entity="Difficulty">D<i class="fas fa-arrow-up"></i></a>
+				<a @click="addPoolOperation('DowngradeDifficulty')" data-pool-entity="Challenge">C<i class="fas fa-arrow-down"></i></a>
 				<span />
 
 				<!-- Add Positive Symbols -->
@@ -612,16 +540,16 @@ async function rollPool() {
 				<div>
 					<span><Localized label="Genesys.DicePrompt.PoolModifications.DefaultDifficulty" /></span>
 					<div>
-						<a v-for="(modification, index) in poolModifications.baseDifficulty" :key="index" :data-die="POOL_MODIFICATIONS_DATA[modification].icon.baseName">
-							{{ POOL_MODIFICATIONS_DATA[modification].icon.baseGlyph }}<i :class="`fas ${POOL_MODIFICATIONS_DATA[modification].icon.operator}`"></i>
+						<a v-for="(modification, index) in poolModifications.baseDifficulty" :key="index" :data-pool-entity="GenesysPoolModifications[modification].icon.baseName">
+							{{ GenesysPoolModifications[modification].icon.baseGlyph }}<i :class="`fas ${GenesysPoolModifications[modification].icon.operator}`"></i>
 						</a>
 					</div>
 				</div>
 				<div class="pool-modifications-manual">
 					<span><Localized label="Genesys.DicePrompt.PoolModifications.ManualChanges" /></span>
 					<div>
-						<a v-for="(modification, index) in poolModifications.manualChanges" :key="index" @click="removeManualChange(index)" :data-die="POOL_MODIFICATIONS_DATA[modification].icon.baseName">
-							{{ POOL_MODIFICATIONS_DATA[modification].icon.baseGlyph }}<i :class="`fas ${POOL_MODIFICATIONS_DATA[modification].icon.operator}`"></i>
+						<a v-for="(modification, index) in poolModifications.manualChanges" :key="index" @click="removeManualChange(index)" :data-pool-entity="GenesysPoolModifications[modification].icon.baseName">
+							{{ GenesysPoolModifications[modification].icon.baseGlyph }}<i :class="`fas ${GenesysPoolModifications[modification].icon.operator}`"></i>
 						</a>
 					</div>
 				</div>
@@ -631,8 +559,8 @@ async function rollPool() {
 						<label>{{ '\xa0' + effect.name }}</label>
 					</span>
 					<div>
-						<a v-for="(modification, index) in effect.mods" :key="index" :data-die="POOL_MODIFICATIONS_DATA[modification].icon.baseName">
-							{{ POOL_MODIFICATIONS_DATA[modification].icon.baseGlyph }}<i :class="`fas ${POOL_MODIFICATIONS_DATA[modification].icon.operator}`"></i>
+						<a v-for="(modification, index) in effect.mods" :key="index" :data-pool-entity="GenesysPoolModifications[modification].icon.baseName">
+							{{ GenesysPoolModifications[modification].icon.baseGlyph }}<i :class="`fas ${GenesysPoolModifications[modification].icon.operator}`"></i>
 						</a>
 					</div>
 				</div>
@@ -791,37 +719,44 @@ async function rollPool() {
 			margin-right: 0.2rem;
 			cursor: default;
 
-			&[data-die] {
-				-webkit-text-stroke: 0.5px black;
-				text-stroke: 0.5px black;
-
-				i {
-					-webkit-text-stroke: 0 transparent;
-					text-stroke: 0 transparent;
-				}
+			&[data-pool-entity] > i.fas {
+				-webkit-text-stroke: 0 transparent;
+				text-stroke: 0 transparent;
 			}
 
-			&[data-die='Ability'] {
+			&[data-pool-entity='Ability'] {
+				-webkit-text-stroke: 0.5px black;
+				text-stroke: 0.5px black;
 				color: colors.$die-ability;
 			}
 
-			&[data-die='Proficiency'] {
+			&[data-pool-entity='Proficiency'] {
+				-webkit-text-stroke: 0.5px black;
+				text-stroke: 0.5px black;
 				color: colors.$die-proficiency;
 			}
 
-			&[data-die='Boost'] {
+			&[data-pool-entity='Boost'] {
+				-webkit-text-stroke: 0.5px black;
+				text-stroke: 0.5px black;
 				color: colors.$die-boost;
 			}
 
-			&[data-die='Difficulty'] {
+			&[data-pool-entity='Difficulty'] {
+				-webkit-text-stroke: 0.5px black;
+				text-stroke: 0.5px black;
 				color: colors.$die-difficulty;
 			}
 
-			&[data-die='Challenge'] {
+			&[data-pool-entity='Challenge'] {
+				-webkit-text-stroke: 0.5px black;
+				text-stroke: 0.5px black;
 				color: colors.$die-challenge;
 			}
 
-			&[data-die='Setback'] {
+			&[data-pool-entity='Setback'] {
+				-webkit-text-stroke: 0.5px black;
+				text-stroke: 0.5px black;
 				color: colors.$die-setback;
 			}
 		}
@@ -930,19 +865,19 @@ async function rollPool() {
 				align-items: flex-start;
 				font-family: 'Genesys Symbols', sans-serif;
 
-				&[data-die='Ability'] {
+				&[data-pool-entity='Ability'] {
 					color: colors.$die-ability;
 				}
 
-				&[data-die='Proficiency'] {
+				&[data-pool-entity='Proficiency'] {
 					color: colors.$die-proficiency;
 				}
 
-				&[data-die='Boost'] {
+				&[data-pool-entity='Boost'] {
 					color: colors.$die-boost;
 				}
 
-				&[data-die='Difficulty'] {
+				&[data-pool-entity='Difficulty'] {
 					-webkit-text-stroke: 0.5px white;
 					text-stroke: 0.5px white;
 					color: colors.$die-difficulty;
@@ -953,7 +888,7 @@ async function rollPool() {
 					}
 				}
 
-				&[data-die='Challenge'] {
+				&[data-pool-entity='Challenge'] {
 					-webkit-text-stroke: 0.5px white;
 					text-stroke: 0.5px white;
 					color: colors.$die-challenge;
@@ -964,7 +899,7 @@ async function rollPool() {
 					}
 				}
 
-				&[data-die='Setback'] {
+				&[data-pool-entity='Setback'] {
 					-webkit-text-stroke: 0.5px white;
 					text-stroke: 0.5px white;
 					color: colors.$die-setback;
