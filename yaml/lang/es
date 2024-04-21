@@ -7,7 +7,7 @@ ACTOR:
 
 ITEM:
   # Character Creation Items
-  TypeAbility: Aptitud especial
+  TypeAbility: Capacidad Especial
   TypeArchetype: Arquetipo
   TypeCareer: Profesión
   TypeInjury: Daño/herida crítico/a
@@ -32,7 +32,7 @@ Genesys:
   # System Settings
   Settings:
     SkillsCompendium: Compendio de habilidades
-    SkillsCompendiumHint: Un compendio de objetos que contiene todas las habilidades que deben aplicarse a los nuevos personajes. Cambiar este valor no tendrá ningún impacto en los personajes existentes.
+    SkillsCompendiumHint: Un compendio de items que contiene todas las habilidades que deben aplicarse a los nuevos personajes. Cambiar este valor no tendrá ningún impacto en los personajes existentes.
     DefaultDifficulty: Dificultad por defecto
     DefaultDifficultyHint: >-
       Las modificaciones por defecto de la reserva de dados que deberían añadirse a la reserva de dados cuando se hace una tirada. Este valor por defecto puede ser ignorado en casos donde la dificultad es conocida.
@@ -49,9 +49,9 @@ Genesys:
     SkillForInjuriesHint: Nombre de la habilidad utilizada al recuperarse de Heridas críticas.
     SkillForRepairingVehicleHits: Nombre de la habilidad Mecánica
     SkillForRepairingVehicleHitsHint: Nombre de la habilidad utilizada al recuperarse de Daños críticos.
-    UseMagicalGirlSymbols:Utiliza los símbolos de Magical Girl de MilkMyth (sólo para el ti)
+    UseMagicalGirlSymbols:Utiliza los símbolos de Magical Girl de MilkMyth (sólo para este usuario)
     UseMagicalGirlSymbolsHint: Cambia el juego de símbolos Genesys por el juego de símbolos Magical Girls de MilkMyth. Esto no afectará a otros usuarios.
-    DicePoolCollapseModifications: Colpasar la sección de modificaciones de la reserva
+    DicePoolCollapseModifications: Colapsar la sección de modificaciones de la reserva
     DicePoolCollapseModificationsHint: Si está activada, la sección "modificaciones de la reserva" de la ventana de dados se colapsará durante la renderización inicial.
     DicePoolAutoApplyModifications: Aplicar automáticamente modificaciones en la reserva
     DicePoolAutoApplyModificationsHint: Si se activa, todas las modificaciones que puedan afectar a la tirada de dados se aplicarán al abrir la ventana de reserva de dados.
@@ -115,12 +115,12 @@ Genesys:
     MagicalGirl: Magical Girl de MilkMyth
     Custom: Dados Genesys (Personalizable)
   DiceColors:
-    Boost: Dado de beneficio
-    Ability: Dado de capacidad
-    Proficiency: Dado de pericia
-    Setback: Dado de complicación
-    Difficulty: Dado de dificultad
-    Challenge: Dado de desafío
+    Boost: Dado de Beneficio
+    Ability: Dado de Capacidad
+    Proficiency: Dado de Pericia
+    Setback: Dado de Complicación
+    Difficulty: Dado de Dificultad
+    Challenge: Dado de Desafío
 
   # Difficulty Ranks
   Difficulty:
@@ -204,11 +204,11 @@ Genesys:
 
   # Notification Prompts
   Notifications:
-    AlreadyHaveSpecialAbility: No puedes añadir {abilityName}; las aptitudes especiales no tienen rangos, ¡y ya la tienes!
+    AlreadyHaveSpecialAbility: No puedes añadir {abilityName}; las capacidades especiales no tienen rangos, ¡y ya la tienes!
     TalentNotRanked: No puedes añadir {talentName}; no es un talento con rangos, ¡y ya la tienes!
     NoSkillsCompendium: La configuración del compendio de habilidades está vacía. Intentando usar el compendio de habilidades por defecto.
     MissingCompendium: No se ha podido cargar el compendio de habilidades '{name}'. Vuelva a configurar el compendio de habilidades en Ajustes de Genesys.
-    WrongCompendiumType: El compendio de habilidades configurado '{name}' es un compendio de {type}, ¡no un compendio de objetos! Vuelve a configurar el compendio de habilidades en Ajustes de Genesys.
+    WrongCompendiumType: El compendio de habilidades configurado '{name}' es un compendio de {type}, ¡no un compendio de items! Vuelve a configurar el compendio de habilidades en Ajustes de Genesys.
     NoSkillsInCompendium: El compendio de habilidades configurado '{name}' no contiene ninguna habilidad. Vuelve a configurar el compendio de habilidades en Ajustes de Genesys.
     CharacterWithNoSkills: El personaje se creó sin ninguna habilidad inicial ya que no se encontró ninguna en el compendio de habilidades configurado.
     CannotDeleteCharacteristic: No puedes eliminar la entrada del diario de PE de la característica '{characteristic}' - ¡primero debes eliminar el avance al siguiente rango!
@@ -218,7 +218,7 @@ Genesys:
     CannotDeleteNewTalent: No puedes eliminar la entrada del diario del nuevo talento '{name}' - ¡primero debes eliminar los aumentos de rango del talento!
     CannotDeleteExistingTalent: No puedes eliminar la entrada del diario de PE del talento mejorado '{name}' al rango {rank} - ¡primero debes eliminar los rangos superiores!
     CannotPurchaseTalentTier: No puedes comprar talentos de nivel {tier} - primero debes tener al menos {minimum} talentos de nivel {lowerTier}.
-    NotEnoughStoryPoints: ¡No puedes gastar Puntos de Historia que no tienes!
+    NotEnoughStoryPoints: ¡No puedes gastar puntos de Historia que no tienes!
     SelectOneTokenForAction: Debes seleccionar un único token para realizar esta acción.
     SelectNoneOrOneTokenForAction: Debes seleccionar ninguna token, o sólo uno, para realizar esta acción.
     TokenIsNotCombatant: El token seleccionado no participa en el combate actual.
@@ -232,7 +232,7 @@ Genesys:
   Dialogs:
     ConfirmDeleteItem:
       Title: Confirmar la eliminación
-      Content: Esto eliminará el objeto. ¿Deseas continuar?
+      Content: Esto eliminará el item. ¿Deseas continuar?
 
   # Migration Related Messages
   Migration:
@@ -253,7 +253,7 @@ Genesys:
   StoryPoints:
     Player: Puntos de Historia de los PJ
     GM: Puntos de Historia del DJ
-    Reset: Resetear Puntos de Historia
+    Reset: Reiniciar puntos de Historia
     Spend: Gastar Puntos
     ChatMessage: ¡Punto de Historia gastado!
 
@@ -396,7 +396,7 @@ Genesys:
     MagicSkills: Habilidades mágicas
     CombatSkills: Habilidades de combate
     SocialSkills: Habilidades sociales
-    KnowledgeSkills: Knowledge Skills
+    KnowledgeSkills: Habilidades de conocimiento
     Category: Categoría
     Skills: Habilidades
     Delete: Eliminar
@@ -485,7 +485,7 @@ Genesys:
     Information: Información
     Passengers: Pasajeros
     Role: Puesto
-    Roles: Roles
+    Roles: Puestos
     OverCapacity: ¡Sobrecapacidad!
     RoleSkills: Habilidades de puesto
     FiringArc: Sector de tiro
