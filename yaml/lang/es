@@ -1,0 +1,493 @@
+ACTOR:
+  TypeCharacter: Personaje
+  TypeMinion: Esbirro
+  TypeRival: Rival
+  TypeNemesis: Antagonista
+  TypeVehicle: Vehículo
+
+ITEM:
+  # Character Creation Items
+  TypeAbility: Capacidad Especial
+  TypeArchetype: Arquetipo
+  TypeCareer: Profesión
+  TypeInjury: Daño/herida crítico/a
+  TypeSkill: Habilidad
+  TypeTalent: Talento
+
+  # Equipment Items
+  TypeArmor: Armadura
+  TypeConsumable: Consumible
+  TypeContainer: Contenedor
+  TypeGear: Equipo
+  TypeQuality: Propiedad
+  TypeWeapon: Arma
+  TypeVehicleweapon: Arma de vehículo
+
+# Genesys
+Genesys:
+  # System Strings
+  System:
+    Name: Genesys
+
+  # System Settings
+  Settings:
+    SkillsCompendium: Compendio de habilidades
+    SkillsCompendiumHint: Un compendio de items que contiene todas las habilidades que deben aplicarse a los nuevos personajes. Cambiar este valor no tendrá ningún impacto en los personajes existentes.
+    DefaultDifficulty: Dificultad por defecto
+    DefaultDifficultyHint: >-
+      Las modificaciones por defecto de la reserva de dados que deberían añadirse a la reserva de dados cuando se hace una tirada. Este valor por defecto puede ser ignorado en casos donde la dificultad es conocida.
+      Para una explicación de todas las posibles modificaciones y sus glifos por favor consulta [[Dice-Pool-Modification-Glyphs|Dice Pool Modification Glyphs]].
+    Money: Dinero
+    MoneyHint: El nombre (como oro, créditos, efectivo, doblones, etc) utilizado como unidad monetaria en el sistema.
+    CareerSkillRanks: Rangos de habilidades de profesión
+    CareerSkillRanksHint: Número de habilidades que puedes seleccionar de tu lista de habilidades profesionales durante la creación del personaje.
+    UncoupleSkillsAlternateRule: Desvincular las habilidades de las características
+    UncoupleSkillsAlternateRuleHint: Permite seleccionar una característica alternativa para una habilidad en la ventana de dados, según la regla alternativa Desacoplar las habilidades de las características (Libro básico, p.205).
+    ShowDamageOnFailure: Muestra el daño del ataque cuando falle
+    ShowDamageOnFailureHint: Mostrar o no el daño, el crítico y las cualidades en las tarjetas de chat de las tiradas de ataque, incluso cuando la tirada haya sido un fracaso.
+    SkillForInjuries: Nombre de la habilidad Aguante
+    SkillForInjuriesHint: Nombre de la habilidad utilizada al recuperarse de Heridas críticas.
+    SkillForRepairingVehicleHits: Nombre de la habilidad Mecánica
+    SkillForRepairingVehicleHitsHint: Nombre de la habilidad utilizada al recuperarse de Daños críticos.
+    UseMagicalGirlSymbols:Utiliza los símbolos de Magical Girl de MilkMyth (sólo para este usuario)
+    UseMagicalGirlSymbolsHint: Cambia el juego de símbolos Genesys por el juego de símbolos Magical Girls de MilkMyth. Esto no afectará a otros usuarios.
+    DicePoolCollapseModifications: Colapsar la sección de modificaciones de la reserva
+    DicePoolCollapseModificationsHint: Si está activada, la sección "modificaciones de la reserva" de la ventana de dados se colapsará durante la renderización inicial.
+    DicePoolAutoApplyModifications: Aplicar automáticamente modificaciones en la reserva
+    DicePoolAutoApplyModificationsHint: Si se activa, todas las modificaciones que puedan afectar a la tirada de dados se aplicarán al abrir la ventana de reserva de dados.
+    DicePoolChanceToSucceedByPermutation: Calcular las probabilidades de éxito de la reserva de dados
+    DicePoolChanceToSucceedByPermutationHint: >-
+      Si se activa, se generará un "Web Worker" que calculará la probabilidad exacta de éxito.
+      Sin embargo, si la tirada de dados utiliza una supercaracterística, el valor calculado es menor que el valor real porque asume que la tirada no explota.
+      Para reserva de dados que usan supercaracterísticas puedes obtener un valor más exacto usando simulaciones.
+    DicePoolChanceToSucceedBySimulation: Estimación de la probabilidad de éxito de la reserva de dados
+    DicePoolChanceToSucceedBySimulationHint: >-
+      El número de tiradas simuladas a ejecutar para aproximar la probabilidad de éxito.
+      Ten cuidado al aumentar este número ya que tendrá un impacto directo en el rendimiento de Foundry; un buen número para empezar es 100. Si se proporciona un valor de 0, esta función se desactiva.
+      Esta configuración se ignora si la probabilidad ya se está calculando de alguna otra manera.
+    SuperCharacteristics: Supercaracterísticas
+    SuperCharacteristicsHint: Permite marcar características como "super" durante la creación del personaje, según la regla opcional Supercaracterísticas (Libro básico, p.251).
+
+  # Tooltips
+  Tooltips:
+    NoDescription: Descripción no disponible
+    IsInitiative: Si la habilidad se usa normalmente para Iniciativa o no. Si se establece como verdadero, aparecerá como una opción en el registro de combate.
+    CycleInitiativeSkill: Cambia la habilidad de iniciativa que utiliza el combatiente.
+    AddExtraInitiativeSlot: Añade un puesto de iniciativa adicional.
+
+  # Dice Rolls
+  Rolls:
+    Dice: Dados
+    Results: Resultados de la tirada
+    Description:
+      Simple: Tirando...
+      Initiative: Tirando Iniciativa con <strong>{skill}</strong>...
+      Characteristic: Tirando <strong>{characteristic}</strong>...
+      Skill: Tirando <strong>{skill} ({characteristic})</strong>...
+      SkillWithoutCharacteristic: Tirando <strong>{skill}</strong>...
+      AttackCharacteristic: ¡Atacando con <strong>{name}</strong> usando <strong>{characteristic}</strong>!
+      AttackSkill: ¡Atacando con <strong>{name}</strong> usando <strong>{skill} ({characteristic})</strong>!
+      AttackSkillWithoutCharacteristic: ¡Atacando con <strong>{name}</strong> usando <strong>{skill}</strong>!
+    Attack:
+      Critical: Crítico
+      Label: Resultados del ataque
+      Damage: Daño
+      Qualities: Propiedades del ataque
+    Summary:
+      Label: Resumen
+      Successes: Éxitos
+      Failures: Fallos
+      Advantage: Ventaja
+      Threat: Amenaza
+      Triumph: Triunfo
+      Despair: Desesperación
+
+  # Career Skill Prompt
+  CareerSkillPrompt:
+    Title: Habilidades de profesión
+    Hint: 'Elige habilidades de profesión para adquirir un rango:'
+    RemainingChoices: Elecciones pendientes
+    Confirm: Listo
+
+  # Dice So Nice strings
+  DiceCat:
+    Normal: Dados Genesys
+    MagicalGirl: Magical Girl de MilkMyth
+    Custom: Dados Genesys (Personalizable)
+  DiceColors:
+    Boost: Dado de Beneficio
+    Ability: Dado de Capacidad
+    Proficiency: Dado de Pericia
+    Setback: Dado de Complicación
+    Difficulty: Dado de Dificultad
+    Challenge: Dado de Desafío
+
+  # Difficulty Ranks
+  Difficulty:
+    Simple: Simple
+    Easy: Fácil
+    Average: Medio
+    Hard: Difícil
+    Daunting: Desalentadora
+    Formidable: Formidable
+    Impossible: Imposible
+
+  Inventory:
+    Sections:
+      Armor: Armadura
+      Consumable: Consumibles
+      Container: Contenedores
+      Gear: Equipo
+      Weapon: Armas
+
+  # ActiveEffects System Strings
+  ActiveEffects:
+    Passive: Efectos pasivos
+    Temporary: Efectos temporales
+    Suppressed: Efectos inactivos
+    Source: Origen
+    Duration: Duración
+    Types:
+      ModifyCharacteristic: Característica modificada
+      ModifyStat: Estadística modificada
+      ModifySkill: Habilidad modificada
+      ModifyDicePool:
+        GroupLabel: Modificar reserva de dados
+        Options:
+          Skill: Habilidad de la reserva de dados
+
+  # Dice Prompt Labels
+  DicePrompt:
+    Title: Reserva de dados
+    Roll: ¡Tira!
+    Hint: Utiliza el recuadro de dados de la derecha para añadir, incrementar y rebajar. Haz clic en los dados para eliminarlos.
+    UseSuperCharacteristic: Tira como una supercaracterística
+    PoolModifications:
+      Title: Modificaciones de la reserva
+      DefaultDifficulty: Dificultad por defecto
+      ManualChanges: Cambios manuales
+    ChanceToSucceed: 'Posibilidades de éxito:'
+    ChanceToSucceedByPermutationDisclaimer: La probabilidad mostrada es exacta a menos que la reserva de dados incluya una supercaracterística.
+    ChanceToSucceedBySimulationDisclaimer: La probabilidad mostrada es una aproximación que utiliza el método Monte Carlo.
+
+  # Rewards Prompt Labels
+  RewardsPrompt:
+    Title: Recompensas
+    Amount: Cantidad
+    Reason: Razón
+
+  # Character Skill Prompt Labels
+  CharacterSkillPrompt:
+    Title: Select User
+
+  # Clone Actor Prompt Labels
+  CloneActorPrompt:
+    Title: Drop Confirmation
+    OriginalMethod:
+      Label: Reference
+      Description: A reference to the actor will be saved.
+    CloneMethod:
+      Label: Clone
+      Description: >-
+        A clone of the dropped actor will be created and a reference to it will be saved.
+        Additionally, the cloned actor will appear on the 'Actors' directory as a new entry with the name specified below.
+      ActorNameLabel: New Name
+
+  # Experience Journal Labels
+  XPJournal:
+    Award: '<strong>PE repartidos por el DJ</strong>: {reason}'
+    Starting: <strong>PE iniciales del arquetipo</strong>
+    Characteristic: Mejorar <strong>{characteristic}</strong> a {rank}.
+    Skill: Entrenar <strong>{name}</strong> a {rank}.
+    NewTalent: Talento adquirido: <strong>{name}</strong> (nivel {tier}).
+    TalentRank: Mejorar <strong>{name}</strong> a rango {rank} (nivel efectivo {tier}).
+
+  # Notification Prompts
+  Notifications:
+    AlreadyHaveSpecialAbility: No puedes añadir {abilityName}; las capacidades especiales no tienen rangos, ¡y ya la tienes!
+    TalentNotRanked: No puedes añadir {talentName}; no es un talento con rangos, ¡y ya la tienes!
+    NoSkillsCompendium: La configuración del compendio de habilidades está vacía. Intentando usar el compendio de habilidades por defecto.
+    MissingCompendium: No se ha podido cargar el compendio de habilidades '{name}'. Vuelva a configurar el compendio de habilidades en Ajustes de Genesys.
+    WrongCompendiumType: El compendio de habilidades configurado '{name}' es un compendio de {type}, ¡no un compendio de items! Vuelve a configurar el compendio de habilidades en Ajustes de Genesys.
+    NoSkillsInCompendium: El compendio de habilidades configurado '{name}' no contiene ninguna habilidad. Vuelve a configurar el compendio de habilidades en Ajustes de Genesys.
+    CharacterWithNoSkills: El personaje se creó sin ninguna habilidad inicial ya que no se encontró ninguna en el compendio de habilidades configurado.
+    CannotDeleteCharacteristic: No puedes eliminar la entrada del diario de PE de la característica '{characteristic}' - ¡primero debes eliminar el avance al siguiente rango!
+    CannotDeleteSkill: No puedes eliminar la entrada del diario de la habilidad '{name}' - ¡primero debes eliminar el avance al siguiente rango!
+    CannotAffordTalent: No puedes permitirte el talento '{name}' ({cost}pe).
+    CannotAffordRankedTalent: No puedes permitirte incrementar el talento '{name}' al rango {newRank} ({cost}pe).
+    CannotDeleteNewTalent: No puedes eliminar la entrada del diario del nuevo talento '{name}' - ¡primero debes eliminar los aumentos de rango del talento!
+    CannotDeleteExistingTalent: No puedes eliminar la entrada del diario de PE del talento mejorado '{name}' al rango {rank} - ¡primero debes eliminar los rangos superiores!
+    CannotPurchaseTalentTier: No puedes comprar talentos de nivel {tier} - primero debes tener al menos {minimum} talentos de nivel {lowerTier}.
+    NotEnoughStoryPoints: ¡No puedes gastar puntos de Historia que no tienes!
+    SelectOneTokenForAction: Debes seleccionar un único token para realizar esta acción.
+    SelectNoneOrOneTokenForAction: Debes seleccionar ninguna token, o sólo uno, para realizar esta acción.
+    TokenIsNotCombatant: El token seleccionado no participa en el combate actual.
+    CannotClaimOppositeSlot: No puedes reclamar este puesto de iniciativa con {nombre} - ¡está en el lado equivocado!
+    CannotSelectActor: No tienes permiso suficiente para seleccionar este Actor.
+    InvalidTokenTypeForAction: El token seleccionado es de un tipo no válido para realizar esta acción.
+    EffectsWereNotUpdatedAfterTransfer: Se ha producido un error al actualizar los efectos con los últimos valores del "{nombre}" transferido.
+    NoRoleMembersWithAppropriateSkills: Ningún personaje en este puesto tiene las habilidades apropiadas para realizar esta acción.
+
+  # Dialogs Prompts
+  Dialogs:
+    ConfirmDeleteItem:
+      Title: Confirmar la eliminación
+      Content: Esto eliminará el item. ¿Deseas continuar?
+
+  # Migration Related Messages
+  Migration:
+    MustPerformMigration: >-
+      MIGRATION NEEDED!: Some data needs to be migrated and failure to do so might corrupt the data or break functionality.
+      Please exit out of the world and wait for a GM to perform the migration.
+    StartingMigration: 'MIGRATION STARTED: Commencing {amount} migration(s); please be patient and do not close the application.'
+    StartingScriptMigration: 'MIGRATION STARTED [{id}]: Commencing migration.'
+    StoppedScriptMigration: 'MIGRATION STOPPED [{id}]: Encountered an error while migrating.'
+    CompletedScriptMigration: 'MIGRATION FINISHED [{id}]: Migration completed.'
+    MultipleSuccessfulMigration: 'MIGRATION VERSION UPDATED: At least one migration was completed successfully.'
+    StoppedMigration: >-
+      MIGRATION STOPPED: The migration has stopped due to some errors; consult the console log for what these errors are.
+      There are still {amount} migration(s) that haven't been performed.
+    CompletedMigration: 'MIGRATION FINISHED: All migrations done; thanks for your patience.'
+
+  # Story Points
+  StoryPoints:
+    Player: Puntos de Historia de los PJ
+    GM: Puntos de Historia del DJ
+    Reset: Reiniciar puntos de Historia
+    Spend: Gastar Puntos
+    ChatMessage: ¡Punto de Historia gastado!
+
+  # Localized strings used in TextEditor enrichers.
+  Enrichers:
+    Difficulty: 'Tirada de {skill} contra {difficulty} [{symbols}]'  # e.g. Average [♦♦] Coercion Check
+    Opposed: 'Tirada enfrentada de {skill1} contra {skill2}'
+
+  # Combat Tracker
+  CombatTracker:
+    RevokeInitiativeClaim: Revocar la Iniciativa
+
+  # Sheet Tab names
+  Tabs:
+    Skills: Habilidades
+    Combat: Combate
+    Talents: Talentos
+    Magic: Magia
+    Inventory: Inventario
+    Effects: Efectos
+    Journal: Diario
+    Description: Descripción
+    Data: Datos
+    Details: Detalles
+    Duration: Duración
+    Miscellaneous: Miscelánea
+    Crew: Tripulación
+    Attachments: Accesorios
+
+  # Characteristics
+  Characteristics:
+    Brawn: Fortaleza
+    Agility: Agilidad
+    Intellect: Intelecto
+    Cunning: Astucia
+    Willpower: Voluntad
+    Presence: Presencia
+
+  # Characteristic Abbreviations
+  CharacteristicAbbr:
+    Brawn: For
+    Agility: Agi
+    Intellect: Int
+    Cunning: Ast
+    Willpower: Vol
+    Presence: Pre
+
+  # Skill Categories
+  SkillCategory:
+    General: General
+    Magic: Mágica
+    Combat: Combate
+    Social: Social
+    Knowledge: Conocimiento
+
+  # Archetype Data
+  Archetype:
+    Abilities: Capacidades del arquetipo
+    StartingWounds: Umbral de Heridas inicial
+    StartingStrain: Umbral de Tensión inicial
+    StartingXP: Puntos de Experiencia iniciales
+    GrantedItems: Objetos concedidos
+
+  # Adversary Labels
+  Adversary:
+    MinionSkills: Habilidades (sólo en grupo)
+    Skills: Habilidades
+    Talents: Talentos
+    Abilities: Capacidades
+    Equipment: Equipo
+    None: Ninguno.
+    Base: Base
+    Remaining: restante
+
+  # Career Data
+  Career:
+    Skills: Habilidades de profesión
+
+  # Range Values
+  Range:
+    Engaged: Interacción
+    Short: Corto
+    Medium: Medio
+    Long: Largo
+    Extreme: Extremo
+    Strategic: Estratégico
+
+  # Firing Arc
+  FiringArc:
+    Fore: Proa
+    Aft: Popa
+    Port: Babor
+    Starboard: Estribor
+    All: Todos
+    None: Ninguno
+
+  # Dialog Groups
+  DialogGroups:
+    Item:
+      CharacterCreation: Creación de personaje
+      Equipment: Equipo
+      Other: Otro
+    Actor:
+      Adversary: Adversario
+      Other: Otro
+
+  # Equipment Data
+  Equipment:
+    DamageState:
+      Undamaged: Intacto
+      Minor: Daño Menor
+      Moderate: Daño Moderado
+      Major: Daño Grave
+
+  # Misc. Unsorted Labels (to be cleaned up later)
+  Labels:
+    Name: Nombre
+    CharacterName: Nombre del personaje
+    SpeciesArchetype: Arquetipo/Especie
+    Career: Profesión
+    Soak: Absorción
+    SoakValue: Valor de Absorción
+    Wounds: Heridas
+    WoundThreshold: Umbral de Heridas
+    Strain: Tensión
+    StrainThreshold: Umbral de Tensión
+    Defense: Defensa
+    Threshold: Umbral
+    Current: Actual
+    DefenseMelee: Cuerpo a cuerpo
+    MeleeDefense: Defensa cuerpo a cuerpo
+    DefenseRanged: A distancia
+    RangedDefense: Defensa a distancia
+    TotalXP: PE totales
+    AvailableXP: PE disponibles
+    Characteristic: Característica
+    IsMagicSkill: Es una habilidad mágica
+    Source: Fuente
+    GeneralSkills: Habilidades generales
+    MagicSkills: Habilidades mágicas
+    CombatSkills: Habilidades de combate
+    SocialSkills: Habilidades sociales
+    KnowledgeSkills: Habilidades de conocimiento
+    Category: Categoría
+    Skills: Habilidades
+    Delete: Eliminar
+    Edit: Editar
+    NoCareer: No has seleccionado ninguna profesión - ¡arrastra aquí uno!
+    NoArchetype: No has seleccionado ningún arquetipo - ¡arrastra aquí uno!
+    MarkCareerSkill: Marcar como habilidad profesional
+    UnmarkCareerSkill: Desmarcar como habilidad profesional
+    MarkSuperCharacteristic: Marcar como supercaracterística
+    UnmarkSuperCharacteristic: Desmarcar como supercaracterística
+    Motivations: Motivaciones
+    Strength: Virtud
+    Flaw: Defecto
+    Desire: Deseo
+    Fear: Miedo
+    CharacterIllustration: Ilustración del personaje
+    CharacterDescription: Descripción del personaje
+    Pronouns: Pronombres
+    Age: Edad
+    Height: Altura
+    Build: Complexión
+    Hair: Pelo
+    Eyes: Ojos
+    NotableFeatures: Rasgos destacados
+    Notes: Notas
+    XPJournal: Diario de PE
+    Tier: Nivel
+    Activation: Activación
+    Rank: Rango
+    Ranked: Con rangos
+    Active: Activa
+    Passive: Pasiva
+    Yes: Si
+    No: No
+    Talents: Talentos
+    SpecialAbilities: Capacidades especiales
+    TierCount: Nivel {tier}
+    DeletedItemData: 'ERR: Objeto eliminado {name}'
+    Add: Añadir
+    Encumbrance: Impedimento
+    Price: Precio
+    Rarity: Rareza
+    Damage: Daño
+    DamageCharacteristic: Daño por característica
+    Critical: Crítico
+    Range: Rango
+    Quantity: Cantidad
+    EncumbranceThreshold: Umbral de Impedimento
+    Encumbered: ¡Sobrecargado!
+    RankUp: Incrementar rango
+    RankDown: Rebajar rango
+    FreeRankUp: Incrementar rango (gratis)
+    FreeRankDown: Rebajar rango (gratis)
+    IsRated: ¿Tiene grado?
+    Qualities: Propiedades
+    Severity: Gravedad
+    Attacks: Ataques
+    Armor: Armadura
+    CriticalInjuries: Heridas críticas
+    CriticalHits: Daños críticos
+    Injury: Herida
+    Hit: Daño
+    Skill: Habilidad
+    Crit: Crítico
+    Special: Especial
+    GroupSize: Tamaño del grupo
+    SkillNotFound: Habilidad no encontrada
+    IsInitiative: ¿Habilidad de iniciativa?
+    Equipped: Equipado
+    Carried: Transportado
+    Dropped: En el suelo
+    NotApplicable: N/A
+    EffectiveTier: Nivel efectivo
+    Silhouette: Silueta
+    Speed: Velocidad
+    Handling: Manejo
+    HullTrauma: Daños en el casco
+    HullTraumaThreshold: Umbral de Daños en el casco
+    SystemStrain: Tensión de sistemas
+    SystemStrainThreshold: Umbral de Tensión de sistemas
+    Illustration: Ilustración
+    Complement: Complemento
+    Consumables: Consumibles
+    PassengerCapacity: Capacidad de pasajeros
+    EncumbranceCapacity: Capacidad de Impedimento
+    Information: Información
+    Passengers: Pasajeros
+    Role: Puesto
+    Roles: Puestos
+    OverCapacity: ¡Sobrecapacidad!
+    RoleSkills: Habilidades de puesto
+    FiringArc: Sector de tiro
+    Select: Seleccionar
+    PerformCheck: Realizar tirada
