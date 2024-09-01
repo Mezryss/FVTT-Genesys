@@ -1,12 +1,18 @@
+## Alpha 0.2.11
+
+### Features / Enhancements
+- [PR #177](https://github.com/Mezryss/FVTT-Genesys/pull/177): FEATURE - Full combatibility with FVTTv12
+- [PR #155](https://github.com/Mezryss/FVTT-Genesys/pull/155): FEATURE - Spanish translations thanks to @Alejabar
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.10
 
 ### Features / Enhancements
 - [PR #151](https://github.com/Mezryss/FVTT-Genesys/pull/151): FEATURE - Confirm inventory deletion upon certain circumstances
 - [PR #152](https://github.com/Mezryss/FVTT-Genesys/pull/152): FEATURE - Adds support for effects that cause pool modifications (Read the PR for more details)
 - [PR #153](https://github.com/Mezryss/FVTT-Genesys/pull/153): FEATURE - Enhance text enrichers
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.9
 
