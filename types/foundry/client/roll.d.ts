@@ -118,6 +118,7 @@ declare global {
 		evaluate({ minimize, maximize, async }: EvaluateRollParams & { async?: false }): Rolled<this>;
 		evaluate({ minimize, maximize, async }: EvaluateRollParams & { async: true }): Promise<Rolled<this>>;
 		evaluate({ minimize, maximize, async }: EvaluateRollParams): Rolled<this> | Promise<Rolled<this>>;
+		evaluate(options?: EvaluateRollParams): Promise<Rolled<this>>;
 
 		/**
 		 * Evaluate the roll asynchronously.

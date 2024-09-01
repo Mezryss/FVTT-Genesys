@@ -34,17 +34,17 @@ export const CharacterCreationItemTypes = ['ability', 'archetype', 'career', 'sk
 export const EquipmentItemTypes = ['armor', 'consumable', 'container', 'gear', 'quality', 'weapon', 'vehicleWeapon'];
 
 function registerDataModels() {
-	CONFIG.Item.systemDataModels.ability = AbilityDataModel;
-	CONFIG.Item.systemDataModels.archetype = ArchetypeDataModel;
-	CONFIG.Item.systemDataModels.armor = ArmorDataModel;
-	CONFIG.Item.systemDataModels.career = CareerDataModel;
-	CONFIG.Item.systemDataModels.consumable = EquipmentDataModel;
-	CONFIG.Item.systemDataModels.container = ContainerDataModel;
-	CONFIG.Item.systemDataModels.injury = InjuryDataModel;
-	CONFIG.Item.systemDataModels.gear = EquipmentDataModel;
-	CONFIG.Item.systemDataModels.skill = SkillDataModel;
-	CONFIG.Item.systemDataModels.talent = TalentDataModel;
-	CONFIG.Item.systemDataModels.quality = ItemQualityDataModel;
-	CONFIG.Item.systemDataModels.weapon = WeaponDataModel;
-	CONFIG.Item.systemDataModels.vehicleWeapon = VehicleWeaponDataModel;
+	CONFIG.Item.dataModels.ability = AbilityDataModel;
+	CONFIG.Item.dataModels.archetype = ArchetypeDataModel;
+	CONFIG.Item.dataModels.armor = ArmorDataModel;
+	CONFIG.Item.dataModels.career = CareerDataModel;
+	CONFIG.Item.dataModels.consumable = EquipmentDataModel;
+	CONFIG.Item.dataModels.container = ContainerDataModel;
+	CONFIG.Item.dataModels.injury = InjuryDataModel;
+	CONFIG.Item.dataModels.gear = EquipmentDataModel;
+	CONFIG.Item.dataModels.skill = SkillDataModel;
+	CONFIG.Item.dataModels.talent = TalentDataModel;
+	CONFIG.Item.dataModels.quality = ItemQualityDataModel;
+	CONFIG.Item.dataModels.weapon = WeaponDataModel;
+	CONFIG.Item.dataModels.vehicleWeapon = VehicleWeaponDataModel;
 }

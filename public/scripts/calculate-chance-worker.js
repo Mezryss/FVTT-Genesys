@@ -537,10 +537,10 @@ async function calculateChanceForDicePool({ dicePool, extraSymbols, criteriaType
 	const requestKey = `${dicePoolAsString}|${extraSymbolsAsString}|${chosenCriteria}`;
 
 	if (cacheForPool[requestKey]) {
-		return cacheForPool[requestKey];
+		return [cacheForPool[requestKey]];
 	}
 
 	const chanceResult = calculateChanceOf(processedDicePool, processedExtraSymbols, Criteria[chosenCriteria]);
 	cacheForPool[requestKey] = chanceResult;
-	return chanceResult;
+	return [chanceResult];
 }

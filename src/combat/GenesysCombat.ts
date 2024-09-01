@@ -167,7 +167,7 @@ export default class GenesysCombat extends Combat {
 				roll = combatant.getInitiativeRoll(skillName, charFallback);
 			}
 
-			await roll.evaluate({ async: true });
+			await roll.evaluate();
 			const results = GenesysRoller.parseRollResults(roll);
 			const newInitiative = results.netSuccess + results.netAdvantage / 100;
 
@@ -197,7 +197,7 @@ export default class GenesysCombat extends Combat {
 				content: html,
 				type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 				sound: i > 0 ? null : CONFIG.sounds.dice,
-				roll,
+				rolls: [roll],
 			};
 
 			messages.push(chatData);

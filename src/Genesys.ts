@@ -213,7 +213,7 @@ Hooks.on('renderCompendiumDirectory', (_sidebar: SidebarTab, _html: JQuery<HTMLE
 			COMPENDIUM_PATCHING.PATCHED.add(pack.metadata.id);
 			if (COMPENDIUM_PATCHING.TYPES.includes(pack.metadata.type)) {
 				pack.apps.shift();
-				pack.apps.push(new GenesysCompendium(pack));
+				pack.apps.push(new GenesysCompendium({ collection: pack }));
 			}
 		}
 	}
