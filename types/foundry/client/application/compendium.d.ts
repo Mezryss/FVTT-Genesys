@@ -1,6 +1,7 @@
 /** An interface for displaying the content of a CompendiumCollection. */
 declare class Compendium<TDocument extends CompendiumDocument = CompendiumDocument> extends Application {
 	constructor(collection: CompendiumCollection<TDocument>, options?: ApplicationOptions);
+	constructor(options?: { collection?: CompendiumCollection<TDocument> });
 
 	/** The CompendiumCollection instance which is represented in this Compendium interface. */
 	collection: CompendiumCollection<TDocument>;

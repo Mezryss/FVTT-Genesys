@@ -1,27 +1,28 @@
-ACTOR:
-  TypeCharacter: Character
-  TypeMinion: Minion
-  TypeRival: Rival
-  TypeNemesis: Nemesis
-  TypeVehicle: Vehicle
+TYPES:
+  Actor:
+    character: Character
+    minion: Minion
+    rival: Rival
+    nemesis: Nemesis
+    vehicle: Vehicle
 
-ITEM:
-  # Character Creation Items
-  TypeAbility: Special Ability
-  TypeArchetype: Archetype
-  TypeCareer: Career
-  TypeInjury: Critical Injury/Hit
-  TypeSkill: Skill
-  TypeTalent: Talent
+  Item:
+    # Character Creation Items
+    ability: Special Ability
+    archetype: Archetype
+    career: Career
+    injury: Critical Injury/Hit
+    skill: Skill
+    talent: Talent
 
-  # Equipment Items
-  TypeArmor: Armor
-  TypeConsumable: Consumable
-  TypeContainer: Container
-  TypeGear: Gear
-  TypeQuality: Item Quality
-  TypeWeapon: Weapon
-  TypeVehicleweapon: Vehicle Weapon
+    # Equipment Items
+    armor: Armor
+    consumable: Consumable
+    container: Container
+    gear: Gear
+    quality: Item Quality
+    weapon: Weapon
+    vehicleWeapon: Vehicle Weapon
 
 # Genesys
 Genesys:

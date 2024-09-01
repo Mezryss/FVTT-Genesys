@@ -55,7 +55,7 @@ async function deleteEffect(effect: GenesysEffect) {
 			<section class="effects-category">
 				<div v-for="effect in effects.filter(filter)" :key="effect.id" class="effect">
 					<img :src="effect.icon" :alt="effect.name" />
-					<div class="name">{{ effect.label }}</div>
+					<div class="name">{{ effect.name }}</div>
 					<div class="source">{{ effect.sourceName }}</div>
 					<div class="duration">{{ effect.duration.label }}</div>
 					<div v-if="rootContext.data.editable" class="buttons">

@@ -184,7 +184,7 @@ function calculatePoolModificationsForSkill() {
 
 					if (relevantChanges.length > 0) {
 						modifications.push({
-							name: effect.name ?? effect.label,
+							name: effect.name,
 							enabled: CONFIG.genesys.settings.autoApplyPoolModifications,
 							mods: relevantChanges.sort(sortPoolModifications),
 						});
@@ -329,18 +329,20 @@ async function approximateProbability() {
 		}
 
 		const rawDicePool = toRaw(dicePool);
-		chanceToSucceed = (await worker.executeFunction('calculateChanceForDicePool', {
-			dicePool: rawDicePool.dice,
-			extraSymbols: rawDicePool.symbols,
-			criteriaType: 'SUCCESS',
-		})) as number;
+		chanceToSucceed = (await worker.executeFunction('calculateChanceForDicePool', [
+			{
+				dicePool: rawDicePool.dice,
+				extraSymbols: rawDicePool.symbols,
+				criteriaType: 'SUCCESS',
+			},
+		])) as number;
 	} else {
 		const formula = compileDiceFormula();
 		const symbols = { symbols: compileSymbolsData() };
 		const simulation = await Promise.all(
 			[...Array(CHANCE_TO_SUCCEED_BY_SIMULATION_NUM_ROLLS)].map(async () => {
 				const roll = new Roll(formula, symbols);
-				const result = await roll.evaluate({ async: true });
+				const result = await roll.evaluate();
 				return GenesysRoller.parseRollResults(result);
 			}),
 		);

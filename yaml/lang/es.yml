@@ -1,27 +1,28 @@
-ACTOR:
-  TypeCharacter: Personaje
-  TypeMinion: Esbirro
-  TypeRival: Rival
-  TypeNemesis: Antagonista
-  TypeVehicle: Vehículo
+TYPES:
+  Actor:
+    character: Personaje
+    minion: Esbirro
+    rival: Rival
+    nemesis: Antagonista
+    vehicle: Vehículo
 
-ITEM:
-  # Character Creation Items
-  TypeAbility: Capacidad Especial
-  TypeArchetype: Arquetipo
-  TypeCareer: Profesión
-  TypeInjury: Daño/herida crítico/a
-  TypeSkill: Habilidad
-  TypeTalent: Talento
+  Item:
+    # Character Creation Items
+    ability: Capacidad Especial
+    archetype: Arquetipo
+    career: Profesión
+    injury: Daño/herida crítico/a
+    skill: Habilidad
+    talent: Talento
 
-  # Equipment Items
-  TypeArmor: Armadura
-  TypeConsumable: Consumible
-  TypeContainer: Contenedor
-  TypeGear: Equipo
-  TypeQuality: Propiedad
-  TypeWeapon: Arma
-  TypeVehicleweapon: Arma de vehículo
+    # Equipment Items
+    armor: Armadura
+    consumable: Consumible
+    container: Contenedor
+    gear: Equipo
+    quality: Propiedad
+    weapon: Arma
+    vehicleWeapon: Arma de vehículo
 
 # Genesys
 Genesys:
@@ -49,7 +50,7 @@ Genesys:
     SkillForInjuriesHint: Nombre de la habilidad utilizada al recuperarse de Heridas críticas.
     SkillForRepairingVehicleHits: Nombre de la habilidad Mecánica
     SkillForRepairingVehicleHitsHint: Nombre de la habilidad utilizada al recuperarse de Daños críticos.
-    UseMagicalGirlSymbols:Utiliza los símbolos de Magical Girl de MilkMyth (sólo para este usuario)
+    UseMagicalGirlSymbols: Utiliza los símbolos de Magical Girl de MilkMyth (sólo para este usuario)
     UseMagicalGirlSymbolsHint: Cambia el juego de símbolos Genesys por el juego de símbolos Magical Girls de MilkMyth. Esto no afectará a otros usuarios.
     DicePoolCollapseModifications: Colapsar la sección de modificaciones de la reserva
     DicePoolCollapseModificationsHint: Si está activada, la sección "modificaciones de la reserva" de la ventana de dados se colapsará durante la renderización inicial.
@@ -199,7 +200,7 @@ Genesys:
     Starting: <strong>PE iniciales del arquetipo</strong>
     Characteristic: Mejorar <strong>{characteristic}</strong> a {rank}.
     Skill: Entrenar <strong>{name}</strong> a {rank}.
-    NewTalent: Talento adquirido: <strong>{name}</strong> (nivel {tier}).
+    NewTalent: 'Talento adquirido: <strong>{name}</strong> (nivel {tier}).'
     TalentRank: Mejorar <strong>{name}</strong> a rango {rank} (nivel efectivo {tier}).
 
   # Notification Prompts

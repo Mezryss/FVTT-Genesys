@@ -25,7 +25,7 @@ async function cloneInventoryItemForAnotherActor(sourceItem: GenesysItem<Equipme
 			for (let k = 0; k < sourceActorEffects.length; k++) {
 				const sourceEffect = sourceActorEffects[k];
 				await targetActorEffects[k].update({
-					label: sourceEffect.label,
+					name: sourceEffect.name,
 					icon: sourceEffect.icon,
 					changes: sourceEffect.changes,
 				});

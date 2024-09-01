@@ -3,9 +3,9 @@ title: Genesys
 description: (ALPHA) Unofficial implementation of EDGE Studio's Genesys RPG System.
 version: 0.2.10
 compatibility:
-  minimum: 10
-  verified: 11
-  maximum: 11
+  minimum: 11
+  verified: 12
+  maximum: 12
 templateVersion: 1
 authors:
   - name: Mezryss
@@ -22,6 +22,9 @@ languages:
   - lang: fr
     name: Français
     path: lang/fr.json
+  - lang: es
+    name: Español
+    path: lang/es.json
 packs:
   - name: crb-skills
     label: Core Skills

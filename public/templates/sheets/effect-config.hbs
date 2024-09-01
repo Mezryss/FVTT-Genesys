@@ -1,7 +1,7 @@
 <form class="genesys effect-sheet" autocomplete="off">
 	<header class="{{#if (eq hasDecoration true)}}with-decoration{{/if}}">
 		<img src="{{ data.icon }}" data-edit="icon" title="{{ label }}" />
-		<input type="text" name="label" value="{{ data.label }}" placeholder="{{ localize 'Genesys.Labels.Name' }}" />
+		<input type="text" name="name" value="{{ data.name }}" placeholder="{{ localize 'Genesys.Labels.Name' }}" />
 		{{#if (eq hasDecoration true)}}
 			{{>decoration}}
 		{{/if}}

@@ -24,9 +24,9 @@ export function register() {
 export const AdversaryTypes = ['minion', 'nemesis', 'rival'];
 
 function registerDataModels() {
-	CONFIG.Actor.systemDataModels.character = CharacterDataModel;
-	CONFIG.Actor.systemDataModels.minion = MinionDataModel;
-	CONFIG.Actor.systemDataModels.rival = RivalDataModel;
-	CONFIG.Actor.systemDataModels.nemesis = NemesisDataModel;
-	CONFIG.Actor.systemDataModels.vehicle = VehicleDataModel;
+	CONFIG.Actor.dataModels.character = CharacterDataModel;
+	CONFIG.Actor.dataModels.minion = MinionDataModel;
+	CONFIG.Actor.dataModels.rival = RivalDataModel;
+	CONFIG.Actor.dataModels.nemesis = NemesisDataModel;
+	CONFIG.Actor.dataModels.vehicle = VehicleDataModel;
 }

@@ -78,7 +78,7 @@ export type GenesysRollResults = {
 export default class GenesysRoller {
 	static async skillRoll({ actor, characteristic, skillId, formula, symbols }: { actor?: GenesysActor; characteristic?: Characteristic; skillId: string; formula: string; symbols: Record<string, number> }) {
 		const roll = new Roll(formula, { symbols });
-		await roll.evaluate({ async: true });
+		await roll.evaluate();
 		const results = this.parseRollResults(roll);
 
 		let description: string | undefined = undefined;
@@ -115,7 +115,7 @@ export default class GenesysRoller {
 			speaker: { actor: actor?.id },
 			content: html,
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-			roll,
+			rolls: [roll],
 		};
 		await ChatMessage.create(chatData);
 	}
@@ -136,7 +136,7 @@ export default class GenesysRoller {
 		weapon: GenesysItem<WeaponDataModel | VehicleWeaponDataModel>;
 	}) {
 		const roll = new Roll(formula, { symbols });
-		await roll.evaluate({ async: true });
+		await roll.evaluate();
 		const results = this.parseRollResults(roll);
 
 		let description: string | undefined = undefined;
@@ -201,7 +201,7 @@ export default class GenesysRoller {
 			rollMode: game.settings.get('core', 'rollMode'),
 			content: html,
 			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-			roll,
+			rolls: [roll],
 		};
 		await ChatMessage.create(chatData);
 	}

@@ -1,27 +1,28 @@
-ACTOR:
-  TypeCharacter: Personnage
-  TypeMinion: Sbire
-  TypeRival: Rival
-  TypeNemesis: Némésis
-  TypeVehicle : Vehicule
+TYPES:
+  Actor:
+    character: Personnage
+    minion: Sbire
+    rival: Rival
+    nemesis: Némésis
+    vehicle : Vehicule
 
-ITEM:
-  # Character Creation Items
-  TypeAbility: Aptitude Speciale
-  TypeArchetype: Archétype
-  TypeCareer: Carrière
-  TypeInjury: Bléssure Critique
-  TypeSkill: Compétence
-  TypeTalent: Talent
+  Item:
+    # Character Creation Items
+    ability: Aptitude Speciale
+    archetype: Archétype
+    career: Carrière
+    injury: Bléssure Critique
+    skill: Compétence
+    talent: Talent
 
-  # Equipment Items
-  TypeArmor: Armure
-  TypeConsumable: Consommable
-  TypeContainer: Conteneur
-  TypeGear: Equipement
-  TypeQuality: Attribut d'item
-  TypeWeapon: Arme
-  TypeVehicleweapon: Arme sur véhicule
+    # Equipment Items
+    armor: Armure
+    consumable: Consommable
+    container: Conteneur
+    gear: Equipement
+    quality: Attribut d'item
+    weapon: Arme
+    vehicleWeapon: Arme sur véhicule
 
 # Genesys
 Genesys:
