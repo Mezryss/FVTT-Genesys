@@ -1,11 +1,18 @@
+## Alpha 0.2.12
+
+### Features / Enhancements
+- [PR #179](https://github.com/Mezryss/FVTT-Genesys/pull/179): FEATURE - More options to modify dice pools with active effects
+- [PR #180](https://github.com/Mezryss/FVTT-Genesys/pull/180): BUGFIX - Properly calculate the skill ranks for minions on a vehicle's Skills tab
+- [PR #181](https://github.com/Mezryss/FVTT-Genesys/pull/181): ENHANCEMENT - GMs can spend player's story points 
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.11
 
 ### Features / Enhancements
 - [PR #177](https://github.com/Mezryss/FVTT-Genesys/pull/177): FEATURE - Full combatibility with FVTTv12
-- [PR #155](https://github.com/Mezryss/FVTT-Genesys/pull/155): FEATURE - Spanish translations thanks to @Alejabar
-
-<details>
-<summary>Previous Releases</summary>
+- [PR #155](https://github.com/Mezryss/FVTT-Genesys/pull/155): FEATURE - Spanish translations thanks to Alejabar
 
 ## Alpha 0.2.10
 

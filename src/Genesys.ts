@@ -51,8 +51,9 @@ async function doAlphaNotice(lastAlpha: string) {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/177">PR #177</a>: FEATURE - Full combatibility with FVTTv12</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/155">PR #155</a>: FEATURE - Spanish translations thanks to <a href="https://github.com/Alejabar">@Alejabar</a></li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/179">PR #179</a>: FEATURE - More options to modify dice pools with active effects</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/180">PR #180</a>: BUGFIX - Properly calculate the skill ranks for minions on a vehicle's Skills tab</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/181">PR #181</a>: ENHANCEMENT - GMs can spend player's story points</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
