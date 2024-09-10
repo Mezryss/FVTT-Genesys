@@ -7,6 +7,7 @@ import GenesysItem from '@/item/GenesysItem';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import AdversaryDataModel from '@/actor/data/AdversaryDataModel';
+import MinionDataModel from '@/actor/data/MinionDataModel';
 
 import DicePrompt from '@/app/DicePrompt';
 import Localized from '@/vue/components/Localized.vue';
@@ -42,7 +43,7 @@ const groupedByMember = ref<Map<string, GroupedByMemberData>>(new Map());
 const groupedBySkill = ref<Map<string, GroupedBySkillData>>(new Map());
 
 watch(
-	[context.sheet, groupingMode],
+	[toRaw(context.data), groupingMode],
 	async () => {
 		const actorData = toRaw(context.data.actor).systemData;
 		const allActorSkills = new Map<string, GroupedByMemberData>();
@@ -172,7 +173,10 @@ async function openActorSheet(actor: GenesysActor) {
 								</a>
 
 								<span class="skill-rank">{{ skill.systemData.rank }}</span>
-								<SkillRanks :skill-value="skill.systemData.rank" :characteristic-value="(details.actor.systemData as NonVehicleDataModel).characteristics[skill.systemData.characteristic]" />
+								<SkillRanks
+									:skill-value="details.actor.type === 'minion' ? Math.max(0, (details.actor.systemData as MinionDataModel).remainingMembers - 1) : skill.systemData.rank"
+									:characteristic-value="(details.actor.systemData as NonVehicleDataModel).characteristics[skill.systemData.characteristic]"
+								/>
 							</div>
 						</div>
 					</div>
@@ -200,7 +204,7 @@ async function openActorSheet(actor: GenesysActor) {
 							<div class="skill-content-details-skillRank">{{ actorRoleSkill.skill.systemData.rank }}</div>
 							<a @click="rollSkillForActor(actorRoleSkill.actor as GenesysActor<NonVehicleDataModel>, actorRoleSkill.skill as GenesysItem<SkillDataModel>)">
 								<SkillRanks
-									:skill-value="actorRoleSkill.skill.systemData.rank"
+									:skill-value="actorRoleSkill.actor.type === 'minion' ? Math.max(0, (actorRoleSkill.actor.systemData as MinionDataModel).remainingMembers - 1) : actorRoleSkill.skill.systemData.rank"
 									:characteristic-value="(actorRoleSkill.actor.systemData as NonVehicleDataModel).characteristics[actorRoleSkill.skill.systemData.characteristic]"
 								/>
 							</a>

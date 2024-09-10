@@ -451,7 +451,7 @@ export function register() {
 			VehicleDataModel._GAME_VEHICLES.delete(targetActor as GenesysActor<VehicleDataModel>);
 		} else {
 			// Whenever a non-vehicle actor is deleted let the primary GM remove it from all the vehicles in the world.
-			const isGmHub = game.users.activeGM?.isSelf ?? (game.user.isGM && game.users.filter((user) => user.isGM && user.active).every((candidate) => candidate.id >= game.user.id));
+			const isGmHub = game.users.activeGM?.isSelf;
 			if (isGmHub) {
 				const genesysActorUuid = targetActor.uuid;
 				for (const vehicle of VehicleDataModel._GAME_VEHICLES) {
