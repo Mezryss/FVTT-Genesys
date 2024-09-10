@@ -103,15 +103,15 @@ export default class StoryPointTracker extends VueSheet(Application) {
 	/**
 	 * Spends a Story Point for the current user.
 	 */
-	static async spendStoryPoint() {
+	static async spendStoryPoint(targetPool: keyof StoryPointTrackerContext) {
 		if (!StoryPointTracker.instance) {
 			return;
 		}
 
 		const storyPoints = StoryPointTracker.instance.storyPoints;
 
-		if ((game.user.isGM && storyPoints.gm === 0) || (!game.user.isGM && storyPoints.player === 0)) {
-			ui.notifications.info(game.i18n.localize('Genesys.Notifications.NotEnoughStoryPoints'));
+		if ((targetPool === 'gmPool' && storyPoints.gm === 0) || (targetPool === 'playerPool' && storyPoints.player === 0)) {
+			ui.notifications.warn(game.i18n.localize('Genesys.Notifications.NotEnoughStoryPoints'));
 			return;
 		}
 
@@ -119,8 +119,8 @@ export default class StoryPointTracker extends VueSheet(Application) {
 		if (game.user.isGM) {
 			// 1. Update setting.
 			await game.settings.set(SETTINGS_NAMESPACE, KEY_STORY_POINTS, {
-				player: storyPoints.player + 1,
-				gm: storyPoints.gm - 1,
+				player: storyPoints.player + (targetPool === 'playerPool' ? -1 : 1),
+				gm: storyPoints.gm + (targetPool === 'gmPool' ? -1 : 1),
 			});
 
 			// 2. Force local re-render
@@ -128,13 +128,16 @@ export default class StoryPointTracker extends VueSheet(Application) {
 
 			// 3. Force players to re-render.
 			socketEmit(SocketOperation.UpdateStoryPointTracker);
-		} else {
+		} else if (targetPool === 'playerPool') {
 			// Update other clients on story point spend.
 			socketEmit(SocketOperation.PlayerSpendStoryPoint);
+		} else {
+			ui.notifications.error(game.i18n.localize('Genesys.Notifications.GenericError'));
+			return;
 		}
 
 		// Add chat message
-		const chatTemplate = await renderTemplate('systems/genesys/templates/chat/storypoint.hbs', { type: game.user.isGM ? 'gm' : 'player' });
+		const chatTemplate = await renderTemplate('systems/genesys/templates/chat/storypoint.hbs', { type: targetPool === 'gmPool' ? 'gm' : 'player' });
 		await ChatMessage.create({
 			user: game.user.id,
 			speaker: {

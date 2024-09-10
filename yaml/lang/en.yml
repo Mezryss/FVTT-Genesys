@@ -212,6 +212,7 @@ Genesys:
 
   # Notification Prompts
   Notifications:
+    GenericError: Unable to perform the desired action.
     AlreadyHaveSpecialAbility: Unable to add {abilityName}; Special Abilities are not ranked, and you already have it!
     TalentNotRanked: Unable to add {talentName}; It is not a ranked talent, and you already have it!
     NoSkillsCompendium: Skills compendium setting is empty! Attempting to use default skills compendium.
@@ -263,7 +264,8 @@ Genesys:
     GM: GM Story Points
     Reset: Reset Story Points
     Spend: Spend Point
-    ChatMessage: Spending a Story Point!
+    ChatMessageGmPool: Spending a GM Story Point!
+    ChatMessagePlayerPool: Spending a Player Story Point!
 
   # Localized strings used in TextEditor enrichers.
   Enrichers:

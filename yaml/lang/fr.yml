@@ -212,6 +212,7 @@ Genesys:
 
   # Notification Prompts
   Notifications:
+    GenericError: Unable to perform the desired action.
     AlreadyHaveSpecialAbility: "Impossible d'ajouter {abilityName} ; les aptitudes spéciales n'ont pas de rang, et vous l'avez déjà !"
     TalentNotRanked: "Impossible d'ajouter {talentName} : c'est un talent sans rang, et vous le possédez déjà !"
     NoSkillsCompendium: Le paramètre du compendium de compétences est vide ! Tentative d'utilisation du recueil de compétences par défaut.
@@ -262,7 +263,8 @@ Genesys:
     GM: Points Narratifs du MJ
     Reset: Réinitialise les Points Narratifs
     Spend: Dépense de point
-    ChatMessage: Dépense un point Narratif!
+    ChatMessageGmPool: Dépense un point Narratif!
+    ChatMessagePlayerPool: Dépense un point Narratif!
 
   # Localized strings used in TextEditor enrichers.
   Enrichers:

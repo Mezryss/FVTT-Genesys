@@ -212,6 +212,7 @@ Genesys:
 
   # Notification Prompts
   Notifications:
+    GenericError: Unable to perform the desired action.
     AlreadyHaveSpecialAbility: No puedes añadir {abilityName}; las capacidades especiales no tienen rangos, ¡y ya la tienes!
     TalentNotRanked: No puedes añadir {talentName}; no es un talento con rangos, ¡y ya la tienes!
     NoSkillsCompendium: La configuración del compendio de habilidades está vacía. Intentando usar el compendio de habilidades por defecto.
@@ -263,7 +264,8 @@ Genesys:
     GM: Puntos de Historia del DJ
     Reset: Reiniciar puntos de Historia
     Spend: Gastar Puntos
-    ChatMessage: ¡Punto de Historia gastado!
+    ChatMessageGmPool: ¡Punto de Historia gastado!
+    ChatMessagePlayerPool: ¡Punto de Historia gastado!
 
   # Localized strings used in TextEditor enrichers.
   Enrichers:
