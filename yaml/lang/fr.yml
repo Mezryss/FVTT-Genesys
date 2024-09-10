@@ -148,6 +148,9 @@ Genesys:
     Suppressed: Effets Désactivés
     Source: Source
     Duration: Durée
+    ChangeKey: Effect Target
+    ChangeMode: Option
+    ChangeValue: Effect Value
     Types:
       ModifyCharacteristic: Caractérisitique à Modifier
       ModifyStat: Statistique à Modifier
@@ -155,7 +158,9 @@ Genesys:
       ModifyDicePool:
         GroupLabel: Réserve de Dés à Modifier
         Options:
-          Skill: Skill Dice Pool
+          Check: Any Check
+          Characteristic: Uses Characteristic
+          Skill: Uses Skill
 
   # Dice Prompt Labels
   DicePrompt:
@@ -167,6 +172,8 @@ Genesys:
       Title: Pool Modifications
       DefaultDifficulty: Default Difficulty
       ManualChanges: Manual Changes
+      SelfEffects: 'From Self: '
+      TargetEffects: 'From Target: '
     ChanceToSucceed: 'Chance de réussite:'
     ChanceToSucceedByPermutationDisclaimer: "Affiche la probabilité exacte à moins qu'un dé dans le pool soit une super-caractéristique."
     ChanceToSucceedBySimulationDisclaimer: La probabilité affiché est une approximation caculé à partir de la méthode de Monte Carlo.

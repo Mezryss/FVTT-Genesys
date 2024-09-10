@@ -45,6 +45,7 @@ type DicePoolModifications = {
 	}>;
 };
 
+const VALID_ACTOR_TARGET_TYPES = ['character', 'minion', 'rival', 'nemesis'];
 const SORT_ORDER: Record<SimplePoolEntity, number> = {
 	Proficiency: 0,
 	Ability: 1,
@@ -165,35 +166,67 @@ function applyDicePoolModifications(dicePool: DicePool, modifierTokens: string[]
 	}
 }
 
+function aggregatePoolModifications(effects: foundry.abstract.EmbeddedCollection<ActiveEffect>, changeKeys: string[], namePrefix: string) {
+	return effects.reduce<DicePoolModifications['effects']>((modifications, effect) => {
+		if (!effect.isSuppressed) {
+			// Find all the changes inside this effect related to the passed criteria.
+			const relevantChanges = effect.changes.reduce((accum, change) => {
+				if (changeKeys.includes(change.key)) {
+					accum.push(...(change.value.match(PoolModGlyphPattern)?.sort(sortPoolModifications) ?? []));
+				}
+				return accum;
+			}, [] as string[]);
+
+			if (relevantChanges.length > 0) {
+				modifications.push({
+					name: namePrefix + effect.name,
+					enabled: CONFIG.genesys.settings.autoApplyPoolModifications,
+					mods: relevantChanges.sort(sortPoolModifications),
+				});
+			}
+		}
+		return modifications;
+	}, []);
+}
+
 function calculatePoolModificationsForSkill() {
 	const actor = toRaw(context.actor);
 	let relevantModifications: DicePoolModifications['effects'] = [];
 
-	if (actor && selectedSkill.value) {
-		const targetChangeKey = `${GenesysEffect.DICE_POOL_MOD_SKILL_PREFIX}.${selectedSkill.value.name}`;
-		relevantModifications = actor.effects.reduce(
-			(modifications, effect) => {
-				if (!effect.isSuppressed) {
-					// Find all the changes inside this effect that apply to the selected skill.
-					const relevantChanges = effect.changes.reduce((accum, change) => {
-						if (change.key === targetChangeKey) {
-							accum.push(...(change.value.match(PoolModGlyphPattern)?.sort(sortPoolModifications) ?? []));
-						}
-						return accum;
-					}, [] as string[]);
+	if (actor) {
+		const selfChangeKeys = [`${GenesysEffect.DICE_POOL_MOD_KEY_PREFIX}${GenesysEffect.DICE_POOL_MOD_CHECK_TYPE}${GenesysEffect.DICE_POOL_MOD_SELF_SOURCE}.`];
+		const targetChangeKeys = [`${GenesysEffect.DICE_POOL_MOD_KEY_PREFIX}${GenesysEffect.DICE_POOL_MOD_CHECK_TYPE}${GenesysEffect.DICE_POOL_MOD_TARGET_SOURCE}.`];
 
-					if (relevantChanges.length > 0) {
-						modifications.push({
-							name: effect.name,
-							enabled: CONFIG.genesys.settings.autoApplyPoolModifications,
-							mods: relevantChanges.sort(sortPoolModifications),
-						});
-					}
+		if (selectedCharacteristic.value) {
+			const charPoolModKey = `${GenesysEffect.DICE_POOL_MOD_KEY_PREFIX}${GenesysEffect.DICE_POOL_MOD_CHAR_TYPE}`;
+			selfChangeKeys.push(`${charPoolModKey}${GenesysEffect.DICE_POOL_MOD_SELF_SOURCE}.${selectedCharacteristic.value}`);
+			targetChangeKeys.push(`${charPoolModKey}${GenesysEffect.DICE_POOL_MOD_TARGET_SOURCE}.${selectedCharacteristic.value}`);
+		}
+		if (selectedSkill.value) {
+			const skillPoolModKey = `${GenesysEffect.DICE_POOL_MOD_KEY_PREFIX}${GenesysEffect.DICE_POOL_MOD_SKILL_TYPE}`;
+			selfChangeKeys.push(`${skillPoolModKey}${GenesysEffect.DICE_POOL_MOD_SELF_SOURCE}.${selectedSkill.value.name}`);
+			targetChangeKeys.push(`${skillPoolModKey}${GenesysEffect.DICE_POOL_MOD_TARGET_SOURCE}.${selectedSkill.value.name}`);
+		}
+
+		relevantModifications.push(...aggregatePoolModifications(actor.effects, selfChangeKeys, game.i18n.localize('Genesys.DicePrompt.PoolModifications.SelfEffects')));
+
+		if (game.user.targets.size === 1) {
+			const [chosenTarget] = game.user.targets;
+			if (VALID_ACTOR_TARGET_TYPES.includes(chosenTarget.actor?.type ?? '')) {
+				relevantModifications.push(
+					...aggregatePoolModifications((chosenTarget.actor?.effects ?? []) as foundry.abstract.EmbeddedCollection<ActiveEffect>, targetChangeKeys, game.i18n.localize('Genesys.DicePrompt.PoolModifications.TargetEffects')),
+				);
+
+				if (context.rollType === RollType.Attack) {
+					const defenseType = (context.rollData as AttackRollData).weapon.systemData.range === 'engaged' ? 'melee' : 'ranged';
+					relevantModifications.push({
+						name: game.i18n.localize('Genesys.DicePrompt.PoolModifications.TargetEffects') + game.i18n.localize(`Genesys.Labels.${defenseType.capitalize()}Defense`),
+						enabled: CONFIG.genesys.settings.autoApplyPoolModifications,
+						mods: Array((chosenTarget.actor as GenesysActor<NonVehicleActorDataModel>).systemData.defense[defenseType]).fill(GenesysDice.Setback.GLYPH),
+					});
 				}
-				return modifications;
-			},
-			[] as DicePoolModifications['effects'],
-		);
+			}
+		}
 	}
 
 	poolModifications.value.effects = relevantModifications;
@@ -693,7 +726,7 @@ async function rollPool() {
 
 		& > div {
 			display: grid;
-			grid-template-columns: 1fr 2fr;
+			grid-template-columns: 2fr 1.2fr;
 			border-bottom: 1px dotted black;
 			min-height: 1.2rem;
 

@@ -7,18 +7,16 @@
  */
 
 import GenesysEffect from '@/effects/GenesysEffect';
+import { Characteristic } from '@/data/Characteristics';
 import { PoolModGlyphPattern } from '@/dice/types/GenesysPoolModifications';
 import './GenesysEffectSheet.scss';
 
 type EffectChangeExpanded = foundry.data.EffectChangeSource & {
 	skill?: string;
+	char?: string;
 };
 
 type IncompleteSheetSubmitData = { changes: EffectChangeExpanded[] };
-
-// Pattern to identify an active effect that modifies the dice pool. It's also used to extract the skill that is tied
-// to the modification.
-const dicePoolModForSkillPattern = new RegExp(`(?<=${escapeRegExp(GenesysEffect.DICE_POOL_MOD_SKILL_PREFIX)})\\.`, 'g');
 
 export default class GenesysEffectSheet extends ActiveEffectConfig<GenesysEffect> {
 	static override get defaultOptions() {
@@ -48,15 +46,20 @@ export default class GenesysEffectSheet extends ActiveEffectConfig<GenesysEffect
 		delete data.modes[CONST.ACTIVE_EFFECT_MODES.CUSTOM];
 
 		// Make a copy of all the changes and do additional processing for the ones that deal with dice pool
-		// modifications. The reason to use copies is because we don't want to modify the effect itself by simply
-		// oppening the sheet.
+		// modifications. We use copies because we don't want to modify the effect itself by simply oppening the sheet.
 		const changes = [];
 		for (const change of data.data.changes) {
 			const thisChange = { ...change } as EffectChangeExpanded;
-			const extractDicePoolModForSkill = thisChange.key.split(dicePoolModForSkillPattern);
-			if (extractDicePoolModForSkill.length === 2) {
-				thisChange.key = GenesysEffect.DICE_POOL_MOD_SKILL_PREFIX;
-				thisChange.skill = extractDicePoolModForSkill[1];
+			const extractDicePoolMod = thisChange.key.split(GenesysEffect.DICE_POOL_MOD_KEY_PATTERN);
+
+			if (extractDicePoolMod.length === 2) {
+				thisChange.key = extractDicePoolMod[0];
+
+				if (extractDicePoolMod[0].includes(GenesysEffect.DICE_POOL_MOD_CHAR_TYPE)) {
+					thisChange.char = extractDicePoolMod[1];
+				} else if (extractDicePoolMod[0].includes(GenesysEffect.DICE_POOL_MOD_SKILL_TYPE)) {
+					thisChange.skill = extractDicePoolMod[1];
+				}
 			}
 			changes.push(thisChange);
 		}
@@ -64,6 +67,7 @@ export default class GenesysEffectSheet extends ActiveEffectConfig<GenesysEffect
 		return foundry.utils.mergeObject(data, {
 			changes,
 			skills: Object.fromEntries(CONFIG.genesys.skills.map((skill) => [skill.name, skill.name])),
+			characteristics: Object.fromEntries(Object.entries(Characteristic).map(([charName, charKey]) => [charKey, charName])),
 		});
 	}
 
@@ -73,12 +77,29 @@ export default class GenesysEffectSheet extends ActiveEffectConfig<GenesysEffect
 		// Make sure we show/hide the proper `select` elements when picking a dice pool modification.
 		html.find('.effect-change > select:first-child').on('change', (event) => {
 			const targetSelect = event.currentTarget as HTMLSelectElement;
-			if (targetSelect.value === GenesysEffect.DICE_POOL_MOD_SKILL_PREFIX) {
-				targetSelect.nextElementSibling?.classList.remove('hide-it');
-				targetSelect.nextElementSibling?.nextElementSibling?.classList.add('hide-it');
+			let targetOptionType: string;
+
+			if (GenesysEffect.DICE_POOL_MOD_KEY_PATTERN.test(targetSelect.value)) {
+				if (targetSelect.value.includes(GenesysEffect.DICE_POOL_MOD_CHECK_TYPE)) {
+					targetOptionType = 'check-selection';
+				} else if (targetSelect.value.includes(GenesysEffect.DICE_POOL_MOD_CHAR_TYPE)) {
+					targetOptionType = 'characteristic-selection';
+				} else if (targetSelect.value.includes(GenesysEffect.DICE_POOL_MOD_SKILL_TYPE)) {
+					targetOptionType = 'skill-selection';
+				} else {
+					targetOptionType = 'effect-mode';
+				}
 			} else {
-				targetSelect.nextElementSibling?.classList.add('hide-it');
-				targetSelect.nextElementSibling?.nextElementSibling?.classList.remove('hide-it');
+				targetOptionType = 'effect-mode';
+			}
+
+			const children = targetSelect.nextElementSibling?.children ?? [];
+			for (let k = 0; k < children.length; k++) {
+				if (children[k].classList.contains(targetOptionType)) {
+					children[k].classList.add('show-it');
+				} else {
+					children[k].classList.remove('show-it');
+				}
 			}
 		});
 
@@ -111,20 +132,30 @@ export default class GenesysEffectSheet extends ActiveEffectConfig<GenesysEffect
 		// Loop through all the changes and make sure to construct the proper key for those that deal with dice pool
 		// modifications.
 		for (const change of submitData.changes) {
-			if (change.key === GenesysEffect.DICE_POOL_MOD_SKILL_PREFIX) {
-				change.key += `.${change.skill}`;
+			if (GenesysEffect.DICE_POOL_MOD_KEY_PATTERN.test(change.key)) {
+				if (change.key.includes(GenesysEffect.DICE_POOL_MOD_CHECK_TYPE)) {
+					change.key += '.';
+				} else if (change.key.includes(GenesysEffect.DICE_POOL_MOD_CHAR_TYPE)) {
+					change.key += `.${change.char}`;
+				} else if (change.key.includes(GenesysEffect.DICE_POOL_MOD_SKILL_TYPE)) {
+					change.key += `.${change.skill}`;
+				}
+
 				change.mode = CONST.ACTIVE_EFFECT_MODES.CUSTOM;
 				if (!dicePoolModificationPattern.test(change.value)) {
 					change.value = '';
 				}
+
+				delete change.char;
 				delete change.skill;
 			}
 		}
+
 		return submitData;
 	}
 }
 
 // Helper function to escape special characters used by regular expressions in strings that we want to match exactly.
-function escapeRegExp(raw: string) {
+export function escapeRegExp(raw: string) {
 	return raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

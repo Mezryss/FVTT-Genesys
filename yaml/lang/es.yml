@@ -148,6 +148,9 @@ Genesys:
     Suppressed: Efectos inactivos
     Source: Origen
     Duration: Duración
+    ChangeKey: Objetivo del efecto
+    ChangeMode: Opción
+    ChangeValue: Valor del efecto
     Types:
       ModifyCharacteristic: Característica modificada
       ModifyStat: Estadística modificada
@@ -155,7 +158,9 @@ Genesys:
       ModifyDicePool:
         GroupLabel: Modificar reserva de dados
         Options:
-          Skill: Habilidad de la reserva de dados
+          Check: Cualquier tirada
+          Characteristic: Utiliza característica
+          Skill: Utiliza habilidad
 
   # Dice Prompt Labels
   DicePrompt:
@@ -167,6 +172,8 @@ Genesys:
       Title: Modificaciones de la reserva
       DefaultDifficulty: Dificultad por defecto
       ManualChanges: Cambios manuales
+      SelfEffects: 'Propios: '
+      TargetEffects: 'Objetivo: '
     ChanceToSucceed: 'Posibilidades de éxito:'
     ChanceToSucceedByPermutationDisclaimer: La probabilidad mostrada es exacta a menos que la reserva de dados incluya una supercaracterística.
     ChanceToSucceedBySimulationDisclaimer: La probabilidad mostrada es una aproximación que utiliza el método Monte Carlo.
