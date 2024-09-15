@@ -199,6 +199,11 @@ async function save() {
 		&:not(:has(.editor-container)) > * {
 			padding-left: 0.5em;
 			padding-right: 0.5em;
+
+			&:is(ul),
+			&:is(ol) {
+				padding-left: 2em;
+			}
 		}
 
 		.editor-container {
