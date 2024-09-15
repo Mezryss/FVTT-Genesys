@@ -11,6 +11,7 @@ import SkillDataModel from '@/item/data/SkillDataModel';
 import TalentDataModel from '@/item/data/TalentDataModel';
 import AbilityDataModel from '@/item/data/AbilityDataModel';
 import EquipmentDataModel from '@/item/data/EquipmentDataModel';
+import ArmorDataModel from '@/item/data/ArmorDataModel';
 import SkillRanks from '@/vue/components/character/SkillRanks.vue';
 import DicePrompt, { RollType } from '@/app/DicePrompt';
 import ContextMenu from '@/vue/components/ContextMenu.vue';
@@ -130,6 +131,80 @@ async function toggleSuper(characteristic: CharacteristicType) {
 
 	await toRaw(context.data.actor).update({
 		'system.superCharacteristics': Array.from(superCharacteristics),
+	});
+}
+
+async function sendTalentToChat(talent: GenesysItem<TalentDataModel | AbilityDataModel>) {
+	const enrichedDescription = await TextEditor.enrichHTML(talent.systemData.description, { async: true });
+
+	const templateData = {
+		img: talent.img,
+		name: talent.name,
+		description: enrichedDescription,
+		activation: {
+			type: talent.systemData.activation.type,
+			detail: talent.systemData.activation.detail,
+		},
+		...(talent.type === 'talent' && {
+			effectiveTier: (talent.systemData as TalentDataModel).effectiveTier,
+			ranked: (talent.systemData as TalentDataModel).ranked,
+			rank: (talent.systemData as TalentDataModel).rank,
+		}),
+	};
+
+	const chatTemplate = await renderTemplate('systems/genesys/templates/chat/ability.hbs', templateData);
+	await ChatMessage.create({
+		user: game.user.id,
+		speaker: {
+			actor: game.user.character?.id,
+		},
+		content: chatTemplate,
+		type: CONST.CHAT_MESSAGE_TYPES.IC,
+	});
+}
+
+async function sendItemToChat(item: GenesysItem<EquipmentDataModel>) {
+	const enrichedDescription = await TextEditor.enrichHTML(item.systemData.description, { async: true });
+
+	let qualities = undefined;
+
+	if (['armor', 'weapon', 'vehicleWeapon'].includes(item.type)) {
+		const itemQualities = (item.systemData as WeaponDataModel | ArmorDataModel).qualities;
+
+		await Promise.all(
+			itemQualities.map(async (quality) => {
+				quality.description = await TextEditor.enrichHTML(quality.description, { async: true });
+			}),
+		);
+
+		qualities = itemQualities;
+	}
+
+	let weapon = undefined;
+	if (item.type === 'weapon') {
+		const charWeapon = item.systemData as WeaponDataModel;
+		weapon = {
+			skill: charWeapon.skills[0] ?? '-',
+			damage: (charWeapon.baseDamage ?? 0).toString() + (charWeapon.damageCharacteristic !== '-' ? ' + ' + game.i18n.localize(`Genesys.CharacteristicAbbr.${charWeapon.damageCharacteristic.capitalize()}`) : ''),
+		};
+	}
+
+	const chatTemplate = await renderTemplate('systems/genesys/templates/chat/item.hbs', {
+		img: item.img,
+		name: item.name,
+		type: item.type,
+		system: item.systemData,
+		description: enrichedDescription,
+		weapon,
+		qualities,
+	});
+	await ChatMessage.create({
+		user: game.user.id,
+		speaker: {
+			actor: game.user.character?.id,
+		},
+		content: chatTemplate,
+		type: CONST.CHAT_MESSAGE_TYPES.IC,
 	});
 }
 
@@ -316,9 +391,10 @@ onBeforeUpdate(updateEffects);
 										</MenuItem>
 									</template>
 
-									<label
-										><a @click="editItem(talent)">{{ talent.name }} {{ talent.systemData.ranked === 'yes' ? talent.systemData.rank : null }}</a></label
-									>
+									<label>
+										<a @click="editItem(talent)">{{ talent.name }} {{ talent.systemData.ranked === 'yes' ? talent.systemData.rank : null }}</a>
+										<a class="send-to-chat-link" @click="sendTalentToChat(talent)"><i class="fas fa-comment"></i></a>
+									</label>
 								</ContextMenu>
 								<Enriched class="description" v-if="talent.systemData.description" :value="talent.systemData.description" />
 							</div>
@@ -338,9 +414,10 @@ onBeforeUpdate(updateEffects);
 										</MenuItem>
 									</template>
 
-									<label
-										><a @click="editItem(ability)">{{ ability.name }}</a></label
-									>
+									<label>
+										<a @click="editItem(ability)">{{ ability.name }}</a>
+										<a class="send-to-chat-link" @click="sendTalentToChat(ability)"><i class="fas fa-comment"></i></a>
+									</label>
 								</ContextMenu>
 								<Enriched class="description" v-if="ability.systemData.description" :value="ability.systemData.description" />
 							</div>
@@ -382,6 +459,7 @@ onBeforeUpdate(updateEffects);
 										</span> </span
 									>)
 								</a>
+								<a class="send-to-chat-link" @click="sendItemToChat(item)"><i class="fas fa-comment"></i></a>
 							</ContextMenu>
 							<ContextMenu v-for="item in equipment.filter((i) => i.type !== 'weapon')" :key="item.id" class="inventory-item" :disable-menu="!context.data.editable">
 								<template v-slot:menu-items>
@@ -403,6 +481,7 @@ onBeforeUpdate(updateEffects);
 
 									<i v-if="item.type !== 'weapon'" class="fas fa-arrow-up-right-from-square"></i>
 								</a>
+								<a class="send-to-chat-link" @click="sendItemToChat(item)"><i class="fas fa-comment"></i></a>
 							</ContextMenu>
 						</div>
 					</div>
@@ -559,6 +638,10 @@ onBeforeUpdate(updateEffects);
 			font-family: 'Bebas Neue', sans-serif;
 			font-size: 1.25em;
 			color: colors.$blue;
+		}
+
+		.send-to-chat-link {
+			margin-left: 0.2em;
 		}
 	}
 
