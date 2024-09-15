@@ -219,10 +219,15 @@ function calculatePoolModificationsForSkill() {
 
 				if (context.rollType === RollType.Attack) {
 					const defenseType = (context.rollData as AttackRollData).weapon.systemData.range === 'engaged' ? 'melee' : 'ranged';
+					const totalDefense =
+						chosenTarget.actor!.type === 'character'
+							? (chosenTarget.actor as GenesysActor<CharacterDataModel>).systemData.totalDefense[defenseType]
+							: (chosenTarget.actor as GenesysActor<NonVehicleActorDataModel>).systemData.defense[defenseType];
+
 					relevantModifications.push({
 						name: game.i18n.localize('Genesys.DicePrompt.PoolModifications.TargetEffects') + game.i18n.localize(`Genesys.Labels.${defenseType.capitalize()}Defense`),
 						enabled: CONFIG.genesys.settings.autoApplyPoolModifications,
-						mods: Array((chosenTarget.actor as GenesysActor<NonVehicleActorDataModel>).systemData.defense[defenseType]).fill(GenesysDice.Setback.GLYPH),
+						mods: Array(totalDefense).fill(GenesysDice.Setback.GLYPH),
 					});
 				}
 			}
