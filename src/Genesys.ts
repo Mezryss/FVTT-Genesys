@@ -51,9 +51,9 @@ async function doAlphaNotice(lastAlpha: string) {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/179">PR #179</a>: FEATURE - More options to modify dice pools with active effects</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/180">PR #180</a>: BUGFIX - Properly calculate the skill ranks for minions on a vehicle's Skills tab</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/181">PR #181</a>: ENHANCEMENT - GMs can spend player's story points</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/184">PR #184</a>: BUGFIX - Fix adding setbacks to the dice pool when targeting a character</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/185">PR #185</a>: STYLING - HTML lists in the editor should now properly show their markers</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/186">PR #186</a>: FEATURE - Users can send to chat abilities and items from adversaries</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">

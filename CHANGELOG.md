@@ -1,12 +1,19 @@
+## Alpha 0.2.13
+
+### Features / Enhancements
+- [PR #184](https://github.com/Mezryss/FVTT-Genesys/pull/184): BUGFIX - Fix adding setbacks to the dice pool when targeting a character
+- [PR #185](https://github.com/Mezryss/FVTT-Genesys/pull/185): STYLING - HTML lists in the editor should now properly show their markers
+- [PR #186](https://github.com/Mezryss/FVTT-Genesys/pull/186): FEATURE - Users can send to chat abilities and items from adversaries
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.12
 
 ### Features / Enhancements
 - [PR #179](https://github.com/Mezryss/FVTT-Genesys/pull/179): FEATURE - More options to modify dice pools with active effects
 - [PR #180](https://github.com/Mezryss/FVTT-Genesys/pull/180): BUGFIX - Properly calculate the skill ranks for minions on a vehicle's Skills tab
 - [PR #181](https://github.com/Mezryss/FVTT-Genesys/pull/181): ENHANCEMENT - GMs can spend player's story points 
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.11
 
