@@ -11,8 +11,8 @@ import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import SkillDataModel from '@/item/data/SkillDataModel';
 import GenesysItem from '@/item/GenesysItem';
 import TalentDataModel from '@/item/data/TalentDataModel';
-import { Characteristic } from '@/data/Characteristics';
-import { CombatPool } from '@/data/Actors';
+import {Characteristic} from '@/data/Characteristics';
+import {CombatPool} from '@/data/Actors';
 
 /**
  * Different sources of Experience Journal entries.
@@ -211,4 +211,30 @@ export async function removeJournalEntry(actor: GenesysActor<CharacterDataModel>
 		'system.experienceJournal.entries': updatedEntries,
 		...additionalChangeKeys,
 	});
+}
+
+export async function findNewTalentIndexById(actor: GenesysActor<CharacterDataModel>, id: string): Promise<number> {
+	for (let i = 0; i >= 0; i++) {
+		const entry = actor.systemData.experienceJournal.entries[i];
+		if (entry.type === EntryType.NewTalent && entry.data) {
+			const data = entry.data as NewTalentEntryData;
+			if (data.id === id) {
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
+export async function findLastTalentRankIndexById(actor: GenesysActor<CharacterDataModel>, id: string): Promise<number> {
+	for (let i = actor.systemData.experienceJournal.entries.length - 1; i >= 0; i--) {
+		const entry = actor.systemData.experienceJournal.entries[i];
+		if (entry.type === EntryType.TalentRank && entry.data) {
+			const data = entry.data as TalentRankEntryData;
+			if (data.id === id) {
+				return i;
+			}
+		}
+	}
+	return -1;
 }

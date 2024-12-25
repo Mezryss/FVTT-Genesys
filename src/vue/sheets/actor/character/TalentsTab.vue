@@ -7,7 +7,12 @@ import TalentDataModel from '@/item/data/TalentDataModel';
 import GenesysItem from '@/item/GenesysItem';
 import Talent from '@/vue/components/character/Talent.vue';
 import AbilityDataModel from '@/item/data/AbilityDataModel';
-import { EntryType } from '@/actor/data/character/ExperienceJournal';
+import {
+	EntryType,
+	findLastTalentRankIndexById,
+	findNewTalentIndexById,
+	removeJournalEntry
+} from '@/actor/data/character/ExperienceJournal';
 import ArchetypeDataModel from '@/item/data/ArchetypeDataModel';
 
 const context = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
@@ -88,6 +93,24 @@ async function upgradeTalent(talent: GenesysItem<TalentDataModel>) {
 	});
 }
 
+async function downgradeTalent(talent: GenesysItem<TalentDataModel>) {
+	const entryIndex = await findLastTalentRankIndexById(context.data.actor, talent.id);
+	if (entryIndex === -1) {
+		console.error("TalentRank have not been found by provided id.")
+	} else {
+		await removeJournalEntry(toRaw(context.data.actor), entryIndex)
+	}
+}
+
+async function deleteTalent(talent: GenesysItem<TalentDataModel>) {
+	const entryIndex = await findNewTalentIndexById(context.data.actor, talent.id);
+	if (entryIndex === -1) {
+		console.error("NewTalent have not been found by provided id.")
+	} else {
+		await removeJournalEntry(toRaw(context.data.actor), entryIndex)
+	}
+}
+
 async function openItem(item: GenesysItem) {
 	await toRaw(item).sheet?.render(true);
 }
@@ -162,8 +185,12 @@ async function openItem(item: GenesysItem) {
 					:ranked="talent.systemData.ranked === 'yes'"
 					:rank="talent.systemData.rank"
 					:can-upgrade="canUpgradeTalent[talent.systemData.effectiveTier - 1]"
+					:can-downgrade="talent.systemData.ranked === 'yes' && talent.systemData.rank > 1"
+					:can-delete="talent.systemData.ranked === 'no' || talent.systemData.rank === 1"
 					@upgrade="upgradeTalent(talent)"
+					@downgrade="downgradeTalent(talent)"
 					@open="openItem(talent)"
+					@delete="deleteTalent(talent)"
 				/>
 
 				<!-- Active Talents w/Description -->
@@ -181,8 +208,12 @@ async function openItem(item: GenesysItem) {
 						:ranked="talent.systemData.ranked === 'yes'"
 						:rank="talent.systemData.rank"
 						:can-upgrade="canUpgradeTalent[talent.systemData.effectiveTier - 1]"
+						:can-downgrade="talent.systemData.ranked === 'yes' && talent.systemData.rank > 1"
+						:can-delete="talent.systemData.ranked === 'no' || talent.systemData.rank === 1"
 						@upgrade="upgradeTalent(talent)"
+						@downgrade="downgradeTalent(talent)"
 						@open="openItem(talent)"
+						@delete="deleteTalent(talent)"
 					/>
 				</template>
 
@@ -200,8 +231,12 @@ async function openItem(item: GenesysItem) {
 					:ranked="talent.systemData.ranked === 'yes'"
 					:rank="talent.systemData.rank"
 					:can-upgrade="canUpgradeTalent[talent.systemData.effectiveTier - 1]"
+					:can-downgrade="talent.systemData.ranked === 'yes' && talent.systemData.rank > 1"
+					:can-delete="talent.systemData.ranked === 'no' || talent.systemData.rank === 1"
 					@upgrade="upgradeTalent(talent)"
+					@downgrade="downgradeTalent(talent)"
 					@open="openItem(talent)"
+					@delete="deleteTalent(talent)"
 				/>
 			</div>
 		</div>

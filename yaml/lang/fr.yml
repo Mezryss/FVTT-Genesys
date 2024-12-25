@@ -81,7 +81,7 @@ Genesys:
     Dice: Dé
     Results: Résultats
     Description:
-      Simple: Lancé...                  
+      Simple: Lancé...
       Initiative: "Jet d'initiative avec <strong>{skill}</strong>..."
       Characteristic: Jet de <strong>{characteristic}</strong>...
       Skill: Jet de <strong>{skill} ({characteristic})</strong>...
@@ -215,6 +215,7 @@ Genesys:
     GenericError: Unable to perform the desired action.
     AlreadyHaveSpecialAbility: "Impossible d'ajouter {abilityName} ; les aptitudes spéciales n'ont pas de rang, et vous l'avez déjà !"
     TalentNotRanked: "Impossible d'ajouter {talentName} : c'est un talent sans rang, et vous le possédez déjà !"
+    TalentCannotBeDowngraded: "Vous ne pouvez pas ajouter {talentName} ; non, c'est un talent avec des rangs, ¡y ya la tienes !"
     NoSkillsCompendium: Le paramètre du compendium de compétences est vide ! Tentative d'utilisation du recueil de compétences par défaut.
     MissingCompendium: "Impossible de charger le compendium de compétences '{name}'. Reconfigurez le compendium de compétences dans la 'configuration des options' -> Genesys."
     WrongCompendiumType: "Le compendium de compétences configuré '{name}' est un compendium de {type} Compendium, pas un Compendium d'objet ! Reconfigurez le recueil de compétences dans la 'configuration des options' -> Genesys."

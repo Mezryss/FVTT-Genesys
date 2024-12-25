@@ -20,10 +20,12 @@ const props = withDefaults(
 		effectiveTier?: number;
 		canDelete?: boolean;
 		canUpgrade?: boolean;
+		canDowngrade?: boolean;
 	}>(),
 	{
 		canDelete: false,
 		canUpgrade: false,
+		canDowngrade: false,
 		ranked: false,
 		rank: 0,
 	},
@@ -32,6 +34,7 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(e: 'open'): void;
 	(e: 'upgrade'): void;
+	(e: 'downgrade'): void;
 	(e: 'delete'): void;
 }>();
 
@@ -80,6 +83,7 @@ async function sendToChat() {
 			</a>
 
 			<a v-if="ranked && canUpgrade" @click="emit('upgrade')"><i class="fas fa-arrow-circle-up"></i></a>
+			<a v-if="ranked && canDowngrade" @click="emit('downgrade')"><i class="fas fa-arrow-circle-down"></i></a>
 		</span>
 		<div></div>
 		<span v-if="canDelete">
