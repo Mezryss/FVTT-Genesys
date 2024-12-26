@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject, toRaw } from 'vue';
+import {computed, inject, toRaw, watchEffect, ref} from 'vue';
 import { ActorSheetContext, RootContext } from '@/vue/SheetContext';
 import CharacterDataModel from '@/actor/data/CharacterDataModel';
 import Localized from '@/vue/components/Localized.vue';
@@ -110,6 +110,28 @@ async function deleteTalent(talent: GenesysItem<TalentDataModel>) {
 		await removeJournalEntry(toRaw(context.data.actor), entryIndex)
 	}
 }
+
+const isPyramidValid = ref(true);
+
+async function validatePyramidTalentStructure(): Promise<boolean> {
+	const tiers = [
+		tier1Talents.value,
+		tier2Talents.value,
+		tier3Talents.value,
+		tier4Talents.value,
+		tier5Talents.value,
+	];
+	for (let i = 1; i < tiers.length; i++) {
+		if (tiers[i] > Math.max(0, tiers[i - 1] - 1)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+watchEffect(async () => {
+	isPyramidValid.value = await validatePyramidTalentStructure();
+})
 
 async function openItem(item: GenesysItem) {
 	await toRaw(item).sheet?.render(true);
@@ -241,7 +263,10 @@ async function openItem(item: GenesysItem) {
 			</div>
 		</div>
 
-		<div class="pyramid">
+		<div class="pyramid" :style="{ color: isPyramidValid ? 'black' : 'red' }">
+			<div v-if="!isPyramidValid">
+				Invalid Pyramid Structure!
+			</div>
 			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 1 }" />: {{ tier1Talents }}/∞</div>
 			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 2 }" />: {{ tier2Talents }}/{{ Math.max(0, tier1Talents - 1) }}</div>
 			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 3 }" />: {{ tier3Talents }}/{{ Math.max(0, tier2Talents - 1) }}</div>
