@@ -103,7 +103,9 @@ export default class GenesysRoller {
 					characteristic: game.i18n.localize(`Genesys.Characteristics.${characteristic.capitalize()}`),
 				});
 			} else if (!actor) {
-				description = game.i18n.localize('Genesys.Rolls.Description.Simple');
+				description = game.i18n.format('Genesys.Rolls.Description.Simple', {
+					superChar: usesSuperCharacteristic ? 'super-char' : 'hide-it',
+				});
 			}
 		} else if (actor) {
 			if (characteristic) {

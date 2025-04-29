@@ -81,7 +81,7 @@ Genesys:
     Dice: Dice
     Results: Roll Results
     Description:
-      Simple: Rolling...
+      Simple: 'Rolling<i class="fas fa-star {superChar}"></i>...'
       Initiative: 'Rolling Initiative with <strong>{skill}<i class="fas fa-star {superChar}"></i></strong>...'
       Characteristic: Rolling <strong>{characteristic}</strong>...
       Skill: 'Rolling <strong>{skill} ({characteristic}<i class="fas fa-star {superChar}"></i>)</strong>...'
