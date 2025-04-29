@@ -35,7 +35,7 @@ export default class GenesysActorSheet<ActorDataModel extends foundry.abstract.D
 		}
 
 		setTimeout(() => {
-         html.find('[data-skill-check]').off('click');
+			html.find('[data-skill-check]').off('click');
 			html.find('[data-skill-check]').on('click', async (event) => {
 				const target = $(event.delegateTarget);
 
