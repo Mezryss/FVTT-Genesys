@@ -76,7 +76,21 @@ export type GenesysRollResults = {
 };
 
 export default class GenesysRoller {
-	static async skillRoll({ actor, characteristic, skillId, formula, symbols }: { actor?: GenesysActor; characteristic?: Characteristic; skillId: string; formula: string; symbols: Record<string, number> }) {
+	static async skillRoll({
+		actor,
+		characteristic,
+		usesSuperCharacteristic,
+		skillId,
+		formula,
+		symbols,
+	}: {
+		actor?: GenesysActor;
+		characteristic?: Characteristic;
+		usesSuperCharacteristic: boolean;
+		skillId: string;
+		formula: string;
+		symbols: Record<string, number>;
+	}) {
 		const roll = new Roll(formula, { symbols });
 		await roll.evaluate();
 		const results = this.parseRollResults(roll);
@@ -96,6 +110,7 @@ export default class GenesysRoller {
 				description = game.i18n.format('Genesys.Rolls.Description.Skill', {
 					skill: actor.items.get(skillId)?.name ?? 'UNKNOWN',
 					characteristic: game.i18n.localize(`Genesys.CharacteristicAbbr.${characteristic.capitalize()}`),
+					superChar: usesSuperCharacteristic ? 'super-char' : 'hide-it',
 				});
 			} else {
 				description = game.i18n.format('Genesys.Rolls.Description.SkillWithoutCharacteristic', {
@@ -123,6 +138,7 @@ export default class GenesysRoller {
 	static async attackRoll({
 		actor,
 		characteristic,
+		usesSuperCharacteristic,
 		skillId,
 		formula,
 		symbols,
@@ -130,6 +146,7 @@ export default class GenesysRoller {
 	}: {
 		actor?: GenesysActor;
 		characteristic?: Characteristic;
+		usesSuperCharacteristic: boolean;
 		skillId: string;
 		formula: string;
 		symbols: Record<string, number>;
@@ -167,6 +184,7 @@ export default class GenesysRoller {
 					name: weapon.name,
 					skill: actor.items.get(skillId)?.name ?? 'UNKNOWN',
 					characteristic: game.i18n.localize(`Genesys.CharacteristicAbbr.${characteristic.capitalize()}`),
+					superChar: usesSuperCharacteristic ? 'super-char' : 'hide-it',
 				});
 			} else {
 				description = game.i18n.format('Genesys.Rolls.Description.AttackSkillWithoutCharacteristic', {

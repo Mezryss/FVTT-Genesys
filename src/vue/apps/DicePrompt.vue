@@ -448,6 +448,7 @@ async function rollPool() {
 	const baseRollData = {
 		actor: toRaw(context.actor),
 		characteristic: selectedCharacteristic.value,
+		usesSuperCharacteristic: currentDicePool.value.usesSuperCharacteristic,
 		skillId: selectedSkill.value?.id ?? '-',
 		formula,
 		symbols,
