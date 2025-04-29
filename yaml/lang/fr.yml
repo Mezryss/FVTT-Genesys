@@ -81,7 +81,7 @@ Genesys:
     Dice: Dé
     Results: Résultats
     Description:
-      Simple: Lancé...                  
+      Simple: 'Lancé<i class="fas fa-star {superChar}"></i>...'
       Initiative: 'Jet d''initiative avec <strong>{skill}<i class="fas fa-star {superChar}"></i></strong>...'
       Characteristic: Jet de <strong>{characteristic}</strong>...
       Skill: 'Jet de <strong>{skill} ({characteristic}<i class="fas fa-star {superChar}"></i>)</strong>...'
