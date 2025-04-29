@@ -35,12 +35,13 @@ export default class GenesysActorSheet<ActorDataModel extends foundry.abstract.D
 		}
 
 		setTimeout(() => {
+         html.find('[data-skill-check]').off('click');
 			html.find('[data-skill-check]').on('click', async (event) => {
 				const target = $(event.delegateTarget);
 
 				// Grab the skill name & difficulty
 				const skillName: string = target.data('skill-check');
-				const difficulty: string = 'D'.repeat(parseInt(target.data('difficulty')));
+				const difficulty: string = target.data('difficulty');
 
 				await DicePrompt.promptForRoll(this.actor, skillName, { difficulty });
 			});
