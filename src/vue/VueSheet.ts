@@ -14,9 +14,14 @@ type Constructor = new (...args: any[]) => {
 	close(options?: {}): Promise<void>;
 };
 
+function preventSubmit(event: SubmitEvent) {
+	event.preventDefault();
+}
+
 export default function VueSheet<TBase extends Constructor, ContextType extends ContextBase | undefined = ContextBase>(base: TBase) {
 	return class extends base {
 		form?: HTMLFormElement;
+		preventSubmit?: boolean;
 
 		/**
 		 * Handle for the active Vue app.
@@ -55,6 +60,7 @@ export default function VueSheet<TBase extends Constructor, ContextType extends 
 				form.setAttribute('autocomplete', 'off');
 
 				this.form = form;
+				this.preventSubmit = !!options?.preventSubmit;
 			}
 
 			// Verify our reactive context is set up
@@ -96,12 +102,19 @@ export default function VueSheet<TBase extends Constructor, ContextType extends 
 			html.find('img[data-edit]').off('click');
 			html.find('input,select,textarea').off('change');
 			html.find('button.file-picker').off('click');
+			if (this.preventSubmit) {
+				this.form?.removeEventListener('submit', preventSubmit);
+			}
 		}
 
 		override activateListeners(html: JQuery) {
 			this.deactivateListeners(html);
 
 			super.activateListeners(html);
+
+			if (this.preventSubmit) {
+				this.form?.addEventListener('submit', preventSubmit);
+			}
 		}
 
 		_activateEditor(_: JQuery | HTMLElement) {}
