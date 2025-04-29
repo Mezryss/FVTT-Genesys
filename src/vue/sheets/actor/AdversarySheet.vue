@@ -72,7 +72,16 @@ async function rollAttack(weapon: GenesysItem) {
 		return;
 	}
 
-	await DicePrompt.promptForRoll(toRaw(context.data.actor), skillForWeapon(weapon)[0], { rollType: RollType.Attack, rollData: { weapon } });
+	const targetWeaponSkill = skillForWeapon(weapon);
+	let attackSkillName = targetWeaponSkill[0];
+	let rollUnskilled: CharacteristicType | undefined = undefined;
+
+	if (targetWeaponSkill[1] === '-') {
+		rollUnskilled = CONFIG.genesys.skills.find((skill) => skill.name === attackSkillName)?.systemData.characteristic;
+		attackSkillName = '';
+	}
+
+	await DicePrompt.promptForRoll(toRaw(context.data.actor), attackSkillName, { rollType: RollType.Attack, rollData: { weapon }, rollUnskilled });
 }
 
 async function editItem(item: GenesysItem) {
