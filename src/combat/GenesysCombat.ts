@@ -196,7 +196,6 @@ export default class GenesysCombat extends Combat {
 				speaker: { actor: combatant.actorId },
 				rollMode: 'rollMode' in messageOptions ? messageOptions.rollMode : combatant.hidden ? CONST.DICE_ROLL_MODES.PRIVATE : chatRollMode,
 				content: html,
-				type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 				sound: i > 0 ? null : CONFIG.sounds.dice,
 				rolls: [roll],
 			};
@@ -329,7 +328,7 @@ export default class GenesysCombat extends Combat {
 
 		if (this.turn !== null) {
 			// @ts-ignore: This assignment is exactly the same as in the original method.
-			this.turn = Math.clamped(this.turn, 0, turns.length - 1);
+			this.turn = Math.clamp(this.turn, 0, turns.length - 1);
 		}
 
 		const currentCombatant = turns[this.turn];

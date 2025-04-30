@@ -40,7 +40,7 @@ declare global {
 		protected override _evaluate({ minimize, maximize }?: { minimize?: boolean; maximize?: boolean }): Promise<Evaluated<this>>;
 	}
 
-	type MathFunctionName = Exclude<MathStringKey, 'E' | 'LN2' | 'LN10' | 'LOG2E' | 'LOG10E' | 'PI' | 'SQRT1_2' | 'SQRT2'> | 'clamped' | 'normalizeDegrees' | 'normalizeRadians' | 'roundDecimals' | 'toDegrees' | 'toRadians' | 'safeEval';
+	type MathFunctionName = Exclude<MathStringKey, 'E' | 'LN2' | 'LN10' | 'LOG2E' | 'LOG10E' | 'PI' | 'SQRT1_2' | 'SQRT2'> | 'clamp' | 'normalizeDegrees' | 'normalizeRadians' | 'roundDecimals' | 'toDegrees' | 'toRadians' | 'safeEval';
 
 	interface MathTermData<TFunctionName extends MathFunctionName = MathFunctionName> extends RollTermData {
 		class?: 'MathTerm';

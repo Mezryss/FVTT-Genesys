@@ -131,14 +131,14 @@ declare global {
 		readonly parent: Actor | Item;
 
 		disabled: boolean;
-		icon: ImageFilePath;
+		img: ImageFilePath;
 		tint?: string;
 	}
 
 	interface TemporaryEffect {
 		disabled: boolean;
 		isTemporary: boolean;
-		icon: ImageFilePath;
+		img: ImageFilePath;
 		tint?: string;
 	}
 

@@ -63,7 +63,7 @@ async function sendToChat() {
 			actor: game.user.character?.id,
 		},
 		content: chatTemplate,
-		type: CONST.CHAT_MESSAGE_TYPES.IC,
+		style: CONST.CHAT_MESSAGE_STYLES.IC,
 	});
 }
 </script>

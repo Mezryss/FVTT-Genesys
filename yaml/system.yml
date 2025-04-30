@@ -3,10 +3,9 @@ title: Genesys
 description: (ALPHA) Unofficial implementation of EDGE Studio's Genesys RPG System.
 version: 0.2.13
 compatibility:
-  minimum: 11
+  minimum: 12
   verified: 12
   maximum: 12
-templateVersion: 1
 authors:
   - name: Mezryss
 scripts:

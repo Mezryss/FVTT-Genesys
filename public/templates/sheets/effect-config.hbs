@@ -1,6 +1,6 @@
 <form class="genesys effect-sheet" autocomplete="off">
 	<header class="{{#if (eq hasDecoration true)}}with-decoration{{/if}}">
-		<img src="{{ data.icon }}" data-edit="icon" title="{{ label }}" />
+		<img src="{{ data.img }}" data-edit="img" title="{{ label }}" />
 		<input type="text" name="name" value="{{ data.name }}" placeholder="{{ localize 'Genesys.Labels.Name' }}" />
 		{{#if (eq hasDecoration true)}}
 			{{>decoration}}
@@ -31,7 +31,7 @@
 				<div class="row">
 					<label>{{localize 'EFFECT.IconTint'}}</label>
 					<div class="tint-container">
-						{{colorPicker name="tint" value=data.tint}}
+                  <color-picker name="tint" value="{{ data.tint }}"></color-picker>
 					</div>
 				</div>
 
@@ -161,14 +161,14 @@
                            {{!-- Dice Pool Changes --}}
                            <optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.GroupLabel'}}">
                               {{!-- Modifications from the Roller --}}
-                              <option value="genesys.pool.check.self">&#x1F481; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Check'}}</option>
-                              <option value="genesys.pool.char.self">&#x1F481; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Characteristic'}}</option>
-                              <option value="genesys.pool.skill.self">&#x1F481; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Skill'}}</option>
+                              <option value="genesys.pool.check.self">&#x1F447; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Check'}}</option>
+                              <option value="genesys.pool.char.self">&#x1F447; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Characteristic'}}</option>
+                              <option value="genesys.pool.skill.self">&#x1F447; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Skill'}}</option>
 
                               {{!-- Modifications from the Target --}}
-                              <option value="genesys.pool.check.target">&#x1F64B; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Check'}}</option>
-                              <option value="genesys.pool.char.target">&#x1F64B; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Characteristic'}}</option>
-                              <option value="genesys.pool.skill.target">&#x1F64B; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Skill'}}</option>
+                              <option value="genesys.pool.check.target">&#x1F3AF; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Check'}}</option>
+                              <option value="genesys.pool.char.target">&#x1F3AF; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Characteristic'}}</option>
+                              <option value="genesys.pool.skill.target">&#x1F3AF; {{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Skill'}}</option>
                            </optgroup>
 							</select>
 						{{/select}}

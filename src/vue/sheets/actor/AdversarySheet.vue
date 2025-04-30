@@ -48,7 +48,7 @@ async function addEffect(category: string) {
 	await toRaw(context.sheet.actor).createEmbeddedDocuments('ActiveEffect', [
 		{
 			label: context.data.actor.name,
-			icon: 'icons/svg/aura.svg',
+			img: 'icons/svg/aura.svg',
 			disabled: category === 'suppressed',
 			duration: category === 'temporary' ? { rounds: 1 } : undefined,
 		},
@@ -168,7 +168,7 @@ async function sendTalentToChat(talent: GenesysItem<TalentDataModel | AbilityDat
 			actor: game.user.character?.id,
 		},
 		content: chatTemplate,
-		type: CONST.CHAT_MESSAGE_TYPES.IC,
+		style: CONST.CHAT_MESSAGE_STYLES.IC,
 	});
 }
 
@@ -213,7 +213,7 @@ async function sendItemToChat(item: GenesysItem<EquipmentDataModel>) {
 			actor: game.user.character?.id,
 		},
 		content: chatTemplate,
-		type: CONST.CHAT_MESSAGE_TYPES.IC,
+		style: CONST.CHAT_MESSAGE_STYLES.IC,
 	});
 }
 

@@ -36,7 +36,7 @@ async function addEffect(category: string) {
 	await toRaw(context.sheet.item).createEmbeddedDocuments('ActiveEffect', [
 		{
 			label: context.data.item.name,
-			icon: 'icons/svg/aura.svg',
+			img: 'icons/svg/aura.svg',
 			disabled: category === 'suppressed',
 			duration: category === 'temporary' ? { rounds: 1 } : undefined,
 		},

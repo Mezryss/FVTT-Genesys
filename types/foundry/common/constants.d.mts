@@ -52,14 +52,12 @@ export const CANVAS_PERFORMANCE_MODES: {
 	MAX: 3;
 };
 
-/** Valid Chat Message types */
-export const CHAT_MESSAGE_TYPES: {
+/** Valid Chat Message styles */
+export const CHAT_MESSAGE_STYLES: {
 	OTHER: 0;
 	OOC: 1;
 	IC: 2;
 	EMOTE: 3;
-	WHISPER: 4;
-	ROLL: 5;
 };
 
 /** Define the set of languages which have built-in support in the core software */
@@ -618,7 +616,7 @@ declare global {
 
 	type AudioFileExtension = keyof typeof AUDIO_FILE_EXTENSIONS;
 	type CanvasPerformanceMode = (typeof CANVAS_PERFORMANCE_MODES)[keyof typeof CANVAS_PERFORMANCE_MODES];
-	type ChatMessageType = (typeof CONST.CHAT_MESSAGE_TYPES)[keyof typeof CONST.CHAT_MESSAGE_TYPES];
+	type ChatMessageType = (typeof CONST.CHAT_MESSAGE_STYLES)[keyof typeof CONST.CHAT_MESSAGE_STYLES];
 	type CompatibilityMode = (typeof CONST.COMPATIBILITY_MODES)[keyof typeof CONST.COMPATIBILITY_MODES];
 	type DocumentOwnershipLevel = (typeof DOCUMENT_OWNERSHIP_LEVELS)[DocumentOwnershipString];
 	type DocumentOwnershipString = keyof typeof DOCUMENT_OWNERSHIP_LEVELS;
