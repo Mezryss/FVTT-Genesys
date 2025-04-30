@@ -9,6 +9,7 @@ import GenesysCombat from '@/combat/GenesysCombat';
 import GenesysCombatant from '@/combat/GenesysCombatant';
 import IHasPreCreate from '@/data/IHasPreCreate';
 import IHasOnDelete from '@/data/IHasOnDelete';
+import { DataModelWithTokenAttributes, TokenAttributeDetails } from '@/token/GenesysTokenDocument';
 
 export default class GenesysActor<ActorDataModel extends foundry.abstract.DataModel = foundry.abstract.DataModel> extends Actor {
 	/**
@@ -50,6 +51,22 @@ export default class GenesysActor<ActorDataModel extends foundry.abstract.DataMo
 		};
 
 		return super.createDialog(data, touchedOptions);
+	}
+
+	override async modifyTokenAttribute(attribute: string, value: number, isDelta?: boolean, isBar?: boolean) {
+		const tokenAttributes = (this.systemData.constructor as DataModelWithTokenAttributes)?.tokenAttributes;
+		if (tokenAttributes) {
+			const tokenAttribute = tokenAttributes[attribute] as TokenAttributeDetails | undefined;
+			if (!tokenAttribute || !tokenAttribute.editable) {
+				return this;
+			}
+
+			return await this.update({
+				[`system.${tokenAttribute.valuePath}`]: isDelta ? Number(foundry.utils.getProperty(this.systemData, tokenAttribute.valuePath)) + value : value,
+			});
+		} else {
+			return super.modifyTokenAttribute(attribute, value, isDelta, isBar);
+		}
 	}
 
 	/**

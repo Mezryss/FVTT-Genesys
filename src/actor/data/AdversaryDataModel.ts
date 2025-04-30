@@ -7,6 +7,7 @@
  */
 import { Characteristic, CharacteristicsContainer } from '@/data/Characteristics';
 import { Defense } from '@/data/Actors';
+import { TokenAttributeDetails } from '@/token/GenesysTokenDocument';
 
 type Motivation = {
 	name: string;
@@ -50,6 +51,15 @@ export default abstract class AdversaryDataModel extends foundry.abstract.DataMo
 		TALENT: ['ability', 'talent'],
 		// Types that are related to the equipment.
 		INVENTORY: ['weapon', 'armor', 'consumable', 'gear', 'container'],
+	};
+
+	static readonly tokenAttributes: Record<string, TokenAttributeDetails> = {
+		soak: {
+			label: 'Soak',
+			isBar: false,
+			editable: false,
+			valuePath: 'soak',
+		},
 	};
 
 	static isRelevantTypeForContext(context: keyof RelevantTypes, type: string) {
