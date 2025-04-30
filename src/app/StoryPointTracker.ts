@@ -145,7 +145,7 @@ export default class StoryPointTracker extends VueSheet(Application) {
 				actor: game.user.character?.id,
 			},
 			content: chatTemplate,
-			type: CONST.CHAT_MESSAGE_TYPES.OOC,
+			style: CONST.CHAT_MESSAGE_STYLES.OOC,
 		});
 	}
 }

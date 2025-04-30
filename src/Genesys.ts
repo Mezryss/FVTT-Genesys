@@ -82,7 +82,7 @@ async function doAlphaNotice(lastAlpha: string) {
 	await ChatMessage.create({
 		user: game.user.id,
 		content: enrichedMessage,
-		type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+		style: CONST.CHAT_MESSAGE_STYLES.OTHER,
 	});
 
 	await game.settings.set(SETTINGS_NAMESPACE, KEY_ALPHA_VERSION, game.system.version);

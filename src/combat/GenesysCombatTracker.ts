@@ -128,8 +128,8 @@ export default class GenesysCombatTracker extends CombatTracker<GenesysCombat> {
 					for (const e of claimant.actor.temporaryEffects) {
 						if ((e as any).getFlag('core', 'statusId') === CONFIG.specialStatusEffects.DEFEATED) {
 							defeated = true;
-						} else if (e.icon) {
-							effects.add(e.icon);
+						} else if (e.img) {
+							effects.add(e.img);
 						}
 					}
 				}

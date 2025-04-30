@@ -131,7 +131,6 @@ export default class GenesysRoller {
 			user: game.user.id,
 			speaker: { actor: actor?.id },
 			content: html,
-			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			rolls: [roll],
 		};
 		await ChatMessage.create(chatData);
@@ -220,7 +219,6 @@ export default class GenesysRoller {
 			speaker: { actor: actor?.id },
 			rollMode: game.settings.get('core', 'rollMode'),
 			content: html,
-			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			rolls: [roll],
 		};
 		await ChatMessage.create(chatData);

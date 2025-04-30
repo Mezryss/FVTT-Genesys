@@ -113,7 +113,7 @@ export default class GenesysEffectSheet extends ActiveEffectConfig<GenesysEffect
 	protected async _onEditImage(event: Event) {
 		const fp = new FilePicker({
 			type: 'image',
-			current: this.object.icon,
+			current: this.object.img,
 			callback: async (path: string) => {
 				(<HTMLImageElement>event.currentTarget).src = path;
 				await this._onSubmit(event, { preventClose: true });
