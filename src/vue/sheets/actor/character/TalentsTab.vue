@@ -70,6 +70,14 @@ async function openItem(item: GenesysItem) {
 
 <template>
 	<section class="tab-talents">
+		<div class="pyramid">
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 1 }" />: {{ talentTotals[1] }}/∞</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 2 }" />: {{ talentTotals[2] }}/{{ Math.max(0, talentTotals[1] - 1) }}</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 3 }" />: {{ talentTotals[3] }}/{{ Math.max(0, talentTotals[2] - 1) }}</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 4 }" />: {{ talentTotals[4] }}/{{ Math.max(0, talentTotals[3] - 1) }}</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 5 }" />: {{ talentTotals[5] }}/{{ Math.max(0, talentTotals[4] - 1) }}</div>
+		</div>
+
 		<div class="block">
 			<div class="header"><Localized label="Genesys.Labels.SpecialAbilities" /></div>
 			<div class="talents-container">
@@ -180,14 +188,6 @@ async function openItem(item: GenesysItem) {
 				/>
 			</div>
 		</div>
-
-		<div class="pyramid">
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 1 }" />: {{ talentTotals[1] }}/∞</div>
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 2 }" />: {{ talentTotals[2] }}/{{ Math.max(0, talentTotals[1] - 1) }}</div>
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 3 }" />: {{ talentTotals[3] }}/{{ Math.max(0, talentTotals[2] - 1) }}</div>
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 4 }" />: {{ talentTotals[4] }}/{{ Math.max(0, talentTotals[3] - 1) }}</div>
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 5 }" />: {{ talentTotals[5] }}/{{ Math.max(0, talentTotals[4] - 1) }}</div>
-		</div>
 	</section>
 </template>
 
@@ -205,9 +205,9 @@ async function openItem(item: GenesysItem) {
 		flex-direction: column;
 		flex-wrap: nowrap;
 		background: transparentize(colors.$light-blue, 0.8);
-		border-top-left-radius: 1em;
-		border-top-right-radius: 1em;
-		padding: 0.5em;
+		border-bottom-left-radius: 1em;
+		border-bottom-right-radius: 1em;
+		padding: 0.5em 0.5em 1em 0.5em;
 		gap: 0.25em;
 
 		.header {
@@ -258,12 +258,12 @@ async function openItem(item: GenesysItem) {
 		gap: 0.5em;
 		align-items: center;
 		justify-content: right;
-		border-bottom-left-radius: 1em;
-		border-bottom-right-radius: 1em;
+		border-top-left-radius: 1em;
+		border-top-right-radius: 1em;
 		background: transparentize(colors.$light-blue, 0.8);
 		font-family: 'Bebas Neue', sans-serif;
 		padding-right: 1em;
-		padding-bottom: 0.25em;
+		padding-top: 0.25em;
 	}
 }
 </style>
