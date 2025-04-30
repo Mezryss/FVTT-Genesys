@@ -477,7 +477,7 @@ declare global {
 
 	interface TokenResourceData {
 		attribute: string;
-		type: 'bar';
+		type: 'bar' | 'value';
 		value: number;
 		max?: number;
 		editable: boolean;

@@ -16,6 +16,7 @@ import { Characteristic, CharacteristicsContainer } from '@/data/Characteristics
 import { CombatPool, Defense } from '@/data/Actors';
 import GenesysEffect from '@/effects/GenesysEffect';
 import TalentDataModel from '@/item/data/TalentDataModel';
+import { TokenAttributeDetails } from '@/token/GenesysTokenDocument';
 
 type Motivation = {
 	name: string;
@@ -96,6 +97,29 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 		EQUIPABLE: ['weapon', 'armor'],
 		// Types that can be spent.
 		CONSUMABLE: ['consumable'],
+	};
+
+	static readonly tokenAttributes: Record<string, TokenAttributeDetails> = {
+		wounds: {
+			label: 'Wounds',
+			isBar: true,
+			editable: true,
+			valuePath: 'wounds.value',
+			maxPath: 'wounds.max',
+		},
+		strain: {
+			label: 'Strain',
+			isBar: true,
+			editable: true,
+			valuePath: 'strain.value',
+			maxPath: 'strain.max',
+		},
+		soak: {
+			label: 'Soak',
+			isBar: false,
+			editable: false,
+			valuePath: 'totalSoak',
+		},
 	};
 
 	static isRelevantTypeForContext(context: keyof RelevantTypes, type: string) {

@@ -271,6 +271,8 @@ declare global {
 					stack?: boolean;
 				},
 			): void;
+
+			function isSubclass(cls: any, parent: object): boolean;
 		}
 	}
 

@@ -60,6 +60,7 @@ declare global {
 			>;
 			typeLabels: Record<string, string | undefined>;
 			dataModels: Record<string, any>;
+			trackableAttributes: Record<string, { bar: string[]; value: string[] }>;
 		};
 
 		/** Configuration for the Cards primary Document type */

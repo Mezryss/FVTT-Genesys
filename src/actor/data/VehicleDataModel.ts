@@ -4,6 +4,7 @@ import IHasPreCreate from '@/data/IHasPreCreate';
 import GenesysEffect from '@/effects/GenesysEffect';
 import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataModel';
 import GenesysItem from '@/item/GenesysItem';
+import { TokenAttributeDetails } from '@/token/GenesysTokenDocument';
 
 type ValueWithMax = {
 	value: number;
@@ -84,6 +85,29 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 		EQUIPABLE: ['vehicleWeapon'],
 		// Types that can be spent.
 		CONSUMABLE: ['consumable'],
+	};
+
+	static readonly tokenAttributes: Record<string, TokenAttributeDetails> = {
+		trauma: {
+			label: 'Hull Trauma',
+			isBar: true,
+			editable: true,
+			valuePath: 'hullTrauma.value',
+			maxPath: 'hullTrauma.max',
+		},
+		strain: {
+			label: 'System Strain',
+			isBar: true,
+			editable: true,
+			valuePath: 'systemStrain.value',
+			maxPath: 'systemStrain.max',
+		},
+		armor: {
+			label: 'Armor',
+			isBar: false,
+			editable: false,
+			valuePath: 'armor',
+		},
 	};
 
 	static isRelevantTypeForContext(context: keyof RelevantTypes, type: string) {
@@ -364,8 +388,8 @@ export default abstract class VehicleDataModel extends foundry.abstract.DataMode
 
 	async preCreate(actor: GenesysActor<VehicleDataModel>, _data: PreDocumentId<any>, _options: DocumentModificationContext<GenesysActor<VehicleDataModel>>, _user: User) {
 		const prototypeToken = {
-			bar1: { attribute: 'hullTrauma' },
-			bar2: { attribute: 'systemStrain' },
+			bar1: { attribute: 'trauma' },
+			bar2: { attribute: 'strain' },
 			actorLink: true,
 		};
 

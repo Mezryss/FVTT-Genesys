@@ -138,7 +138,7 @@ declare global {
 		static getTrackedAttributes(data?: Record<string, unknown>, _path?: string[]): TokenAttributes;
 
 		/** Inspect the Actor data model and identify the set of attributes which could be used for a Token Bar */
-		static getTrackedAttributeChoices(attributes: TokenAttributes): TokenAttributes;
+		static getTrackedAttributeChoices(attributes: TokenAttributes): TokenAttributeChoices[];
 	}
 
 	interface TokenDocument {
@@ -172,7 +172,13 @@ declare global {
 	type TokenDocumentUUID = `Scene.${string}.Token.${string}`;
 
 	interface TokenAttributes {
-		bar: string[];
-		value: number[];
+		bar: string[][];
+		value: string[][];
+	}
+
+	interface TokenAttributeChoices {
+		group: string;
+		value: string;
+		label: string;
 	}
 }

@@ -19,6 +19,7 @@ import { KEY_DEFAULT_DIFFICULTY } from '@/settings/campaign';
 
 import { register as registerStoryPointTracker } from '@/app/StoryPointTracker';
 import { register as registerActors, AdversaryTypes } from '@/actor';
+import { register as registerToken } from '@/token';
 import { register as registerEffects } from '@/effects';
 import { register as registerItems, CharacterCreationItemTypes, EquipmentItemTypes } from '@/item';
 import { register as registerVehicles } from '@/actor/data/VehicleDataModel';
@@ -90,6 +91,7 @@ async function doAlphaNotice(lastAlpha: string) {
 Hooks.once('init', async () => {
 	// System Documents
 	registerActors();
+	registerToken();
 	registerEffects();
 	registerItems();
 
