@@ -249,7 +249,7 @@ function buildDicePool() {
 		let skillValue = selectedSkill.value?.systemData.rank ?? 0;
 
 		if (actor.type === 'minion' && selectedSkill.value) {
-			skillValue = Math.max(0, (actor.systemData as MinionDataModel).remainingMembers - 1);
+			skillValue = Math.min(Math.max(0, (actor.systemData as MinionDataModel).remainingMembers - 1), 5);
 		}
 
 		proficiencyDice = Math.min(characteristicValue, skillValue);
