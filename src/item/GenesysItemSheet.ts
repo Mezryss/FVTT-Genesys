@@ -41,6 +41,10 @@ export default class GenesysItemSheet<ItemDataModel extends BaseItemDataModel = 
 		};
 	}
 
+	protected override _canDragDrop(_selector: string): boolean {
+		return this.isEditable;
+	}
+
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html);
 
