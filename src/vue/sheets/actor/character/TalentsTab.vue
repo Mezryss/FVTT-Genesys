@@ -23,39 +23,14 @@ const allTalents = computed(() => toRaw(context.data.actor).items.filter((i) => 
 const activeTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'active'));
 const activeTalentTypes = computed(() => Array.from(new Set(activeTalents.value.filter((t) => t.systemData.activation.detail.trim() !== '').map((t) => t.systemData.activation.detail.toLowerCase()))));
 const passiveTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'passive'));
+const talentTotals = computed(() => toRaw(context.data.actor).systemData.talentPyramidTotals);
 
-function atTier(tier: number) {
-	const talentsCount = allTalents.value.reduce((accumulator, talent) => {
-		if (tier === 5 && talent.systemData.effectiveTier === 5) {
-			// If we want to count talents of tier 5 it requires that we consider the ranking of the talent if appropriate;
-			// ranked talents that are at tier 5 remain at that tier for any future purchases.
-			return accumulator + talent.systemData.rank - (talent.systemData.effectiveTier - talent.systemData.tier);
-		} else if (talent.systemData.tier === tier) {
-			// Count the talent if it matches the desired tier.
-			return accumulator + 1;
-		} else if (talent.systemData.tier < tier && talent.systemData.effectiveTier >= tier) {
-			// Count the talent if it's from a lower tier but it has been purchased enough times that at some point it was
-			// considered as a talent of the desired tier.
-			return accumulator + 1;
-		} else {
-			return accumulator;
-		}
-	}, 0);
-
-	return talentsCount;
-}
-
-const tier1Talents = computed(() => atTier(1));
-const tier2Talents = computed(() => atTier(2));
-const tier3Talents = computed(() => atTier(3));
-const tier4Talents = computed(() => atTier(4));
-const tier5Talents = computed(() => atTier(5));
 const canUpgradeTalent = computed(() => [
-	system.value.availableXP >= 10 && atTier(1) > atTier(2) + 1,
-	system.value.availableXP >= 15 && atTier(2) > atTier(3) + 1,
-	system.value.availableXP >= 20 && atTier(3) > atTier(4) + 1,
-	system.value.availableXP >= 25 && atTier(4) > atTier(5) + 1,
-	system.value.availableXP >= 25 && atTier(4) > atTier(5) + 1,
+	system.value.availableXP >= 10 && talentTotals.value[1] > talentTotals.value[2] + 1,
+	system.value.availableXP >= 15 && talentTotals.value[2] > talentTotals.value[3] + 1,
+	system.value.availableXP >= 20 && talentTotals.value[3] > talentTotals.value[4] + 1,
+	system.value.availableXP >= 25 && talentTotals.value[4] > talentTotals.value[5] + 1,
+	system.value.availableXP >= 25 && talentTotals.value[4] > talentTotals.value[5] + 1,
 ]);
 
 async function upgradeTalent(talent: GenesysItem<TalentDataModel>) {
@@ -207,11 +182,11 @@ async function openItem(item: GenesysItem) {
 		</div>
 
 		<div class="pyramid">
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 1 }" />: {{ tier1Talents }}/∞</div>
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 2 }" />: {{ tier2Talents }}/{{ Math.max(0, tier1Talents - 1) }}</div>
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 3 }" />: {{ tier3Talents }}/{{ Math.max(0, tier2Talents - 1) }}</div>
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 4 }" />: {{ tier4Talents }}/{{ Math.max(0, tier3Talents - 1) }}</div>
-			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 5 }" />: {{ tier5Talents }}/{{ Math.max(0, tier4Talents - 1) }}</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 1 }" />: {{ talentTotals[1] }}/∞</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 2 }" />: {{ talentTotals[2] }}/{{ Math.max(0, talentTotals[1] - 1) }}</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 3 }" />: {{ talentTotals[3] }}/{{ Math.max(0, talentTotals[2] - 1) }}</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 4 }" />: {{ talentTotals[4] }}/{{ Math.max(0, talentTotals[3] - 1) }}</div>
+			<div><Localized label="Genesys.Labels.TierCount" :format-args="{ tier: 5 }" />: {{ talentTotals[5] }}/{{ Math.max(0, talentTotals[4] - 1) }}</div>
 		</div>
 	</section>
 </template>

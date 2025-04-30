@@ -137,8 +137,18 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 					const newRank = targetTalent.systemData.rank + 1;
 					const newEffectiveTier = targetTalent.systemData.effectiveNextTier;
 					const cost = targetTalent.systemData.advanceCost;
+					const talentPyramidTotals = this.actor.systemData.talentPyramidTotals;
 
-					if (this.actor.systemData.availableXP < cost) {
+					if (talentPyramidTotals[newEffectiveTier - 1] <= talentPyramidTotals[newEffectiveTier] + 1) {
+						ui.notifications.info(
+							game.i18n.format('Genesys.Notifications.CannotPurchaseTalentTier', {
+								tier: newEffectiveTier,
+								lowerTier: newEffectiveTier - 1,
+								minimum: talentPyramidTotals[newEffectiveTier] + 2,
+							}),
+						);
+						return false;
+					} else if (this.actor.systemData.availableXP < cost) {
 						ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordRankedTalent', { name: droppedTalent.name, newRank, cost }));
 						return false;
 					}
@@ -164,9 +174,20 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 					});
 				} else {
 					// New talent
-					const cost = droppedTalent.systemData.tier * 5;
+					const newEffectiveTier = droppedTalent.systemData.tier;
+					const cost = newEffectiveTier * 5;
+					const talentPyramidTotals = this.actor.systemData.talentPyramidTotals;
 
-					if (this.actor.systemData.availableXP < cost) {
+					if (talentPyramidTotals[newEffectiveTier - 1] <= talentPyramidTotals[newEffectiveTier] + 1) {
+						ui.notifications.info(
+							game.i18n.format('Genesys.Notifications.CannotPurchaseTalentTier', {
+								tier: newEffectiveTier,
+								lowerTier: newEffectiveTier - 1,
+								minimum: talentPyramidTotals[newEffectiveTier] + 2,
+							}),
+						);
+						return false;
+					} else if (this.actor.systemData.availableXP < cost) {
 						ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotAffordTalent', { name: droppedTalent.name, cost }));
 						return false;
 					}

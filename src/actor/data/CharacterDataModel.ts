@@ -15,6 +15,7 @@ import EquipmentDataModel, { EquipmentState } from '@/item/data/EquipmentDataMod
 import { Characteristic, CharacteristicsContainer } from '@/data/Characteristics';
 import { CombatPool, Defense } from '@/data/Actors';
 import GenesysEffect from '@/effects/GenesysEffect';
+import TalentDataModel from '@/item/data/TalentDataModel';
 
 type Motivation = {
 	name: string;
@@ -170,6 +171,37 @@ export default abstract class CharacterDataModel extends foundry.abstract.DataMo
 		const currentEncumbrance = this.currentEncumbrance;
 
 		return currentEncumbrance.value > currentEncumbrance.threshold;
+	}
+
+	get talentPyramidTotals() {
+		const allTalents = (<CharacterActor>(<unknown>this.parent)).items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[];
+		return allTalents.reduce(
+			(accumulator, talent) => {
+				const talentEffectiveTier = talent.systemData.effectiveTier;
+				for (let k = talentEffectiveTier; k > 0; k--) {
+					if (k === 5 && talentEffectiveTier === 5) {
+						// If we want to count talents of tier 5 it requires that we consider the ranking of the talent if appropriate;
+						// ranked talents that are at tier 5 remain at that tier for any future purchases.
+						accumulator[k] += talent.systemData.rank - (talentEffectiveTier - talent.systemData.tier);
+					} else if (talent.systemData.tier === k) {
+						// Count the talent if it matches the desired tier.
+						accumulator[k]++;
+					} else if (talent.systemData.tier < k && talentEffectiveTier >= k) {
+						// Count the talent if it's from a lower tier but it has been purchased enough times that at some point it was
+						// considered as a talent of the desired tier.
+						accumulator[k]++;
+					}
+				}
+				return accumulator;
+			},
+			{
+				'1': 0,
+				'2': 0,
+				'3': 0,
+				'4': 0,
+				'5': 0,
+			} as Record<number, number>,
+		);
 	}
 
 	get canPurchaseCharacteristicAdvance(): { brawn: boolean; agility: boolean; intellect: boolean; cunning: boolean; willpower: boolean; presence: boolean } {

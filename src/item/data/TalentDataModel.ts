@@ -36,7 +36,7 @@ export default abstract class TalentDataModel extends BaseItemDataModel {
 	 * How much XP it costs to advance this talent to the next rank.
 	 */
 	get advanceCost() {
-		return Math.min(5, this.tier + this.rank) * 5;
+		return this.effectiveNextTier * 5;
 	}
 
 	static override defineSchema() {
@@ -44,7 +44,7 @@ export default abstract class TalentDataModel extends BaseItemDataModel {
 
 		return {
 			...super.defineSchema(),
-			tier: new fields.NumberField({ integer: true, initial: 1 }),
+			tier: new fields.NumberField({ integer: true, initial: 1, min: 1 }),
 			activation: new fields.SchemaField({
 				type: new fields.StringField({
 					initial: 'passive',
@@ -56,7 +56,7 @@ export default abstract class TalentDataModel extends BaseItemDataModel {
 				initial: 'no',
 				choices: ['yes', 'no'],
 			}),
-			rank: new fields.NumberField({ integer: true, initial: 1 }),
+			rank: new fields.NumberField({ integer: true, initial: 1, min: 1 }),
 		};
 	}
 }
