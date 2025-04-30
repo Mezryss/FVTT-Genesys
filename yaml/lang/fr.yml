@@ -81,13 +81,13 @@ Genesys:
     Dice: Dé
     Results: Résultats
     Description:
-      Simple: Lancé...                  
-      Initiative: "Jet d'initiative avec <strong>{skill}</strong>..."
+      Simple: 'Lancé<i class="fas fa-star {superChar}"></i>...'
+      Initiative: 'Jet d''initiative avec <strong>{skill}<i class="fas fa-star {superChar}"></i></strong>...'
       Characteristic: Jet de <strong>{characteristic}</strong>...
-      Skill: Jet de <strong>{skill} ({characteristic})</strong>...
+      Skill: 'Jet de <strong>{skill} ({characteristic}<i class="fas fa-star {superChar}"></i>)</strong>...'
       SkillWithoutCharacteristic: Jet direct <strong>{skill}</strong>...
       AttackCharacteristic: Attaque de <strong>{name}</strong> en utilisant <strong>{characteristic}</strong>!
-      AttackSkill: Attaque de <strong>{name}</strong> en utilisant <strong>{skill} ({characteristic})</strong>!
+      AttackSkill: 'Attaque de <strong>{name}</strong> en utilisant <strong>{skill} ({characteristic}<i class="fas fa-star {superChar}"></i>)</strong>!'
       AttackSkillWithoutCharacteristic: Attaque de <strong>{name}</strong> en utilisant <strong>{skill}</strong>!
     Attack:
       Critical: Critique

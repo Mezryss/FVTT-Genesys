@@ -81,13 +81,13 @@ Genesys:
     Dice: Dice
     Results: Roll Results
     Description:
-      Simple: Rolling...
-      Initiative: Rolling Initiative with <strong>{skill}</strong>...
+      Simple: 'Rolling<i class="fas fa-star {superChar}"></i>...'
+      Initiative: 'Rolling Initiative with <strong>{skill}<i class="fas fa-star {superChar}"></i></strong>...'
       Characteristic: Rolling <strong>{characteristic}</strong>...
-      Skill: Rolling <strong>{skill} ({characteristic})</strong>...
+      Skill: 'Rolling <strong>{skill} ({characteristic}<i class="fas fa-star {superChar}"></i>)</strong>...'
       SkillWithoutCharacteristic: Rolling <strong>{skill}</strong>...
       AttackCharacteristic: Attacking with <strong>{name}</strong> using <strong>{characteristic}</strong>!
-      AttackSkill: Attacking with <strong>{name}</strong> using <strong>{skill} ({characteristic})</strong>!
+      AttackSkill: 'Attacking with <strong>{name}</strong> using <strong>{skill} ({characteristic}<i class="fas fa-star {superChar}"></i>)</strong>!'
       AttackSkillWithoutCharacteristic: Attacking with <strong>{name}</strong> using <strong>{skill}</strong>!
     Attack:
       Critical: Critical

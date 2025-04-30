@@ -81,13 +81,13 @@ Genesys:
     Dice: Dados
     Results: Resultados de la tirada
     Description:
-      Simple: Tirando...
-      Initiative: Tirando Iniciativa con <strong>{skill}</strong>...
+      Simple: 'Tirando<i class="fas fa-star {superChar}"></i>...'
+      Initiative: 'Tirando Iniciativa con <strong>{skill}<i class="fas fa-star {superChar}"></i></strong>...'
       Characteristic: Tirando <strong>{characteristic}</strong>...
-      Skill: Tirando <strong>{skill} ({characteristic})</strong>...
+      Skill: 'Tirando <strong>{skill} ({characteristic}<i class="fas fa-star {superChar}"></i>)</strong>...'
       SkillWithoutCharacteristic: Tirando <strong>{skill}</strong>...
       AttackCharacteristic: ¡Atacando con <strong>{name}</strong> usando <strong>{characteristic}</strong>!
-      AttackSkill: ¡Atacando con <strong>{name}</strong> usando <strong>{skill} ({characteristic})</strong>!
+      AttackSkill: '¡Atacando con <strong>{name}</strong> usando <strong>{skill} ({characteristic}<i class="fas fa-star {superChar}"></i>)</strong>!'
       AttackSkillWithoutCharacteristic: ¡Atacando con <strong>{name}</strong> usando <strong>{skill}</strong>!
     Attack:
       Critical: Crítico

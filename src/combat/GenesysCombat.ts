@@ -169,6 +169,7 @@ export default class GenesysCombat extends Combat {
 
 			await roll.evaluate();
 			const results = GenesysRoller.parseRollResults(roll);
+			const superCharClass = roll.formula.toLowerCase().includes('dpx') ? 'super-char' : 'hide-it';
 			const newInitiative = results.netSuccess + results.netAdvantage / 100;
 
 			if (extraSlotsPerCombatant[combatant.id]) {
@@ -185,7 +186,7 @@ export default class GenesysCombat extends Combat {
 			}
 
 			const rollData = {
-				description: game.i18n.format('Genesys.Rolls.Description.Initiative', { skill: skillName }),
+				description: game.i18n.format('Genesys.Rolls.Description.Initiative', { skill: skillName, superChar: superCharClass }),
 				results,
 			};
 			const html = await renderTemplate('systems/genesys/templates/chat/rolls/skill.hbs', rollData);

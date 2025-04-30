@@ -448,6 +448,7 @@ async function rollPool() {
 	const baseRollData = {
 		actor: toRaw(context.actor),
 		characteristic: selectedCharacteristic.value,
+		usesSuperCharacteristic: currentDicePool.value.usesSuperCharacteristic,
 		skillId: selectedSkill.value?.id ?? '-',
 		formula,
 		symbols,
@@ -566,7 +567,7 @@ async function rollPool() {
 		</div>
 
 		<div v-else-if="USE_SUPER_CHARACTERISTICS" class="super-characteristic-row">
-			<input type="checkbox" v-model="useSuperCharacteristic" />
+			<input type="checkbox" v-model="useSuperCharacteristic" @change="buildDicePool()" />
 			<label><Localized label="Genesys.DicePrompt.UseSuperCharacteristic" /></label>
 		</div>
 
