@@ -93,7 +93,7 @@ export default class CharacterSheet extends VueSheet(GenesysActorSheet<Character
 			} else if (droppedItem.type === 'career') {
 				// If it's a career, delete the old one and apply the new one.
 
-				if (this.actor.systemData.experienceJournal.entries.length > 1) {
+				if (this.actor.systemData.experienceJournal.entries.some((entry) => entry.type === EntryType.Skill)) {
 					return false;
 				}
 
