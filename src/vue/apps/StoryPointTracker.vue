@@ -88,7 +88,7 @@ async function toggleEdit(which: 'gm' | 'player') {
 	<div class="tracker">
 		<header><Localized label="Genesys.StoryPoints.Player" /></header>
 		<input v-if="editingPlayer" class="points" :value="context.playerPool" @change="manualStoryPoints('player', $event)" ref="playerInput" />
-		<a v-else-if="canSpend.playerPool" class="points" @click="spendStoryPoint('playerPool')">{{ context.playerPool }}</a>
+		<a v-else-if="canSpend.playerPool" class="points" @click="spendStoryPoint('playerPool')" @contextmenu="toggleEdit('player')">{{ context.playerPool }}</a>
 		<div v-else class="points" @contextmenu="toggleEdit('player')">{{ context.playerPool }}</div>
 	</div>
 </template>

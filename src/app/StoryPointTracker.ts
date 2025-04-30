@@ -42,6 +42,7 @@ export default class StoryPointTracker extends VueSheet(Application) {
 			popOut: false,
 			resizable: false,
 			width: 'auto',
+			preventSubmit: true,
 		};
 	}
 
