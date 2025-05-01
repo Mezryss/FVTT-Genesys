@@ -225,6 +225,7 @@ Genesys:
     CannotAffordRankedTalent: "Impossible d'augmenter le talent '{name}' au rang {newRank} ({cost}xp)."
     CannotDeleteNewTalent: Impossible de supprimer l'entrée du journal d'XP pour le nouveau talent '{name}' - Vous devez d'abord supprimer les augmentations de rang du talent !
     CannotDeleteExistingTalent: "Impossible de supprimer l'entrée du journal de XP pour l'augmentation du talent '{name}' au rang {rank} - Vous devez d'abord supprimer les augmentations de rang supérieur !"
+    CannotDeleteInvalidTalentPyramid: Cannot delete XP Journal Entry for talent of rank {rank} to preserve the talent pyramid structure. Try deleting talents of higher rank first.
     CannotPurchaseTalentTier: "Vous ne pouvez prendre des talents de la catégorie {tier} - vous devez avoir au moins {minimum} talents à la catégorie {lowerTier} d'abord"
     NotEnoughStoryPoints: Vous ne pouvez pas dépenser de Point Narratif que vous ne possédez pas!
     SelectOneTokenForAction: Vous devez selectionner un unique token pour réaliser cette action.
