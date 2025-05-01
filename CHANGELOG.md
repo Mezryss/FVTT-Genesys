@@ -1,12 +1,30 @@
+## Alpha 0.2.14
+
+### Features / Enhancements
+- [PR #204](https://github.com/Mezryss/FVTT-Genesys/pull/204): ENHANCE - Add an icon when rolling a skill with a super-characteristic
+- [PR #209](https://github.com/Mezryss/FVTT-Genesys/pull/209): FEATURE - Construct actor-specific token trackable attributes
+- [PR #210](https://github.com/Mezryss/FVTT-Genesys/pull/210): STYLING - Move the talents count to the top of the tab
+
+### Bug Fixes / Misc
+- [PR #201](https://github.com/Mezryss/FVTT-Genesys/pull/201): BUGFIX - Fix `@check` enricher to properly set the difficulty when clicked
+- [PR #202](https://github.com/Mezryss/FVTT-Genesys/pull/202): BUGFIX - Fix adversaries not having a weapon skill when attacking
+- [PR #203](https://github.com/Mezryss/FVTT-Genesys/pull/203): BUGFIX - Fix minion skills going over rank 5
+- [PR #205](https://github.com/Mezryss/FVTT-Genesys/pull/205): BUGFIX - Let GM edit player SPs even when different than 0
+- [PR #206](https://github.com/Mezryss/FVTT-Genesys/pull/206): BUGFIX - Let the user drop items into items if they have ownership
+- [PR #207](https://github.com/Mezryss/FVTT-Genesys/pull/207): BUGFIX - Enforce talent pyramid purchase when dropping talents
+- [PR #208](https://github.com/Mezryss/FVTT-Genesys/pull/208): BUGFIX - Allows to add a career so long no skills have been ranked up
+- [PR #211](https://github.com/Mezryss/FVTT-Genesys/pull/211): MISC - Initial drop of support for v11
+- [PR #212](https://github.com/Mezryss/FVTT-Genesys/pull/212): BUGFIX - Prevent an invalid talent pyramid due to a journal entry removal
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.13
 
 ### Features / Enhancements
 - [PR #184](https://github.com/Mezryss/FVTT-Genesys/pull/184): BUGFIX - Fix adding setbacks to the dice pool when targeting a character
 - [PR #185](https://github.com/Mezryss/FVTT-Genesys/pull/185): STYLING - HTML lists in the editor should now properly show their markers
 - [PR #186](https://github.com/Mezryss/FVTT-Genesys/pull/186): FEATURE - Users can send to chat abilities and items from adversaries
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.12
 

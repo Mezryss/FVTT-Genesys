@@ -52,9 +52,18 @@ async function doAlphaNotice(lastAlpha: string) {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/184">PR #184</a>: BUGFIX - Fix adding setbacks to the dice pool when targeting a character</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/185">PR #185</a>: STYLING - HTML lists in the editor should now properly show their markers</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/186">PR #186</a>: FEATURE - Users can send to chat abilities and items from adversaries</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/201">PR #201</a>: BUGFIX - Fix '@check' enricher to properly set the difficulty when clicked</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/202">PR #202</a>: BUGFIX - Fix adversaries not having a weapon skill when attacking</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/203">PR #203</a>: BUGFIX - Fix minion skills going over rank 5</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/204">PR #204</a>: ENHANCE - Add an icon when rolling a skill with a super-characteristic</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/205">PR #205</a>: BUGFIX - Let GM edit player SPs even when different than 0</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/206">PR #206</a>: BUGFIX - Let the user drop items into items if they have ownership</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/207">PR #207</a>: BUGFIX - Enforce talent pyramid purchase when dropping talents</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/208">PR #208</a>: BUGFIX - Allows to add a career so long no skills have been ranked up</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/209">PR #209</a>: FEATURE - Construct actor-specific token trackable attributes</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/210">PR #210</a>: STYLING - Move the talents count to the top of the tab</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/211">PR #211</a>: MISC - Initial drop of support for v11</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/212">PR #212</a>: BUGFIX - Prevent an invalid talent pyramid due to a journal entry removal</li>
 	</ul>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Roadmap</h4>
 	<ul style="margin-top: 0">
