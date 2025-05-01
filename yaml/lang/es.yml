@@ -226,6 +226,7 @@ Genesys:
     CannotAffordRankedTalent: No puedes permitirte incrementar el talento '{name}' al rango {newRank} ({cost}pe).
     CannotDeleteNewTalent: No puedes eliminar la entrada del diario del nuevo talento '{name}' - ¡primero debes eliminar los aumentos de rango del talento!
     CannotDeleteExistingTalent: No puedes eliminar la entrada del diario de PE del talento mejorado '{name}' al rango {rank} - ¡primero debes eliminar los rangos superiores!
+    CannotDeleteInvalidTalentPyramid: No puedes eliminar la entrada del diario de PE del talento de rango {rank} para preservar la pirámide de talentos. Intenta borrando talentos de rango mas bajo.
     CannotPurchaseTalentTier: No puedes comprar talentos de nivel {tier} - primero debes tener al menos {minimum} talentos de nivel {lowerTier}.
     NotEnoughStoryPoints: ¡No puedes gastar puntos de Historia que no tienes!
     SelectOneTokenForAction: Debes seleccionar un único token para realizar esta acción.

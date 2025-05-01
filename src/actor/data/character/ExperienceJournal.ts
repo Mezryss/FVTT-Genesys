@@ -103,8 +103,6 @@ type TalentRankEntryData = {
 
 export async function removeJournalEntry(actor: GenesysActor<CharacterDataModel>, index: number) {
 	if (index >= actor.systemData.experienceJournal.entries.length) {
-		console.warn(`Attempted to remove XP journal entry with index ${index}, but this index is out of bounds!`);
-		console.warn(actor.systemData.experienceJournal.entries);
 		return;
 	}
 
@@ -173,8 +171,16 @@ export async function removeJournalEntry(actor: GenesysActor<CharacterDataModel>
 				break;
 			}
 
-			if (data.rank !== talent.system.rank) {
+			if (data.rank !== talent.systemData.rank) {
 				ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotDeleteExistingTalent', data));
+				return;
+			}
+
+			const talentPyramidTotals = actor.systemData.talentPyramidTotals;
+			const talentEffectiveTier = talent.systemData.effectiveTier;
+			const totalNextTier = talentPyramidTotals[talentEffectiveTier + 1];
+			if (talentEffectiveTier < 5 && totalNextTier > 0 && totalNextTier >= talentPyramidTotals[talentEffectiveTier] - 1) {
+				ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotDeleteInvalidTalentPyramid', { rank: talentEffectiveTier }));
 				return;
 			}
 
@@ -191,8 +197,16 @@ export async function removeJournalEntry(actor: GenesysActor<CharacterDataModel>
 				break;
 			}
 
-			if (data.rank !== talent.system.rank) {
+			if (data.rank !== talent.systemData.rank) {
 				ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotDeleteExistingTalent', data));
+				return;
+			}
+
+			const talentPyramidTotals = actor.systemData.talentPyramidTotals;
+			const talentEffectiveTier = talent.systemData.effectiveTier;
+			const totalNextTier = talentPyramidTotals[talentEffectiveTier + 1];
+			if (talentEffectiveTier < 5 && totalNextTier > 0 && totalNextTier >= talentPyramidTotals[talentEffectiveTier] - 1) {
+				ui.notifications.info(game.i18n.format('Genesys.Notifications.CannotDeleteInvalidTalentPyramid', { rank: talentEffectiveTier }));
 				return;
 			}
 
