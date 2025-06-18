@@ -14,15 +14,39 @@ const context = inject<ActorSheetContext<CharacterDataModel>>(RootContext)!;
 
 const system = computed(() => context.data.actor.systemData);
 
-const activeAbilities = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'ability' && (i.system as AbilityDataModel).activation.type === 'active') as GenesysItem<AbilityDataModel>[]);
+const activeAbilities = computed(() => toRaw(context.data.actor).items
+	.filter((i) => i.type === 'ability' && (i.system as AbilityDataModel).activation.type === 'active')
+	.sort((a, b) => {
+		return a.name.localeCompare(b.name);
+	}) as GenesysItem<AbilityDataModel>[]);
 const activeAbilityTypes = computed(() => Array.from(new Set(activeAbilities.value.map((t) => t.systemData.activation.detail.toLowerCase()))));
-const passiveAbilities = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'ability' && (i.system as AbilityDataModel).activation.type === 'passive') as GenesysItem<AbilityDataModel>[]);
+const passiveAbilities = computed(() => toRaw(context.data.actor).items
+	.filter((i) => i.type === 'ability' && (i.system as AbilityDataModel).activation.type === 'passive')
+	.sort((a, b) => {
+		return a.name.localeCompare(b.name);
+	}) as GenesysItem<AbilityDataModel>[]);
 const archetypeAbilities = computed(() => (toRaw(context.data.actor).items.find((i) => i.type === 'archetype') as GenesysItem<ArchetypeDataModel>)?.systemData.grantedItems.filter((g) => g.type === 'ability').map((r) => r.name) ?? []);
 
 const allTalents = computed(() => toRaw(context.data.actor).items.filter((i) => i.type === 'talent') as GenesysItem<TalentDataModel>[]);
-const activeTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'active'));
+const activeTalents = computed(() => { return allTalents.value
+	.filter((i) => i.systemData.activation.type === 'active')
+	.sort((a, b) => {
+		const tierA = a.system?.tier ?? 0;
+		const tierB = b.system?.tier ?? 0;
+		if (tierA !== tierB) return tierA - tierB;
+		return a.name.localeCompare(b.name);
+		});
+	});
 const activeTalentTypes = computed(() => Array.from(new Set(activeTalents.value.filter((t) => t.systemData.activation.detail.trim() !== '').map((t) => t.systemData.activation.detail.toLowerCase()))));
-const passiveTalents = computed(() => allTalents.value.filter((i) => i.systemData.activation.type === 'passive'));
+const passiveTalents = computed(() => { return allTalents.value
+	.filter((i) => i.systemData.activation.type === 'passive')
+	.sort((a, b) => {
+		const tierA = a.system?.tier ?? 0;
+		const tierB = b.system?.tier ?? 0;
+		if (tierA !== tierB) return tierA - tierB;
+		return a.name.localeCompare(b.name);
+	});
+})
 const talentTotals = computed(() => toRaw(context.data.actor).systemData.talentPyramidTotals);
 
 const canUpgradeTalent = computed(() => [
@@ -96,7 +120,7 @@ async function openItem(item: GenesysItem) {
 					@delete="ability.delete()"
 				/>
 
-				<!-- Active Abilities w/Description -->
+				 Active Abilities w/Description
 				<template v-for="activeType in activeAbilityTypes" :key="activeType">
 					<div class="sub-category-header">{{ activeType }}</div>
 					<Talent
