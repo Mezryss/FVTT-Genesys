@@ -120,7 +120,7 @@ async function openItem(item: GenesysItem) {
 					@delete="ability.delete()"
 				/>
 
-				 Active Abilities w/Description
+<!--				 Active Abilities w/Description-->
 				<template v-for="activeType in activeAbilityTypes" :key="activeType">
 					<div class="sub-category-header">{{ activeType }}</div>
 					<Talent
