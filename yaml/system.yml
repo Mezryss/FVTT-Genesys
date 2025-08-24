@@ -4,8 +4,8 @@ description: (ALPHA) Unofficial implementation of EDGE Studio's Genesys RPG Syst
 version: 0.2.14
 compatibility:
   minimum: 12
-  verified: 12
-  maximum: 12
+  verified: 13
+  maximum: 13
 authors:
   - name: Mezryss
 scripts:

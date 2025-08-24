@@ -169,6 +169,10 @@ Hooks.on('renderDialog', (_dialog: Dialog, html: JQuery<HTMLElement>, _data: obj
 
 // Makes the dice icon at the bottom of the chat to function as a shortcut to call the dice prompt.
 Hooks.on('renderChatLog', (_sidebar: SidebarTab, html: JQuery<HTMLElement>, _data: object) => {
+	if (game.version.startsWith('13')) {
+		return;
+	}
+
 	const diceIcon = html.find('#chat-controls > .chat-control-icon');
 	diceIcon.on('click', async (_event) => {
 		const controlledTokens = canvas.tokens.controlled;
@@ -194,10 +198,12 @@ Hooks.on('renderChatLog', (_sidebar: SidebarTab, html: JQuery<HTMLElement>, _dat
 // directly add links as any HTML is escaped.
 const wikiLinkPattern = /\[\[([^|\]]+)(\|([^\]]+))?\]\]/g;
 Hooks.on('renderSettingsConfig', (_app: SettingsConfig, html: JQuery<HTMLElement>, _data: object) => {
-	let [note] = html.find(`[data-setting-id='genesys.${KEY_DEFAULT_DIFFICULTY}'] > .notes`);
+	const theHtml = game.version.startsWith('13') ? (html as unknown as HTMLElement) : html[0];
+
+	let note = theHtml.querySelector(`[data-setting-id='genesys.${KEY_DEFAULT_DIFFICULTY}'] > .notes`);
 	if (!note) {
-		// FVTT v10 has a different way for structuring their settings.
-		[note] = html.find(`.form-fields:has(input[name='genesys.${KEY_DEFAULT_DIFFICULTY}']) + p.notes`);
+		// FVTT v13 has a different way for structuring their settings.
+		note = theHtml.querySelector(`.form-fields:has(input[name='genesys.${KEY_DEFAULT_DIFFICULTY}']) + p.hint`);
 	}
 
 	if (note) {

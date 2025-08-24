@@ -49,7 +49,7 @@ export default class StoryPointTracker extends VueSheet(Application) {
 	override async _renderInner(data: object, options: RenderOptions = {}) {
 		return super._renderInner(data, {
 			...options,
-			classes: options.classes ?? ['genesys', 'story-point-tracker'],
+			classes: options.classes ?? ['genesys', 'story-point-tracker', ...(game.version.startsWith('13') ? ['move-to-left'] : [])],
 		});
 	}
 

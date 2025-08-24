@@ -47,7 +47,7 @@ const rankDownLabel = game.i18n.localize('Genesys.Labels.RankDown');
 async function addEffect(category: string) {
 	await toRaw(context.sheet.actor).createEmbeddedDocuments('ActiveEffect', [
 		{
-			label: context.data.actor.name,
+			name: context.data.actor.name,
 			img: 'icons/svg/aura.svg',
 			disabled: category === 'suppressed',
 			duration: category === 'temporary' ? { rounds: 1 } : undefined,

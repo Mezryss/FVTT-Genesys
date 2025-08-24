@@ -35,7 +35,7 @@ watchEffect(async () => {
 async function addEffect(category: string) {
 	await toRaw(context.sheet.item).createEmbeddedDocuments('ActiveEffect', [
 		{
-			label: context.data.item.name,
+			name: context.data.item.name,
 			img: 'icons/svg/aura.svg',
 			disabled: category === 'suppressed',
 			duration: category === 'temporary' ? { rounds: 1 } : undefined,

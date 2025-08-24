@@ -102,6 +102,12 @@ async function toggleEdit(which: 'gm' | 'player') {
 	bottom: 20px;
 	right: 320px;
 
+	&.move-to-left {
+		bottom: 15px;
+		left: 250px;
+		right: auto;
+	}
+
 	display: flex;
 	flex-direction: column;
 	gap: 1em;
