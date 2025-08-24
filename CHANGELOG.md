@@ -1,3 +1,11 @@
+## Alpha 0.2.15
+### Features / Enhancements
+- MISC - Initial **basic** support for FVTT v13
+- [PR #217](https://github.com/Mezryss/FVTT-Genesys/pull/217): ENHANCE - Sorts the talents and abilities on the character sheet
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.14
 
 ### Features / Enhancements
@@ -15,9 +23,6 @@
 - [PR #208](https://github.com/Mezryss/FVTT-Genesys/pull/208): BUGFIX - Allows to add a career so long no skills have been ranked up
 - [PR #211](https://github.com/Mezryss/FVTT-Genesys/pull/211): MISC - Initial drop of support for v11
 - [PR #212](https://github.com/Mezryss/FVTT-Genesys/pull/212): BUGFIX - Prevent an invalid talent pyramid due to a journal entry removal
-
-<details>
-<summary>Previous Releases</summary>
 
 ## Alpha 0.2.13
 
