@@ -54,6 +54,7 @@ async function doAlphaNotice(lastAlpha: string) {
 	<ul style="margin-top: 0">
       <li>MISC - Initial <strong>basic</strong> support for FVTT v13</li>
       <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/217">PR #217</a>: ENHANCE - Sorts the talents and abilities on the character sheet</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/221">PR #221</a>: FIX - Fixes genesys font ligatures on Chromium (thanks @kornifex)</li>
 	</ul>
 	<div style="text-align: center">@dice[apbdcs]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Useful Links</h4>

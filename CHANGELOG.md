@@ -1,7 +1,8 @@
-## Alpha 0.2.15
+## Alpha 0.2.16
 ### Features / Enhancements
 - MISC - Initial **basic** support for FVTT v13
 - [PR #217](https://github.com/Mezryss/FVTT-Genesys/pull/217): ENHANCE - Sorts the talents and abilities on the character sheet
+- [PR #221](https://github.com/Mezryss/FVTT-Genesys/pull/221): FIX - Fixes genesys font ligatures on Chromium (thanks @kornifex)
 
 <details>
 <summary>Previous Releases</summary>
