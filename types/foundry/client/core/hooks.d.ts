@@ -21,6 +21,7 @@ declare global {
 	type HooksParamsPreUpdateCombat = HookParameters<'preUpdateCombat', [Combat, object, { diff: boolean; advanceTime: number; [key: string]: unknown }, string]>;
 	type HookParamsPreUpdateToken = HookParameters<'preUpdateToken', [Scene, foundry.data.TokenData, Partial<foundry.data.TokenData>, { diff: boolean; [key: string]: unknown }, string]>;
 	type HookParamsRender<T extends Application, N extends string> = HookParameters<`render${N}`, [T, JQuery, ReturnType<T['getData']>]>;
+	type HookParamsChatMessage = HookParameters<'chatMessage', [ChatLog, string, any]>;
 	type HookParamsRenderChatMessage = HookParameters<'renderChatMessage', [ChatMessage, JQuery, foundry.data.ChatMessageSource]>;
 	type HookParamsTargetToken = HookParameters<'targetToken', [User, Token, boolean]>;
 	type HookParamsUpdate<T extends ClientDocument, N extends string> = HookParameters<`update${N}`, [T, DocumentUpdateData<T>, DocumentModificationContext]>;
@@ -47,6 +48,7 @@ declare global {
 		static on(...args: HookParamsPreCreateItem): number;
 		static on(...args: HooksParamsPreUpdateCombat): number;
 		static on(...args: HookParamsPreUpdateToken): number;
+		static on(...args: HookParamsChatMessage): number;
 		static on(...args: HookParamsRenderChatMessage): number;
 		static on(...args: HookParamsRender<ChatLog, 'ChatLog'>): number;
 		static on(...args: HookParamsRender<ChatPopout, 'ChatPopout'>): number;
@@ -88,6 +90,7 @@ declare global {
 		static once(...args: HookParamsLightingRefresh): number;
 		static once(...args: HookParamsPreCreateItem): number;
 		static once(...args: HookParamsPreUpdateToken): number;
+		static once(...args: HookParamsChatMessage): number;
 		static once(...args: HookParamsRenderChatMessage): number;
 		static once(...args: HookParamsRender<ActorDirectory<Actor>, 'ActorDirectory'>): number;
 		static once(...args: HookParamsRender<ChatLog, 'ChatLog'>): number;

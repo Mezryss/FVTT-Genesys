@@ -175,6 +175,16 @@ Hooks.on('renderChatLog', (_sidebar: SidebarTab, html: JQuery<HTMLElement>, _dat
 	});
 });
 
+// Allow to open the DicePrompt on chat command /gendr (for GENesys Dice Roller), thus allowing to open it from a macro
+Hooks.on('chatMessage', (chatLog: ChatLog, message: string, _chatData: any) => {
+	const commandR = /^\/gendr(?:oll)?/i;
+	if (message.match(commandR)) {
+		DicePrompt.promptForRoll(undefined, '');
+		return false;
+	}
+	return true;
+});
+
 // Create wiki links in the description section of certain settings. We use a hook here since there is no way to
 // directly add links as any HTML is escaped.
 const wikiLinkPattern = /\[\[([^|\]]+)(\|([^\]]+))?\]\]/g;
