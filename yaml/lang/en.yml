@@ -378,6 +378,14 @@ Genesys:
       Minor: Minor Damage
       Moderate: Moderate Damage
       Major: Major Damage
+    Dropdown:
+      Equip: Equip
+      Unequip: Unequip
+      Drop: Drop
+      PickUp: Pick Up
+      ToChat: To Chat
+      Edit: Edit
+      Delete: Delete
 
   # Misc. Unsorted Labels (to be cleaned up later)
   Labels:

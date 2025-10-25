@@ -490,44 +490,44 @@ async function dropInventoryIntoContainer(event: DragEvent) {
 			<template v-slot:menu-items>
 				<MenuItem v-if="allowEquippedState && ['weapon', 'vehicleWeapon'].includes(item.type) && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-sword"></i></template>
-					Equip
+					<Localized label="Genesys.Equipment.Dropdown.Equip" />
 				</MenuItem>
 
 				<MenuItem v-if="allowEquippedState && item.type === 'armor' && canEquipItem(item)" @click="setItemState(EquipmentState.Equipped)">
 					<template v-slot:icon><i class="fas fa-shield"></i></template>
-					Equip
+					<Localized label="Genesys.Equipment.Dropdown.Equip" />
 				</MenuItem>
 
 				<MenuItem v-if="allowEquippedState && canUnequipItem(item)" @click="setItemState(EquipmentState.Carried)">
 					<template v-slot:icon><i class="fas fa-backpack"></i></template>
-					Unequip
+					<Localized label="Genesys.Equipment.Dropdown.Unequip" />
 				</MenuItem>
 
 				<MenuItem v-if="allowDroppedState && canDropItem(item)" @click="setItemState(EquipmentState.Dropped)">
 					<template v-slot:icon><i class="fas fa-shelves"></i></template>
-					Drop
+					<Localized label="Genesys.Equipment.Dropdown.Drop" />
 				</MenuItem>
 
 				<MenuItem v-if="allowDroppedState && canPickupItem(item)" @click="setItemState(EquipmentState.Carried)">
 					<template v-slot:icon><i class="fas fa-backpack"></i></template>
-					Pick Up
+					<Localized label="Genesys.Equipment.Dropdown.PickUp" />
 				</MenuItem>
 
 				<hr v-if="(allowEquippedState && isEquipableItem(item)) || allowDroppedState" />
 
 				<MenuItem @click="sendItemToChat">
 					<template v-slot:icon><i class="fas fa-comment"></i></template>
-					To Chat
+					<Localized label="Genesys.Equipment.Dropdown.ToChat" />
 				</MenuItem>
 
 				<MenuItem @click="openItem">
 					<template v-slot:icon><i class="fas fa-edit"></i></template>
-					Edit
+					<Localized label="Genesys.Equipment.Dropdown.Edit" />
 				</MenuItem>
 
 				<MenuItem @click="deleteItem">
 					<template v-slot:icon><i class="fas fa-trash"></i></template>
-					Delete
+					<Localized label="Genesys.Equipment.Dropdown.Delete" />
 				</MenuItem>
 			</template>
 
