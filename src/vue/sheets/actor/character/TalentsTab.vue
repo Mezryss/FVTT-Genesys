@@ -128,8 +128,8 @@ async function openItem(item: GenesysItem) {
 					@delete="ability.delete()"
 				/>
 
-				<!--				 Active Abilities w/Description-->
-				<template v-for="activeType in activeAbilityTypes" :key="activeType">
+				<!-- Active Abilities w/Description -->
+				<template v-for="activeType in activeAbilityTypes.filter(t => t !== '')" :key="activeType">
 					<div class="sub-category-header">{{ activeType }}</div>
 					<Talent
 						v-for="ability in activeAbilities.filter((t) => t.systemData.activation.detail.toLowerCase() === activeType)"
