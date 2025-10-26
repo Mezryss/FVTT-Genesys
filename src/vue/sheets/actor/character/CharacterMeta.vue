@@ -55,7 +55,7 @@ onUpdated(updateArchetypeAndCareer);
 <template>
 	<header class="character-meta">
 		<div class="data">
-			<div class="title"><Localized label="ACTOR.TypeCharacter" /></div>
+			<div class="title"><Localized label="TYPES.Actor.character" /></div>
 
 			<label><Localized label="Genesys.Labels.CharacterName" /></label>
 			<input type="text" name="name" :value="rootContext.data.actor.name" v-localize:placeholder="'Genesys.Labels.CharacterName'" />
