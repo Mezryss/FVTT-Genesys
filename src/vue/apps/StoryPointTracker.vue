@@ -101,6 +101,7 @@ async function toggleEdit(which: 'gm' | 'player') {
 	position: absolute;
 	bottom: 20px;
 	right: 320px;
+	color: var(--color-dark-1);
 
 	&.move-to-left {
 		bottom: 15px;
