@@ -25,6 +25,34 @@ export default class GenesysActorSheet<ActorDataModel extends foundry.abstract.D
 		};
 	}
 
+	protected override async _onDropFolder(event: DragEvent, data: DropCanvasData<'Folder'>): Promise<GenesysItem<ItemDataModel>[]> {
+		if (!this.actor.isOwner) return [];
+		const folder = await Folder.fromDropData(data);
+		if (!folder) return [];
+		if (folder.type !== "Item") return [];
+
+		const createdItems: GenesysItem<BaseItemDataModel>[] = [];
+
+		const folderContent = folder.contents;
+		for (const item of folderContent) {
+			const creationResult = await this._onDropItem(new DragEvent(event.type), {
+				uuid: item.uuid,
+				x: data.x,
+				y: data.y
+			});
+
+			if(!creationResult) {
+				continue;
+			}
+
+			if(Array.isArray(creationResult)) {
+				createdItems.push(...creationResult);
+			}
+		}
+
+		return createdItems;
+	}
+
 	override activateListeners(html: JQuery) {
 		super.activateListeners(html);
 
