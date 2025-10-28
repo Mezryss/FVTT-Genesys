@@ -22,7 +22,7 @@ const activeAbilities = computed(
 				return a.name.localeCompare(b.name);
 			}) as GenesysItem<AbilityDataModel>[],
 );
-const activeAbilityTypes = computed(() => Array.from(new Set(activeAbilities.value.map((t) => t.systemData.activation.detail.toLowerCase()))));
+const activeAbilityTypes = computed(() => Array.from(new Set(activeAbilities.value.map((t) => t.systemData.activation.detail.toLowerCase()))).filter(t => t !== ''));
 const passiveAbilities = computed(
 	() =>
 		toRaw(context.data.actor)
@@ -128,7 +128,7 @@ async function openItem(item: GenesysItem) {
 					@delete="ability.delete()"
 				/>
 
-				<!--				 Active Abilities w/Description-->
+				<!-- Active Abilities w/Description -->
 				<template v-for="activeType in activeAbilityTypes" :key="activeType">
 					<div class="sub-category-header">{{ activeType }}</div>
 					<Talent
