@@ -673,6 +673,7 @@ onBeforeUpdate(updateEffects);
 			font-family: 'Bebas Neue', sans-serif;
 			font-size: 2rem;
 			color: colors.$blue;
+			height: 2rem;
 
 			&,
 			&:focus {
