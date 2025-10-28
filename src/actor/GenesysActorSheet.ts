@@ -29,7 +29,7 @@ export default class GenesysActorSheet<ActorDataModel extends foundry.abstract.D
 		if (!this.actor.isOwner) return [];
 		const folder = await Folder.fromDropData(data);
 		if (!folder) return [];
-		if (folder.type !== "Item") return [];
+		if (folder.type !== 'Item') return [];
 
 		const createdItems: GenesysItem<BaseItemDataModel>[] = [];
 
@@ -38,14 +38,14 @@ export default class GenesysActorSheet<ActorDataModel extends foundry.abstract.D
 			const creationResult = await this._onDropItem(new DragEvent(event.type), {
 				uuid: item.uuid,
 				x: data.x,
-				y: data.y
+				y: data.y,
 			});
 
-			if(!creationResult) {
+			if (!creationResult) {
 				continue;
 			}
 
-			if(Array.isArray(creationResult)) {
+			if (Array.isArray(creationResult)) {
 				createdItems.push(...creationResult);
 			}
 		}

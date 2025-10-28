@@ -22,7 +22,7 @@ const activeAbilities = computed(
 				return a.name.localeCompare(b.name);
 			}) as GenesysItem<AbilityDataModel>[],
 );
-const activeAbilityTypes = computed(() => Array.from(new Set(activeAbilities.value.map((t) => t.systemData.activation.detail.toLowerCase()))).filter(t => t !== ''));
+const activeAbilityTypes = computed(() => Array.from(new Set(activeAbilities.value.map((t) => t.systemData.activation.detail.toLowerCase()))).filter((t) => t !== ''));
 const passiveAbilities = computed(
 	() =>
 		toRaw(context.data.actor)

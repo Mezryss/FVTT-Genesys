@@ -52,9 +52,13 @@ async function doAlphaNotice(lastAlpha: string) {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-      <li>MISC - Initial <strong>basic</strong> support for FVTT v13</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/217">PR #217</a>: ENHANCE - Sorts the talents and abilities on the character sheet</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/221">PR #221</a>: FIX - Fixes genesys font ligatures on Chromium (thanks @kornifex)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/230">[FIX]</a>: Fix duplication of active abilities without activation phrase in talents tab (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/226">[FIX]</a>: Handle dropping folder of items to actor sheets (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/227">[STYLING]</a>: Fix Story Point values being unreadable in FVTT v13 (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/229">[STYLING]</a>: Fix cut off sheet titles (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/228">[FIX]</a>: Fix the phrase at the top of actor sheets (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/225">[LOCALIZATION]</a>: Adds localization strings for equipment dropdown (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/223">[FEATURE]</a>: Adds a chat command to prompt the dice roller (thanks @kornifex)</li>
 	</ul>
 	<div style="text-align: center">@dice[apbdcs]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Useful Links</h4>

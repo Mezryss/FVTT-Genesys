@@ -1,11 +1,21 @@
+## Alpha 0.2.17
+### Changes
+- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/230): Fix duplication of active abilities without activation phrase in talents tab (thanks @KitCat420)
+- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/226): Handle dropping folder of items to actor sheets (thanks @KitCat420)
+- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/227): Fix Story Point values being unreadable in FVTT v13 (thanks @KitCat420)
+- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/229): Fix cut off sheet titles (thanks @KitCat420)
+- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/228): Fix the phrase at the top of actor sheets (thanks @KitCat420)
+- [LOCALIZATION](https://github.com/Mezryss/FVTT-Genesys/pull/225): Adds localization strings for equipment dropdown (thanks @KitCat420)
+- [FEATURE](https://github.com/Mezryss/FVTT-Genesys/pull/223): Adds a chat command to prompt the dice roller (thanks @kornifex)
+
+<details>
+<summary>Previous Releases</summary>
+
 ## Alpha 0.2.16
 ### Features / Enhancements
 - MISC - Initial **basic** support for FVTT v13
 - [PR #217](https://github.com/Mezryss/FVTT-Genesys/pull/217): ENHANCE - Sorts the talents and abilities on the character sheet
-- [PR #221](https://github.com/Mezryss/FVTT-Genesys/pull/221): FIX - Fixes genesys font ligatures on Chromium (thanks @kornifex)
-
-<details>
-<summary>Previous Releases</summary>
+- [PR #221](https://github.com/Mezryss/FVTT-Genesys/pull/221): FIX - Fixes genesys font ligatures on Chromium
 
 ## Alpha 0.2.14
 
