@@ -82,7 +82,7 @@ export default class GenesysEffectSheetV2 extends ActiveEffectConfig<GenesysEffe
 		const formDataExpanded = super._processFormData(event, form, formData) as { changes: EffectChangeExpanded[] };
 
 		const dicePoolModificationPattern = new RegExp(`^${PoolModGlyphPattern.source}*$`);
-		formDataExpanded.changes = Object.values(formDataExpanded.changes).map((change: EffectChangeExpanded) => {
+		formDataExpanded.changes = Object.values(formDataExpanded.changes || []).map((change: EffectChangeExpanded) => {
 			if (GenesysEffect.DICE_POOL_MOD_KEY_PATTERN.test(change.key)) {
 				if (change.key.includes(GenesysEffect.DICE_POOL_MOD_CHECK_TYPE)) {
 					change.key += '.';
