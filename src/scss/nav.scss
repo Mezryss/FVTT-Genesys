@@ -1,7 +1,7 @@
 @use 'vars/colors';
 @use 'vars/sheet';
 
-.sheet {
+.sheet.genesys {
 	nav.sheet-tabs {
 		// Stretch the tabs container across the full sheet width.
 		margin-left: -1 * sheet.$padding;
