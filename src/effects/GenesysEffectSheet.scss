@@ -151,3 +151,17 @@
 		}
 	}
 }
+
+.effect-sheet-v2 {
+	.check-selection {
+		text-align: center;
+	}
+
+	.initial-hide {
+		display: none;
+	}
+
+	.show-it {
+		display: inherit;
+	}
+}

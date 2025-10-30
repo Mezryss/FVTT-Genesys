@@ -1,0 +1,119 @@
+<section class="tab changes{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+	<header>
+		<div class="key">{{localize "EFFECT.ChangeKey"}}</div>
+		<div class="mode">{{localize "EFFECT.ChangeMode"}}</div>
+		<div class="value">{{localize "EFFECT.ChangeValue"}}</div>
+		<div class="priority">{{localize "EFFECT.ChangePriority"}}</div>
+		<div class="controls"><a data-action="addChange"><i class="fa-regular fa-square-plus"></i></a></div>
+	</header>
+	<ol class="scrollable">
+		{{#each changes as |change i|}}
+		{{#with ../fields.changes.element.fields as |changeFields|}}
+		<li data-index="{{i}}">
+			<div class="key">
+				{{#select change.key}}
+				<select name="changes.{{i}}.key">
+					<option value="">—</option>
+
+					{{!-- Characteristics Changes --}}
+					<optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyCharacteristic'}}">
+						{{!-- Character & Adversary Characteristics --}}
+						<option value="system.characteristics.brawn">&#x1F9D1; {{localize
+							'Genesys.Characteristics.Brawn'}}</option>
+						<option value="system.characteristics.agility">&#x1F9D1; {{localize
+							'Genesys.Characteristics.Agility'}}</option>
+						<option value="system.characteristics.intellect">&#x1F9D1; {{localize
+							'Genesys.Characteristics.Intellect'}}</option>
+						<option value="system.characteristics.cunning">&#x1F9D1; {{localize
+							'Genesys.Characteristics.Cunning'}}</option>
+						<option value="system.characteristics.willpower">&#x1F9D1; {{localize
+							'Genesys.Characteristics.Willpower'}}</option>
+						<option value="system.characteristics.presence">&#x1F9D1; {{localize
+							'Genesys.Characteristics.Presence'}}</option>
+
+						{{!-- Vehicle Characteristics --}}
+						<option value="system.silhouette">&#x1F697; {{localize 'Genesys.Labels.Silhouette'}}</option>
+						<option value="system.speed">&#x1F697; {{localize 'Genesys.Labels.Speed'}}</option>
+						<option value="system.handling">&#x1F697; {{localize 'Genesys.Labels.Handling'}}</option>
+						<option value="system.defense">&#x1F697; {{localize 'Genesys.Labels.Defense'}}</option>
+						<option value="system.armor">&#x1F697; {{localize 'Genesys.Labels.Armor'}}</option>
+					</optgroup>
+
+					{{!-- Stat Changes --}}
+					<optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyStat'}}">
+						{{!-- Characert and Adversary Secondary Stats --}}
+						<option value="system.soak">&#x1F9D1; {{localize 'Genesys.Labels.SoakValue'}}</option>
+						<option value="system.wounds.max">&#x1F9D1; {{localize 'Genesys.Labels.WoundThreshold'}}
+						</option>
+						<option value="system.strain.max">&#x1F9D1; {{localize 'Genesys.Labels.StrainThreshold'}}
+						</option>
+						<option value="system.defense.melee">&#x1F9D1; {{localize 'Genesys.Labels.MeleeDefense'}}
+						</option>
+						<option value="system.defense.ranged">&#x1F9D1; {{localize 'Genesys.Labels.RangedDefense'}}
+						</option>
+
+						{{!-- Vehicle Secondary Stats --}}
+						<option value="system.hullTrauma.max">&#x1F697; {{localize
+							'Genesys.Labels.HullTraumaThreshold'}}</option>
+						<option value="system.systemStrain.max">&#x1F697; {{localize
+							'Genesys.Labels.SystemStrainThreshold'}}</option>
+						<option value="system.passengers.value">&#x1F697; {{localize 'Genesys.Labels.Passengers'}}
+						</option>
+						<option value="system.passengers.threshold">&#x1F697; {{localize
+							'Genesys.Labels.PassengerCapacity'}}</option>
+
+						{{!-- Shared Secondary Stats --}}
+						<option value="system.encumbrance.value">&#x1F310; {{localize 'Genesys.Labels.Encumbrance'}}
+						</option>
+						<option value="system.encumbrance.threshold">&#x1F310; {{localize
+							'Genesys.Labels.EncumbranceThreshold'}}</option>
+					</optgroup>
+
+					{{!-- Skill Changes --}}
+
+					{{!-- Dice Pool Changes --}}
+					<optgroup label="{{localize 'Genesys.ActiveEffects.Types.ModifyDicePool.GroupLabel'}}">
+						{{!-- Modifications from the Roller --}}
+						<option value="genesys.pool.check.self">&#x1F447; {{localize
+							'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Check'}}</option>
+						<option value="genesys.pool.char.self">&#x1F447; {{localize
+							'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Characteristic'}}</option>
+						<option value="genesys.pool.skill.self">&#x1F447; {{localize
+							'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Skill'}}</option>
+
+						{{!-- Modifications from the Target --}}
+						<option value="genesys.pool.check.target">&#x1F3AF; {{localize
+							'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Check'}}</option>
+						<option value="genesys.pool.char.target">&#x1F3AF; {{localize
+							'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Characteristic'}}</option>
+						<option value="genesys.pool.skill.target">&#x1F3AF; {{localize
+							'Genesys.ActiveEffects.Types.ModifyDicePool.Options.Skill'}}</option>
+					</optgroup>
+				</select>
+				{{/select}}
+			</div>
+			<div class="mode">
+				<div class="check-selection initial-hide {{#if (isSubstringOf 'genesys.pool.check.' change.key)}}show-it{{/if}}">—</div>
+				<select name="changes.{{i}}.char" class="characteristic-selection initial-hide {{#if (isSubstringOf 'genesys.pool.char.' change.key)}}show-it{{/if}}">
+					{{selectOptions @root.characteristics selected=change.char sort=true}}
+				</select>
+				<select name="changes.{{i}}.skill" class="skill-selection initial-hide {{#if (isSubstringOf 'genesys.pool.skill.' change.key)}}show-it{{/if}}">
+					{{selectOptions @root.skills selected=change.skill sort=true}}
+				</select>
+				<select name="changes.{{i}}.mode" data-dtype="Number" class="effect-mode initial-hide {{#if (not (isSubstringOf 'genesys.pool.' change.key))}}show-it{{/if}}">
+					{{selectOptions @root.modes selected=change.mode}}
+				</select>
+			</div>
+			<div class="value">
+				{{formInput changeFields.value name=(concat "changes." i ".value") value=change.value}}
+			</div>
+			<div class="priority">
+				{{formInput changeFields.priority name=(concat "changes." i ".priority") value=change.priority
+				placeholder=(lookup ../../priorities change.mode)}}
+			</div>
+			<div class="controls"><a data-action="deleteChange"><i class="fa-solid fa-trash"></i></a></div>
+		</li>
+		{{/with}}
+		{{/each}}
+	</ol>
+</section>
