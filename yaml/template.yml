@@ -260,6 +260,8 @@ Item:
       detail: ''
     # Whether the talent can be taken multiple times.
     ranked: 'no'
+    # Whether the talent's effects scale with rank.
+    scalesWithRank: 'no'
     # (Owned) How many times the talent has been taken, if it's a ranked talent.
     rank: 1
   quality:

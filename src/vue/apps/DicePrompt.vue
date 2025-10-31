@@ -169,7 +169,7 @@ function applyDicePoolModifications(dicePool: DicePool, modifierTokens: string[]
 function aggregatePoolModifications(effects: foundry.abstract.EmbeddedCollection<ActiveEffect>, changeKeys: string[], namePrefix: string) {
 	return effects.reduce<DicePoolModifications['effects']>((modifications, effect) => {
 		if (!effect.isSuppressed) {
-			let effectRank = effect.originItem?.system?.rank ?? 1;
+			let effectRank = effect.originItem?.system?.scalesWithRank === 'yes' ? (effect.originItem?.system?.rank ?? 1) : 1;
 
 			// Find all the changes inside this effect related to the passed criteria.
 			const relevantChanges = effect.changes.reduce((accum, change) => {

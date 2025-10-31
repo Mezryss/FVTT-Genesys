@@ -44,6 +44,14 @@ const system = computed(() => context.data.item.systemData);
 					</select>
 				</div>
 
+				<div class="row" v-if="system.ranked === 'yes'">
+					<label><Localized label="Genesys.Labels.EffectsScaleWithRank" /></label>
+					<select name="system.scalesWithRank" :value="system.scalesWithRank">
+						<option value="yes"><Localized label="Genesys.Labels.Yes" /></option>
+						<option value="no"><Localized label="Genesys.Labels.No" /></option>
+					</select>
+				</div>
+
 				<div class="row">
 					<label><Localized label="Genesys.Labels.Source" /></label>
 					<input type="text" name="system.source" :value="system.source" />
