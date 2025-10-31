@@ -129,6 +129,7 @@ declare global {
 
 	interface ActiveEffect {
 		readonly parent: Actor | Item;
+		readonly originItem?: Item;
 
 		disabled: boolean;
 		img: ImageFilePath;
