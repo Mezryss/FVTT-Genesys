@@ -412,7 +412,9 @@ async function dropInventoryIntoContainer(event: DragEvent) {
 		<div v-else class="details" @dragenter="dragEnter" @dragleave="dragLeave">
 			<span class="name">
 				<a @click="openItem">{{ item.name }}</a>
-				<button class="attack" v-if="item.type === 'weapon' && system.state === EquipmentState.Equipped" @click="rollAttack">Attack</button>
+				<button class="attack" v-if="item.type === 'weapon' && system.state === EquipmentState.Equipped" @click="rollAttack">
+					<Localized label="Genesys.Labels.Attack" />
+				</button>
 			</span>
 
 			<div :data-item-type="item.type">
@@ -452,12 +454,12 @@ async function dropInventoryIntoContainer(event: DragEvent) {
 				<!-- Armor Details -->
 				<template v-else-if="item.type === 'armor'">
 					<!-- Soak -->
-					<div v-if="armorData.soak > 0">Soak +{{ armorData.soak }}</div>
-					<div v-else-if="armorData.soak < 0">Soak {{ armorData.soak }}</div>
+					<div v-if="armorData.soak > 0"><Localized label="Genesys.Labels.Soak" /> +{{ armorData.soak }}</div>
+					<div v-else-if="armorData.soak < 0"><Localized label="Genesys.Labels.Soak" /> {{ armorData.soak }}</div>
 
 					<!-- Defense -->
-					<div v-if="armorData.defense > 0">Defense +{{ armorData.defense }}</div>
-					<div v-else-if="armorData.defense < 0">Defense {{ armorData.defense }}</div>
+					<div v-if="armorData.defense > 0"><Localized label="Genesys.Labels.Defense" /> +{{ armorData.defense }}</div>
+					<div v-else-if="armorData.defense < 0"><Localized label="Genesys.Labels.Defense" /> {{ armorData.defense }}</div>
 
 					<!-- Qualities -->
 					<div v-if="armorData.qualities.length > 0" class="item-qualities">
@@ -469,8 +471,13 @@ async function dropInventoryIntoContainer(event: DragEvent) {
 
 				<!-- Container Details -->
 				<template v-else-if="item.type === 'container'">
-					<a v-if="displayContainerContents" @click="displayContainerContents = false"><i class="fas fa-box-open"></i> Close Container</a>
-					<a v-else @click="displayContainerContents = true"><i class="fas fa-box"></i> {{ containedItems.length }} Items</a>
+					<a v-if="displayContainerContents" @click="displayContainerContents = false"><i class="fas fa-box-open"></i> <Localized label="Genesys.Labels.CloseContainer" /></a>
+					<a v-else @click="displayContainerContents = true">
+						<i class="fas fa-box"></i>
+						{{ containedItems.length }}
+						<Localized label="Genesys.Labels.Items" v-if="containedItems.length !== 1" />
+						<Localized label="Genesys.Labels.Item" v-else />
+					</a>
 				</template>
 			</div>
 		</div>
