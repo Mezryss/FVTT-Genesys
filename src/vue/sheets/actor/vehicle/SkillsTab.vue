@@ -147,7 +147,7 @@ async function openActorSheet(actor: GenesysActor) {
 <template>
 	<section class="tab-skills">
 		<div class="grouping-mode">
-			Group By:
+			<Localized label="Genesys.Labels.GroupBy" />:
 			<select v-model="groupingMode">
 				<option value="member"><Localized label="Genesys.Tabs.Crew" /></option>
 				<option value="skill"><Localized label="Genesys.Labels.Skill" /></option>

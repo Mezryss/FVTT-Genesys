@@ -510,3 +510,8 @@ Genesys:
     FiringArc: Firing Arc
     Select: Select
     PerformCheck: Perform Check
+    GroupBy: Group By
+    Attack: Attack
+    Item: Item
+    Items: Items
+    CloseContainer: Close Container
