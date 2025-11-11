@@ -11,7 +11,9 @@ export function register() {
 	Handlebars.registerHelper('capitalize', (value: string) => value.capitalize());
 	Handlebars.registerHelper('toLowerCase', (value: string) => value.toLowerCase());
 	Handlebars.registerHelper('toUpperCase', (value: string) => value.toUpperCase());
-	Handlebars.registerHelper('concat', (...values: any[]) => values.filter((v) => v && typeof v === 'string').join(''));
+	if (game.version.startsWith('12')) {
+		Handlebars.registerHelper('concat', (...values: any[]) => values.filter((v) => v && typeof v === 'string').join(''));
+	}
 	Handlebars.registerHelper('split', (value: string) => value.split(' '));
 	Handlebars.registerHelper('isSubstringOf', (substring: string, fullString: string) => fullString.includes(substring));
 
