@@ -16,6 +16,7 @@ export default abstract class TalentDataModel extends BaseItemDataModel {
 	abstract tier: number;
 	abstract activation: AbilityActivation;
 	abstract ranked: 'yes' | 'no';
+	abstract scalesWithRank: 'yes' | 'no';
 	abstract rank: number;
 
 	/**
@@ -53,6 +54,10 @@ export default abstract class TalentDataModel extends BaseItemDataModel {
 				detail: new fields.StringField(),
 			}),
 			ranked: new fields.StringField({
+				initial: 'no',
+				choices: ['yes', 'no'],
+			}),
+			scalesWithRank: new fields.StringField({
 				initial: 'no',
 				choices: ['yes', 'no'],
 			}),

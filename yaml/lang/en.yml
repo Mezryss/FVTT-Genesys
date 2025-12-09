@@ -446,6 +446,7 @@ Genesys:
     Activation: Activation
     Rank: Rank
     Ranked: Ranked
+    EffectsScaleWithRank: Effects scale with rank
     Active: Active
     Passive: Passive
     Yes: Yes

@@ -25,6 +25,7 @@ const props = withDefaults(
 		canDelete: false,
 		canUpgrade: false,
 		ranked: false,
+		scalesWithRank: false,
 		rank: 0,
 	},
 );
