@@ -21,6 +21,9 @@ declare global {
 
 	class ActiveEffectConfig<TDocument extends ActiveEffect = ActiveEffect> extends DocumentSheet<TDocument> {
 		/** @override */
+		static PARTS: Record<string, { template: string, [key: string]: unknown }>;
+
+		/** @override */
 		static get defaultOptions(): ActiveEffectConfigOptions;
 
 		/** @override */
@@ -41,5 +44,14 @@ declare global {
 
 		/** @override */
 		protected _updateObject(event: Event, formData: Record<string, unknown> & { changes?: foundry.data.EffectChangeData[] }): Promise<void>;
+
+		/** @override */
+		protected _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
+
+		/** @override */
+		protected _onChangeForm(formConfig: Record<string, unknown>, event: Event): void;
+
+		/** @override */
+		protected _processFormData(event: Event, form: HTMLElement, formData: Record<string, unknown>): Record<string, unknown>;
 	}
 }
