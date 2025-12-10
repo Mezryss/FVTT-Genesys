@@ -166,7 +166,7 @@ function applyDicePoolModifications(dicePool: DicePool, modifierTokens: string[]
 	}
 }
 
-function aggregatePoolModifications(effects: foundry.abstract.EmbeddedCollection<ActiveEffect>, changeKeys: string[], namePrefix: string) {
+function aggregatePoolModifications(effects: foundry.abstract.EmbeddedCollection<GenesysEffect>, changeKeys: string[], namePrefix: string) {
 	return effects.reduce<DicePoolModifications['effects']>((modifications, effect) => {
 		if (!effect.isSuppressed) {
 			let effectRank = effect.originItem?.system?.scalesWithRank === 'yes' ? effect.originItem?.system?.rank ?? 1 : 1;
@@ -212,13 +212,13 @@ function calculatePoolModificationsForSkill() {
 			targetChangeKeys.push(`${skillPoolModKey}${GenesysEffect.DICE_POOL_MOD_TARGET_SOURCE}.${selectedSkill.value.name}`);
 		}
 
-		relevantModifications.push(...aggregatePoolModifications(actor.effects, selfChangeKeys, game.i18n.localize('Genesys.DicePrompt.PoolModifications.SelfEffects')));
+		relevantModifications.push(...aggregatePoolModifications(actor.effects as foundry.abstract.EmbeddedCollection<GenesysEffect>, selfChangeKeys, game.i18n.localize('Genesys.DicePrompt.PoolModifications.SelfEffects')));
 
 		if (game.user.targets.size === 1) {
 			const [chosenTarget] = game.user.targets;
 			if (VALID_ACTOR_TARGET_TYPES.includes(chosenTarget.actor?.type ?? '')) {
 				relevantModifications.push(
-					...aggregatePoolModifications((chosenTarget.actor?.effects ?? []) as foundry.abstract.EmbeddedCollection<ActiveEffect>, targetChangeKeys, game.i18n.localize('Genesys.DicePrompt.PoolModifications.TargetEffects')),
+					...aggregatePoolModifications((chosenTarget.actor?.effects ?? []) as foundry.abstract.EmbeddedCollection<GenesysEffect>, targetChangeKeys, game.i18n.localize('Genesys.DicePrompt.PoolModifications.TargetEffects')),
 				);
 
 				if (context.rollType === RollType.Attack) {
