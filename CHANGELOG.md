@@ -1,15 +1,24 @@
-## Alpha 0.2.17
+## Alpha 0.2.18
 ### Changes
-- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/230): Fix duplication of active abilities without activation phrase in talents tab (thanks @KitCat420)
-- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/226): Handle dropping folder of items to actor sheets (thanks @KitCat420)
-- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/227): Fix Story Point values being unreadable in FVTT v13 (thanks @KitCat420)
-- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/229): Fix cut off sheet titles (thanks @KitCat420)
-- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/228): Fix the phrase at the top of actor sheets (thanks @KitCat420)
-- [LOCALIZATION](https://github.com/Mezryss/FVTT-Genesys/pull/225): Adds localization strings for equipment dropdown (thanks @KitCat420)
-- [FEATURE](https://github.com/Mezryss/FVTT-Genesys/pull/223): Adds a chat command to prompt the dice roller (thanks @kornifex)
+- [FEATURE](https://github.com/Mezryss/FVTT-Genesys/pull/231): Allow dice pools modifications to scale with talent rank (thanks @KitCat420)
+- [FEATURE](https://github.com/Mezryss/FVTT-Genesys/pull/234): FoundryVTT v13 ActiveEffect config sheet workaround (thanks @KitCat420)
+- [LOCALIZATION](https://github.com/Mezryss/FVTT-Genesys/pull/235): Fix missing character/vehicle sheet localizations (thanks @KitCat420)
+- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/236): Fix archetype characteristic label misalignment (thanks @KitCat420)
+- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/233): Fix sheet tab styling bleeding into other apps (thanks @KitCat420)
+- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/232): Fix simple difficulty showing as empty brackets in skill check enricher (thanks @KitCat420)
 
 <details>
 <summary>Previous Releases</summary>
+
+## Alpha 0.2.17
+### Changes
+- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/230): Fix duplication of active abilities without activation phrase in talents tab (thanks KitCat420)
+- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/226): Handle dropping folder of items to actor sheets (thanks KitCat420)
+- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/227): Fix Story Point values being unreadable in FVTT v13 (thanks KitCat420)
+- [STYLING](https://github.com/Mezryss/FVTT-Genesys/pull/229): Fix cut off sheet titles (thanks KitCat420)
+- [FIX](https://github.com/Mezryss/FVTT-Genesys/pull/228): Fix the phrase at the top of actor sheets (thanks KitCat420)
+- [LOCALIZATION](https://github.com/Mezryss/FVTT-Genesys/pull/225): Adds localization strings for equipment dropdown (thanks KitCat420)
+- [FEATURE](https://github.com/Mezryss/FVTT-Genesys/pull/223): Adds a chat command to prompt the dice roller (thanks kornifex)
 
 ## Alpha 0.2.16
 ### Features / Enhancements

@@ -21,7 +21,7 @@ declare global {
 
 	class ActiveEffectConfig<TDocument extends ActiveEffect = ActiveEffect> extends DocumentSheet<TDocument> {
 		/** @override */
-		static PARTS: Record<string, { template: string, [key: string]: unknown }>;
+		static PARTS: Record<string, { template: string; [key: string]: unknown }>;
 
 		/** @override */
 		static get defaultOptions(): ActiveEffectConfigOptions;

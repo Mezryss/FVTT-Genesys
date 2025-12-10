@@ -18,7 +18,7 @@ export default class GenesysEffectSheetV2 extends ActiveEffectConfig<GenesysEffe
 	};
 
 	override async _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>> {
-		const partContext = await super._preparePartContext(partId, context) as Record<string, unknown> & { source: GenesysEffect };
+		const partContext = (await super._preparePartContext(partId, context)) as Record<string, unknown> & { source: GenesysEffect };
 
 		if (partId === 'changes') {
 			partContext.skills = Object.fromEntries(CONFIG.genesys.skills.map((skill) => [skill.name, skill.name]));

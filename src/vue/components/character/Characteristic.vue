@@ -210,7 +210,8 @@ const unmarkSuperCharacteristicLabel = game.i18n.localize('Genesys.Labels.Unmark
 		margin-top: 2px;
 		margin-bottom: 2px;
 
-		a, span {
+		a,
+		span {
 			display: flex;
 			flex-wrap: nowrap;
 			align-items: center;

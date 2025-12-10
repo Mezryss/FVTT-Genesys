@@ -151,7 +151,7 @@ export function register() {
 				'<i class="far fa-dice-d10"></i> ' +
 				game.i18n.format('Genesys.Enrichers.Difficulty', {
 					difficulty: difficultyName,
-					symbols: difficultyIcons || "—",
+					symbols: difficultyIcons || '—',
 					skill,
 				});
 

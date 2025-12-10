@@ -23,8 +23,7 @@ export function register() {
 		DocumentSheetConfig.registerSheet(ActiveEffect, 'genesys', GenesysEffectSheet, {
 			makeDefault: true,
 		});
-	}
-	else {
+	} else {
 		DocumentSheetConfig.registerSheet(ActiveEffect, 'genesys', GenesysEffectSheetV2, {
 			makeDefault: true,
 		});

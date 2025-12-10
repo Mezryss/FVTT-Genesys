@@ -52,13 +52,12 @@ async function doAlphaNotice(lastAlpha: string) {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/230">[FIX]</a>: Fix duplication of active abilities without activation phrase in talents tab (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/226">[FIX]</a>: Handle dropping folder of items to actor sheets (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/227">[STYLING]</a>: Fix Story Point values being unreadable in FVTT v13 (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/229">[STYLING]</a>: Fix cut off sheet titles (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/228">[FIX]</a>: Fix the phrase at the top of actor sheets (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/225">[LOCALIZATION]</a>: Adds localization strings for equipment dropdown (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/223">[FEATURE]</a>: Adds a chat command to prompt the dice roller (thanks @kornifex)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/231">[FEATURE]</a>: Allow dice pools modifications to scale with talent rank (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/234">[FEATURE]</a>: FoundryVTT v13 ActiveEffect config sheet workaround (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/235">[LOCALIZATION]</a>: Fix missing character/vehicle sheet localizations (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/236">[STYLING]</a>: Fix archetype characteristic label misalignment (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/233">[STYLING]</a>: Fix sheet tab styling bleeding into other apps (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/232">[STYLING]</a>: Fix simple difficulty showing as empty brackets in skill check enricher (thanks @KitCat420)</li>
 	</ul>
 	<div style="text-align: center">@dice[apbdcs]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Useful Links</h4>
