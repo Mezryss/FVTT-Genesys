@@ -133,7 +133,7 @@ export default class GenesysRoller {
 			content: html,
 			rolls: [roll],
 		};
-		await ChatMessage.create(chatData);
+		await ChatMessage.create(chatData, { rollMode: game.settings.get('core', 'rollMode') });
 	}
 
 	static async attackRoll({
