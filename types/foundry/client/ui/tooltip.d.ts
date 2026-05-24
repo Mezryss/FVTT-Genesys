@@ -69,8 +69,9 @@ declare global {
 		 *                           direction is acquired from the data-tooltip-direction attribute of the
 		 *                           element or one of its parents.
 		 * @param options.cssClass   An optional CSS class to apply to the activated tooltip.
+		 * @param options.content    Explicit HTML content to inject into the tooltip rather than using tooltip text.
 		 */
-		activate(element: HTMLElement, { text, direction, cssClass }: TooltipActivationOptions): void;
+		activate(element: HTMLElement, { text, direction, cssClass, content }: TooltipActivationOptions): void;
 
 		/**
 		 * Deactivate the tooltip from a previously hovered HTML element.
@@ -107,6 +108,7 @@ declare global {
 		text?: string;
 		direction?: TooltipDirection;
 		cssClass?: string;
+		content?: HTMLElement | DocumentFragment;
 	}
 
 	interface TooltipStylePosition {

@@ -1,7 +1,7 @@
 @use '@scss/mixins/backgrounds.scss';
 @use '@scss/vars/colors.scss';
 
-#tooltip {
+#tooltip.genesys {
 	@include backgrounds.crossboxes;
 	color: black;
 	padding-left: 0.5em;

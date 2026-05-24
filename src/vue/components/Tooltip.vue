@@ -20,8 +20,9 @@ const props = withDefaults(
 async function showTooltip(event: Event) {
 	const sourceText = props.localized ? game.i18n.localize(props.content) : props.content;
 	const enriched = await TextEditor.enrichHTML(sourceText, { async: true });
+	const content = document.createRange().createContextualFragment(enriched);
 
-	game.tooltip.activate(event.currentTarget as HTMLElement, { text: enriched, direction: props.direction, cssClass: props.cssClass });
+	game.tooltip.activate(event.currentTarget as HTMLElement, { content: content, direction: props.direction, cssClass: props.cssClass ? `${props.cssClass} genesys` : 'genesys' });
 }
 
 async function hideTooltip() {
