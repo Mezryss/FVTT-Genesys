@@ -52,12 +52,8 @@ async function doAlphaNotice(lastAlpha: string) {
 	<div style="text-align: center">@symbol[satfhd]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Bug Fixes & Updates</h4>
 	<ul style="margin-top: 0">
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/231">[FEATURE]</a>: Allow dice pools modifications to scale with talent rank (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/234">[FEATURE]</a>: FoundryVTT v13 ActiveEffect config sheet workaround (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/235">[LOCALIZATION]</a>: Fix missing character/vehicle sheet localizations (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/236">[STYLING]</a>: Fix archetype characteristic label misalignment (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/233">[STYLING]</a>: Fix sheet tab styling bleeding into other apps (thanks @KitCat420)</li>
-      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/232">[STYLING]</a>: Fix simple difficulty showing as empty brackets in skill check enricher (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/pull/258">[FIX]</a>: Allow dice pools modifications to scale with talent rank (thanks @KitCat420)</li>
+      <li><a href="https://github.com/Mezryss/FVTT-Genesys/commit/920895a1d36372803c64ec54fa5b8a492020e0fb">[STYLING]</a>: Fix tooltips in FVTT13</li>
 	</ul>
 	<div style="text-align: center">@dice[apbdcs]</div>
 	<h4 style="font-family: 'Bebas Neue', sans-serif">Useful Links</h4>
